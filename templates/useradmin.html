@@ -1,0 +1,84 @@
+{% if settings['USERS'][user]['admin'] %}
+<div class="card">
+<div class="card-body">
+  <h5 class="card-title">Users <span>| Admin</span></h5>
+
+  <form class="row g-3" role="form" name="modifyUsersConfigForm">
+  <input type="hidden" class="form-control" id="modify_users_config" value="modify_users_config" readonly>
+	<div class="col-md-12">
+	  <label for="user_select" class="form-label">Edit user</label>
+	  <select id="user_select" class="form-select" onchange="showDiv(this);">
+		<option selected value="nouser">Choose user..</option>
+		{% for user in settings['USERS'] %}
+			<option value="{{ user }}">{{ user }}</option>
+		{% endfor %}
+			<option value="newuser">Add new user</option>
+	  </select>
+	</div>
+	{% for euser in settings['USERS'] %}	
+	<div id="passdiv_{{ euser }}" class="col-md-6 forms" style="display: none;">
+	  <label for="userpassword" class="form-label">DZGA password <small>(Userinterface)</small></label>
+	  <div class="input-group mb-3">
+		<input type="password" class="form-control password" id="userpassword_{{ euser }}" value="{{ settings['USERS'][euser]['password']}}">
+		<span class="input-group-text togglePassword bi bi-eye" id="">		
+		</span>
+	  </div>
+	</div>
+	<div id="admindiv_{{ euser }}" class="col-md-6 forms" style="display: none;">
+	  <label for="admin" class="form-label">Admin</label>
+	  <select id="admin_{{ euser }}" class="form-select">
+		<option {% if settings['USERS'][euser]['admin'] is true %} selected {% endif %} value="true">Yes</option>
+		<option {% if settings['USERS'][euser]['admin'] is false %} selected {% endif %}value="false">No</option>
+	  </select>
+	</div>
+	<div id="gassitdiv_{{ euser }}" class="col-md-6 forms" style="display: none;">
+	  <label for="googleassist" class="form-label">Google Assistant</label>
+	  <select id="googleassist_{{ euser }}" class="form-select">
+		<option {% if settings['USERS'][euser]['googleassistant'] is true %} selected {% endif %} value="true">Enabled</option>
+		<option {% if settings['USERS'][euser]['googleassistant'] is false %} selected {% endif %}value="false">Disabled</option>
+	  </select>
+	</div>
+	<div class="text-center forms" id="submitdiv_{{ euser }}" style="display: none;">
+	  <button type="submit" class="btn btn-primary" onclick="modifyConfig('users', '{{ euser }}')">Submit</button>
+	  <button type="reset" class="btn btn-secondary">Reset</button>
+	  {% if user != euser %}
+	  <button class="btn btn-danger" onclick="removeUser('{{euser}}')">Remove user</button>
+	  {% endif %}
+	</div>
+	{% endfor %}
+	 <input type="hidden" class="form-control" id="new_user" value="new_user" readonly>
+	<div id="userdiv" class="col-md-6 newforms" style="display: none;">
+	  <label for="user" class="form-label">User</label>
+	  <input type="text" class="form-control" id="user" value="">
+	</div>
+	<div id="passdiv" class="col-md-6 newforms" style="display: none;">
+	  <label for="userpassword" class="form-label">Password</label>
+	  <div class="input-group mb-3">
+		<input type="password" class="form-control password" id="userpassword" value="">
+		<span class="input-group-text togglePassword bi bi-eye" id="">		
+		</span>
+	  </div>
+	</div>
+	<div id="admindiv" class="col-md-6 newforms" style="display: none;">
+	  <label for="admin" class="form-label">Admin</label>
+	  <select id="admin" class="form-select">
+		<option value="true">Yes</option>
+		<option selected value="false">No</option>
+	  </select>
+	</div>
+	<div id="gassitdiv}" class="col-md-6 newforms" style="display: none;">
+	  <label for="googleassistant" class="form-label">Google Assistant</label>
+	  <select id="googleassistant" class="form-select">
+		<option selected value="false">Disabled</option>
+		<option value="true">Enabled</option>
+	  </select>
+	</div>
+	<div class="text-center newforms" id="submitdiv" style="display: none;">
+	  <button type="submit" class="btn btn-primary" onclick="modifyConfig('users')">Submit</button>
+	  <button type="reset" class="btn btn-secondary">Reset</button>
+	</div>
+  </form>
+
+</div>
+</div>
+{% endif %}

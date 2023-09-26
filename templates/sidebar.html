@@ -1,0 +1,32 @@
+<!-- ======= Sidebar ======= -->
+  <aside id="sidebar" class="sidebar">
+
+    <ul class="sidebar-nav" id="sidebar-nav">
+
+      <li class="nav-item">
+        <a class="nav-link " href="{{ url_for('dashboard') }}">
+          <i class="material-symbols-outlined" style="font-size: 24px">dashboard</i>
+          <span>Dashboard</span>
+        </a>
+      </li><!-- End Dashboard Nav -->
+
+      <li class="nav-heading">Pages</li>
+
+	  <li class="nav-item">
+        <a class="nav-link collapsed" href="{{ url_for('devices') }}">
+          <i class="material-symbols-outlined" style="font-size: 24px">devices</i>
+          <span>Devices</span>
+        </a>
+      </li>
+	  {% if settings['USERS'][user]['admin'] %}
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{{ url_for('settings') }}">
+          <i class="material-symbols-outlined" style="font-size: 24px">settings</i>
+          <span>Settings</span>
+        </a>
+      </li>
+	  {% endif %}
+
+    </ul>
+
+  </aside><!-- End Sidebar-->
