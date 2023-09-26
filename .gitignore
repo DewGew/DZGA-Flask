@@ -5,6 +5,8 @@ __pycache__/
 upload/
 config/
 config/token/*
+.github
+.github/*
 
 # Flask stuff:
 instance/

@@ -1,0 +1,37 @@
+{
+    "CLIENT_ID": "client123",
+    "CLIENT_SECRET": "pass123",
+    "API_KEY": "<AOG API Key>",
+    "TEMPUNIT": "C",
+    "USE_SSL": false,
+    "SSL_CERT": "/home/cert/local.crt",
+    "SSL_KEY": "/home/cert/local.key",
+    "LANGUAGE": "en",
+    "ARMLEVEL_ARMHOME": [
+        "armed home",
+        "low security",
+        "home and guarding",
+        "level 1",
+        "home",
+        "SL1"
+    ],
+    "ARMLEVEL_ARMAWAY": [
+        "armed away",
+        "high security",
+        "away and guarding",
+        "level 2",
+        "away",
+        "SL2"
+    ],
+    "USERS": {
+        "admin": {
+            "domo_url": "http://192.168.1.123:8080",
+            "domouser": "<Domotic User>",
+            "domopass": "<Domotic Pass>",
+            "roomplan": "0",
+            "password": "smarthome",
+            "admin": true,
+            "googleassistant": false
+        }
+    }
+}

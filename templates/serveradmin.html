@@ -1,0 +1,77 @@
+{% if settings['USERS'][user]['admin'] %}
+<div class="card">
+<div class="card-body">
+  <h5 class="card-title">Server settings <span>| Admin</span></h5>
+   <p>Actions on Google API key will be disabled if <code>smart-home-key.json</code> file is added.</p>
+
+  <form class="row g-3" onsubmit="modifyConfig('server')" role="form" name="modifyConfigForm">
+  <input type="hidden" class="form-control" id="modify_config" value="modify_config" readonly>
+	<div class="col-md-6">
+	  <label for="aogclient" class="form-label">Actions on Google Client id</label>
+	  <input type="text" class="form-control" id="aogclient" value="{{ settings['CLIENT_ID']}}">
+	</div>
+	<div class="col-md-6">
+	  <label for="aogsecret" class="form-label">Actions on Google Client secret</label>
+	  <div class="input-group mb-3">
+		<input type="password" class="form-control password" id="aogsecret" value="{{ settings['CLIENT_SECRET']}}">
+		<span class="input-group-text togglePassword bi bi-eye" id="">
+		</span>
+	  </div>
+	</div>
+	<div class="col-6">
+	  <label for="aogapi" class="form-label">Actions on Google API key</label>
+	  <input type="text" class="form-control" id="aogapi" value="{{ settings['API_KEY']}}" {% if reportstate is true %} disabled readonly {% endif %}>
+	</div>
+	
+	<div class="col-6">
+	  <label for="tempunit" class="form-label">Temperture unit</label>
+	  <select id="tempunit" class="form-select">
+		<option {% if settings['LANGUAGE'] == 'C' %} selected {% endif %}value="C">Celsius</option>
+		<option {% if settings['LANGUAGE'] == 'F' %} selected {% endif %}value="F">Fahrenheit</option>
+	  </select>
+	</div>
+	<div class="col-md-6">
+	  <label for="language" class="form-label">Speak Language</label>
+	  <select id="language" class="form-select" onchange="showDiv(this);">
+		<option {% if settings['LANGUAGE'] == 'sv' %} selected {% endif %}value="sv">Swedish</option>
+		<option {% if settings['LANGUAGE'] == 'en' %} selected {% endif %}value="en">English</option>
+		<option {% if settings['LANGUAGE'] == 'de' %} selected {% endif %}value="de">German</option>
+		<option {% if settings['LANGUAGE'] == 'nl' %} selected {% endif %}value="nl">Dutch</option>
+		<option {% if settings['LANGUAGE'] == 'fr' %} selected {% endif %}value="fr">French</option>
+		<option {% if settings['LANGUAGE'] == 'it' %} selected {% endif %}value="it">Italian</option>
+	  </select>
+	</div>
+	<div class="col-md-6">
+	  <label for="ssl" class="form-label">Use SSL</label>
+	  <select id="ssl" class="form-select" onchange="showDiv(this);">
+		<option {% if settings['USE_SSL'] is true %} selected {% endif %} value="true" >Enabled</option>
+		<option {% if settings['USE_SSL'] is false %} selected {% endif %}value="false">Disabled</option>
+	  </select>
+	</div>
+	<div id="pathcert" class="col-md-6" style="display: none;">
+	  <label for="sslcert" class="form-label">Path to SSL Certificate</label>
+	  <input type="text" class="form-control" id="sslcert" value="{{ settings['SSL_CERT']}}">
+	</div>
+	<div id="pathkey" class="col-md-6" style="display: none;">
+	  <label for="sslkey" class="form-label">Path to SSL key</label>
+	  <input type="text" class="form-control" id="sslkey" value="{{ settings['SSL_KEY']}}">
+	</div>
+	<div id="armhome_div" class="col-md-12" {% if settings['LANGUAGE'] == 'en' %}style="display: none;"{% endif %}>
+	<p id="label_armlevel"></p>
+	  <label for="armhome" class="form-label">Armhome</label>
+	  <input type="text" class="form-control" id="armhome" value="{{ settings['ARMLEVELS_ARMHOME'] }}">
+	</div>
+	<div id="armaway_div" class="col-md-12" {% if settings['LANGUAGE'] == 'en' %}style="display: none;"{% endif %}>
+	  <label for="armaway" class="form-label">Armaway</label>
+	  <input type="text" class="form-control" id="armaway" value="{{ settings['ARMLEVELS_ARMAWAY']}}">
+	</div>
+	<div class="text-center">
+	  <button type="submit" class="btn btn-primary">Submit</button>
+	  <button type="reset" class="btn btn-secondary">Reset</button>
+	</div>
+
+  </form>
+
+</div>
+</div>
+{% endif %}

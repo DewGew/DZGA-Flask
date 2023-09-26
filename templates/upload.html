@@ -1,0 +1,23 @@
+<div class="card">
+<div class="card-body">
+  <h5 class="card-title">File upload <span>| Admin</span></h5>
+  <p>Upload your {% if settings['USERS'][user]['admin'] %}<code>smart-home-key.json</code> file or{% endif %} profile image here. Optimal size is 120x120px. Name your profile image to <code>{{ user }}.png</code> or <code>{{ user }}.jpg</code>.</p>
+	<form class="row g-3" action = "{{ url_for('upload_file') }}" method = "POST" enctype="multipart/form-data">
+		<div class="col-sm-12">
+			<label for="file" class="col-sm-2 col-form-label">File Upload</label>
+			<input class="form-control" id="file" name="file" type="file" />
+		</div>
+	<div class="col-12">
+	  {% if reportstate is true %}
+		<small class="text-default">Smart-home-key.json file found! <span class="text-success">Reportstate is enabled.</span>
+	  {% else %}
+		<small class="text-default">Smart-home-key.json file <b>not</b> found! <span class="text-danger">Reportstate is disabled.</span>
+	  {% endif %}
+		</small>
+	</div>
+		<div class="text-center">
+			<button id="btn" class="btn btn-secondary">Upload</button>
+		</div>
+	</form>	
+</div>
+</div>

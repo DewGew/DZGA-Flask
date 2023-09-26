@@ -1,0 +1,317 @@
+{% include 'head.html' %}
+
+{% include 'header.html' %}
+
+{% include 'sidebar.html' %}
+
+<style>
+.pointer {cursor: pointer;}
+</style>
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Devices</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+          <li class="breadcrumb-item active">Devices</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+      <div class="row dashboard">
+
+        <!-- Left side columns -->
+        <div class="col-lg-12">
+          <div class="row">
+
+            <div class="col-12">
+              <div class="card recent-sales overflow-auto">
+
+                <div class="card-body">
+                  <h5 class="card-title">Added devices <span>| {{ user }}</span></h5>
+
+                  <table class="table table-borderless datatable">
+                    <thead>
+                      <tr>
+                        <th scope="col">Id</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Protected</th>
+                        <th scope="col">State</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+					{% for k, v in devices.items() %}
+                      <tr>
+                        <th class="pointer" scope="row" data-bs-toggle="modal" data-bs-target="#devicesModal_{{ k }}">{{ k }}</th>
+						
+							  <div class="modal fade" id="devicesModal_{{ k }}" tabindex="-1">
+								<div class="modal-dialog modal-lg">
+								  <div class="modal-content">
+									<div class="modal-header">
+									  <h5 class="modal-title">Sync request json for {{ k }}</h5>
+									  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+									</div>
+									<div class="modal-body">
+										<pre id="json_{{ v['customData']['idx'] }}">
+										</pre>
+<!-- 									<div class="modal-footer">
+									  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+									  <button type="button" class="btn btn-primary">Save changes</button>
+									</div> -->
+								  </div>
+								</div>
+							  </div><!-- End Vertically centered Modal-->
+
+                        <td>{{ v['name']['name'].replace("_", " ") }}</td>
+                        <td class="text-primary pointer" data-bs-toggle="modal" data-bs-target="#descriptionModal_{{ k }}" >{{ v['customData']['domain'] }}</td>
+						    <div class="modal fade" id="descriptionModal_{{ k }}" tabindex="-1">
+								<div class="modal-dialog modal-lg">
+								  <div class="modal-content">
+									<div class="modal-header">
+									  <h5 class="modal-title">Description {{ v['name']['name'].replace("_", " ") }}</h5>
+									  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+									</div>
+									<div class="modal-body" >
+									<div class="row mb-10">
+									<form> <!-- move? -->
+									<label class="col-sm-4 col-form-label"></label>
+									  <div class="col-sm-10">
+										<div class="form-check form-switch">
+										  <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" {% if 'Hidden' in v['customData']['domain'] %}checked{% endif %}>
+										  <label class="form-check-label" for="flexSwitchCheckChecked">hiddenDevice</label>
+										</div>
+										<div class="form-check form-switch">
+										  <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" {% if v['willReportState'] == True %}checked{% endif %}{% if 'Hidden' in v['customData']['domain'] %} disabled{% endif %}>
+										  <label class="form-check-label" for="flexSwitchCheckDefault">willReportState</label>
+										</div>
+										<div class="form-check form-switch">
+										  <input class="form-check-input" type="checkbox" id="flexSwitchCheckCheckedDisabled" {% if v['notificationSupportedByAgent'] == True %}checked{% endif %}{% if 'Hidden' in v['customData']['domain'] %} disabled{% endif %}>
+										  <label class="form-check-label" for="flexSwitchCheckCheckedDisabled">notificationSupportedByAgent</label>
+										</div>
+										<div class="form-check form-switch">
+										  <input class="form-check-input" type="checkbox" id="secondaryUserVerificationCheck_{{ v['id'] }}" {% if ('acknowledge' in v['customData'] or v['customData']['protected'] == True) %}checked{% endif %}{% if 'Hidden' in v['customData']['domain'] %} disabled{% endif %}>
+										  <label class="form-check-label" for="secondaryUserVerificationCheck_{{ v['id'] }}">secondaryUserVerification</label>
+										</div>
+										<div id="radioButtons_{{ v['id'] }}">
+										<fieldset class="row mb-3" >
+										  <legend class="col-form-label col-sm-1 pt-0"></legend>
+										  <div class="col-sm-10">
+											<div class="form-check">
+											  <input class="form-check-input" type="radio" name="gridRadios1" id="gridRadios1" value="ackNeeded" {% if ('acknowledge' in v['customData'] and v['customData']['protected'] != True) %}checked{% endif %}{% if 'Hidden' in v['customData']['domain'] %} disabled{% endif %}>
+											  <label class="form-check-label" for="gridRadios1">
+												ackNeeded
+											  </label>
+											</div>
+											<div class="form-check">
+											  <input class="form-check-input" type="radio" name="gridRadios2" id="gridRadios2" value="pinNeeded" {% if v['customData']['protected'] == True %}checked{% endif %}{% if 'Hidden' in v['customData']['domain'] %} disabled{% endif %}>
+											  <label class="form-check-label" for="gridRadios2">
+												pinNeeded
+											  </label>
+											</div>
+										  </div>
+										</fieldset>
+										</div>
+										{% if 'Hidden' not in v['customData']['domain'] %}
+										<div class="row mb-3">
+										  <label for="inputText" class="col-sm-3 col-form-label">roomHint</label>
+										  <div class="col-sm-2">
+											<input type="text" class="form-control" value="{{ v['roomHint'] }}">
+										  </div>
+										</div>
+										<div class="row mb-3">
+										  <label for="inputText" class="col-sm-3 col-form-label">nicknames</label>
+										  <div class="col-sm-6">
+											<input type="text" class="form-control" value="{% for n in v['name']['nicknames'] %}{{ n }}, {% endfor %}">
+										  </div>
+										</div>
+										<div class="row mb-3">
+										  <label for="inputText" class="col-sm-3 col-form-label">devicetype</label>
+										  <div class="col-sm-6"> 
+											  <select id="devicetype" class="form-select" {% if v['customData']['domain'] != 'OnOff' %}disabled{% endif %}>
+											  {% if v['customData']['domain'] == 'Security' %}
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'securitysystem' %} selected {% endif %} value="securitysystem" >Securitysystem</option>
+											  {% endif %}
+											  {% if v['customData']['domain'] == 'Scene' %}
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'scene' %}selected {% endif %} value="scene">Scene</option>
+											  {% endif %}
+											  {% if v['customData']['domain'] == 'Thermostat' %}
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'thermostat' %}selected {% endif %} value="thermostat">Thermostat</option>
+											  {% endif %}
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'light' %}selected {% endif %} value="light">Light</option>
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'switch' %}selected {% endif %} value="switch">Switch</option>
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'outlet' %}selected {% endif %} value="outlet">Outlet</option>
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'blinds' %}selected {% endif %} value="blinds">Blinds</option>
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'sensor' %}selected {% endif %} value="sensor">Sensor</option>
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'doorbell' %}selected {% endif %} value="doorbell">Doorbell</option>
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'vacuum' %}selected {% endif %} value="vacuum">Vacuum</option>
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'lock' %}selected {% endif %} value="lock">Lock</option>
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'camera' %}selected {% endif %} value="camera">Camera</option>
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'heater' %}selected {% endif %} value="heater">Heater</option>
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'waterheater' %}selected {% endif %} value="waterheater">Waterheater</option>
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'fan' %}selected {% endif %} value="fan">Fan</option>
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'oven' %}selected {% endif %} value="oven">Oven</option>
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'tv' %}selected {% endif %} value="tv">TV</option>
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'washer' %}selected {% endif %} value="washer">Washer</option>
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'dishwasher' %}selected {% endif %} value="dishwasher">Dishwasher</option>
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'coffeemaker' %}selected {% endif %} value="coffeemaker">Coffee maker</option>
+											  </select>
+										  </div>
+										</div>
+										 {% if v['customData']['domain'] == 'Thermostat' %}
+										<div class="row mb-3">
+										  <label for="inputText" class="col-sm-3 col-form-label">minThreehold</label>
+										  <div class="col-sm-2">
+											<input type="number" class="form-control" value="{{ v['attributes']['thermostatTemperatureRange']['minThresholdCelsius'] }}">
+										  </div>
+										</div>
+										<div class="row mb-3">
+										  <label for="inputText" class="col-sm-3 col-form-label">maxThreehold</label>
+										  <div class="col-sm-2">
+											<input type="number" class="form-control" value="{{ v['attributes']['thermostatTemperatureRange']['maxThresholdCelsius'] }}">
+										  </div>
+										</div>
+									  {% endif %}
+									  {% if (v['customData']['domain'] in ['Doorbell', 'Camera'] and 'camurl' in v['customData']) %}
+										<div class="row mb-3">
+										  <label for="inputText" class="col-sm-3 col-form-label">camurl</label>
+										  <div class="col-sm-10">
+											<input type="text" class="form-control" value="{{ v['customData']['camurl'] }}">
+										  </div>
+										</div>
+									  {% endif %}
+									  {% if (v['customData']['domain'] == 'Thermostat' and 'actual_temp_idx' in v['customData']) %}
+									   <div class="row mb-3">
+										  <label for="inputText" class="col-sm-3 col-form-label">actual_temp_idx</label>
+										  <div class="col-sm-2">
+											<input type="number" class="form-control" value="{{ v['customData']['actual_temp_idx'] }}">
+										  </div>
+										</div>
+									  {% endif %}
+									  {% if (v['customData']['domain'] == 'Thermostat' and 'selector_modes_idx' in v['customData']) %}
+										<div class="row mb-3">
+										  <label for="inputText" class="col-sm-3 col-form-label">selector_modes_idx</label>
+										  <div class="col-sm-2">
+											<input type="number" class="form-control" value="{{ v['customData']['selector_modes_idx'] }}">
+										  </div>
+										</div>
+									  {% endif %}
+									  {% endif %}
+									   {% if v['customData']['domain'] == 'Security' %}
+									   <div class="row mb-3" {% if settings['LANGUAGE'] == 'en' %}style="display: none;"{% endif %}>
+									  	<div id="armhome_div" class="col-md-12">
+										  <label for="armhome" class="col-sm-10 col-form-label" id="label_armhome">Armhome</label>
+										  <input type="text" class="form-control" id="armhome" value="{% for n in settings['ARMLEVELS_ARMHOME'] %}{{ n }}, {% endfor %}">
+										</div>
+										<div id="armaway_div" class="col-md-12">
+										  <label for="armaway" class="col-sm-10 col-form-label" id="label_armaway">Armaway</label>
+										  <input type="text" class="form-control" id="armaway" value="{% for n in settings['ARMLEVELS_ARMAWAY'] %}{{ n }}, {% endfor %}">
+										</div>
+										</div>
+										{% endif %}
+										</div>
+										</form> <!-- move? -->
+										</div>
+										
+<!-- 										<hr>
+									<pre id="description_{{ v['customData']['idx'] }}">
+									
+Nothing added to description
+
+									</pre> -->
+
+									<div class="modal-footer">
+									  <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+									  <button class="btn btn-primary" >Save changes</button>
+									</div>
+								  </div>
+								</div>
+							  </div><!-- End Vertically centered Modal-->
+                        <td>
+						{% if v['customData']['protected'] == False %}
+							<button class="btn btn-outline-success btn-sm" onclick="toogleProtected({{ v['customData']['idx'] }}, 'true')" >No
+							{% else %}
+							<button class="btn btn-outline-danger btn-sm" onclick="toogleProtected({{ v['customData']['idx'] }}, 'false')">Yes
+							{% endif %}							
+							</button></td>
+						<td><button class="btn btn-light btn-sm" id="switch_{{ v['customData']['idx'] }}">Not availible</button></td>
+                      </tr>
+					{% endfor %}
+                    </tbody>
+                  </table>
+
+                </div>
+
+              </div>
+			</div>
+
+			</div>
+			</div><!-- End Left side columns -->
+
+			<!-- Right side columns -->
+			<div class="col-lg-12">
+
+				{% include 'info.html' %}
+
+			</div><!-- End Right side columns -->
+		</div>
+		</div>
+      </div>
+    </section>
+
+  </main><!-- End #main -->
+
+  {% include 'footer.html' %}
+  
+<script>
+var updateInterval = 9000
+var updateSwitches_block = [];
+var updateScenes_block = [];
+var updateDimmers_block = [];
+var updateSelectors_block = [];
+
+{% for k, v in devices.items() %}
+	{% if v['customData']['domain'] in ('Group', 'Scene') %}
+		updateScenes_block.push("{{ v['customData']['idx'] }}")
+	{% elif v['customData']['domain'] == 'Dimmer' %}
+		updateDimmers_block.push("{{ v['customData']['idx'] }}")
+	{% elif v['customData']['domain'] == 'Selector' %}
+		updateSelectors_block.push("{{ v['customData']['idx'] }}")
+	{% else %}
+		updateSwitches_block.push("{{ v['customData']['idx'] }}")
+	{% endif %}
+	
+	json = '{{ v | tojson }}';
+	$("#json_{{ v['customData']['idx'] }}").html(JSON.stringify(JSON.parse(json), null, 4))
+	
+	$("#radioButtons_{{ v['id'] }}").hide()
+	if ($("#secondaryUserVerificationCheck_{{ v['id'] }}").prop('checked')) {
+			$("#radioButtons_{{ v['id'] }}").show()
+		}
+	$("#secondaryUserVerificationCheck_{{ v['id'] }}").on("click", function(){
+		$("#radioButtons_{{ v['id'] }}").toggle()
+	});
+{% endfor %}
+
+{% if settings['USERS'][user]['admin'] %}
+	var text = '{{ settings["LANGUAGE"] }}';
+	var htext = "<i> in <b>" + text.toUpperCase() + "</b>. (Separate levelnames with comma)</i>"
+	var atext = "<i> in <b>" + text.toUpperCase() + "</b>.</i>"
+
+	$("#label_armhome").append(htext)
+	$("#label_armaway").append(atext)
+{% endif %}
+
+refreshSwitches(updateSwitches_block);
+refreshScenes(updateScenes_block)
+refreshDimmers(updateDimmers_block)
+refreshSelectors(updateSelectors_block)
+
+setInterval(refreshSwitches, updateInterval, updateSwitches_block)
+setInterval(refreshScenes, updateInterval, updateScenes_block)
+setInterval(refreshDimmers, updateInterval, updateDimmers_block)
+setInterval(refreshSelectors, updateInterval, updateSelectors_block)	
+
+</script>
