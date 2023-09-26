@@ -1,2 +1,3 @@
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/dewgew/Domoticz-Google-Assistant?logo=github) [![Discord](https://img.shields.io/discord/664815298284748830?logo=discord)](https://discordapp.com/invite/AmJV6AC) [![Python Package](https://github.com/DewGew/Domoticz-Google-Assistant/actions/workflows/python-app.yml/badge.svg?branch=master)](https://github.com/DewGew/Domoticz-Google-Assistant/actions/workflows/python-app.yml) [![Docker Image CI](https://github.com/DewGew/Domoticz-Google-Assistant/actions/workflows/docker-image.yml/badge.svg?branch=master)](https://github.com/DewGew/Domoticz-Google-Assistant/actions/workflows/docker-image.yml)
 # DZGA-Flask
 Domoticz Google Assisting using Flask
