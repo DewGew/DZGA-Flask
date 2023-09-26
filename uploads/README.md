@@ -1,1 +1,1 @@
-# Uploads folder
+Uploads folder
