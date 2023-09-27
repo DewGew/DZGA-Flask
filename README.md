@@ -18,3 +18,10 @@ Just open a terminal window and execute this command. Thats it!
 ```
 bash <(curl -s https://raw.githubusercontent.com/DewGew/dzga-installer/master/dzga-flask-install.sh)
 ```
+Start, stop and restart service
+
+```
+sudo systemctl start dzga-flask.service
+sudo systemctl stop dzga-flask.service
+sudo systemctl restart dzga-flask.service
+```
