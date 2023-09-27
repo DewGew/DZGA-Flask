@@ -25,12 +25,16 @@ then
     echo " This script must run as $RUN_AS, trying to change user..."
     exec sudo -u $RUN_AS $0
 fi
-
+echo ""
+echo " Updating your system..."
+echo ""
+sudo apt-get update -y
+sed 's/#.*//' ${INSTALL_DIR}/scripts/system-requirements.txt | xargs sudo apt-get install -y
 cd /home/${USER}/
 
 VER=$(python3 -V 2>&1 | sed 's/.* \([0-9]\).\([0-9]\).*/\1\2/')
 if [ "$VER" -lt "35" ]; then
-    echo " Domoticz-Google-Assistant requires python 3.5 or greater"
+    echo " DZGA-Flask requires python 3.5 or greater"
 	echo ""
     exit 1
 fi
