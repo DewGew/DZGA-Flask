@@ -10,3 +10,11 @@ Required:
   - SSL with own domain or dynamic DNS, require ssl key and ssl certficate
   - Use ngrok for a secure SSL tunnel with valid public HTTPS URL
   - Configure reverse proxy with valid certificate using Let's Encrypt
+
+## Ubuntu, Raspbarry Pi Installation with autostart
+
+Just open a terminal window and execute this command. Thats it!
+
+```
+bash <(curl -s https://raw.githubusercontent.com/DewGew/dzga-installer/master/dzgaboard_install.sh)
+```
