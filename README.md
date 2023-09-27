@@ -16,5 +16,5 @@ Required:
 Just open a terminal window and execute this command. Thats it!
 
 ```
-bash <(curl -s https://raw.githubusercontent.com/DewGew/dzga-installer/master/dzgaboard_install.sh)
+bash <(curl -s https://raw.githubusercontent.com/DewGew/dzga-installer/master/dzga-flask-install.sh)
 ```
