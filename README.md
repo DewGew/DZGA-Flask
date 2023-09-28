@@ -32,7 +32,7 @@ To update run installer again:
 bash <(curl -s https://raw.githubusercontent.com/DewGew/dzga-installer/development/dzga-flaskinstall.sh)
 ```
 To run manually:
-```
+```bash
 cd /home/${USER}/
 sudo systemctl stop dzga-flask #If service is running
 source DZGA-Flask-flask/env/bin/activate
