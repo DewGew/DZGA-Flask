@@ -350,7 +350,7 @@ def fulfillment():
             newSettings = {
                     'authtoken':newToken
                     }
-            save_settings(newsettings, user_id)
+            save_settings(newSettings, user_id)
                 
             return {}
     
