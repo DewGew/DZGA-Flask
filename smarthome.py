@@ -190,8 +190,8 @@ def token():
     if  time() - last_code_time > 10:
         logger.warning("code is too old")
         return "Code is too old", 403
-    # Generate and save random token with username
-    access_token = generateToken(last_code_user)
+    # Get token with username
+    access_token = get_settings()['USERS'][last_code_user]['authtoken']
     # Return token without any expiration time
     return jsonify({'access_token': access_token})
     
@@ -345,6 +345,13 @@ def fulfillment():
             if os.path.isfile(access_token_file) and os.access(access_token_file, os.R_OK):
                 os.remove(access_token_file)
                 logger.debug("token %s revoked", access_token)
+                
+            newToken =  generateToken(user_id)
+            newSettings = {
+                    'authtoken':newToken
+                    }
+            save_settings(newsettings, user_id)
+                
             return {}
     
     logger.debug("response: \r\n%s", json.dumps(result, indent=4))
@@ -478,6 +485,7 @@ def gateway():
             'roomplan': request.args.get('roomplan',''),
             'password':request.args.get('uipassword',''),
             'googleassistant':gass,
+            'authtoken':request.args.get('authtoken','')
                 }
         
         save_settings(newsettings, flask_login.current_user.id)
@@ -503,6 +511,8 @@ def gateway():
         newUser = request.args.get('user','')
         admin = (request.args.get('admin', '') == 'true')
         gass = (request.args.get('googleassistant', '') == 'true')
+        # Generate and save random token with username
+        access = generateToken(newUser)
 
         newsettings = {
             'domo_url':'http://192.168.1.123:8080',
@@ -512,6 +522,7 @@ def gateway():
             'password':request.args.get('userpassword',''),
             'admin':admin,
             'googleassistant':gass,
+			'authtoken':access
             }
             
         save_settings(newsettings, newUser)
@@ -524,11 +535,16 @@ def gateway():
         
     elif custom == "removeuser":
         userToRemove = request.args.get('user','')
+        access_token_to_remove = get_settings()['USERS'][userToRemove]['authtoken']
+        access_token_file_to_remove = os.path.join(config.TOKENS_DIRECTORY, access_token_to_remove)
+        if os.path.isfile(access_token_file_to_remove) and os.access(access_token_file_to_remove, os.R_OK):
+            os.remove(access_token_file_to_remove)
         remove_user(userToRemove)
         
         users = get_settings()['USERS']
+        logger.info("User " + userToRemove + " is deleted")
 
-        return "Settings saved", 200
+        return "User removed", 200
     else:
         result = queryDomoticz(flask_login.current_user.id, requestedUrl[1])
     try:
