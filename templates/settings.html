@@ -67,14 +67,18 @@
 						</div>
 						<div class="col-md-6">
 						  <label for="googleassist" class="form-label">Google Assistant</label>
-						  <select id="googleassist" class="form-select" {% if settings['USERS'][user]['admin'] is false %}disabled{% endif %}>
+						  <select id="googleassist" class="form-select" {% if settings['USERS'][user]['admin'] is false %}disabled{% endif %} onchange="showDiv(this);">
 							<option {% if settings['USERS'][user]['googleassistant'] is true %} selected {% endif %} value="true">Enabled</option>
 							<option {% if settings['USERS'][user]['googleassistant'] is false %} selected {% endif %}value="false">Disabled</option>
 						  </select>
 						</div>
-						<div class="col-md-6">
+						<div class="col-md-6" >
 						  <label for="domoticzAdmin" class="form-label">Domoticz Admin</label>
 						  <input type="text" class="form-control" id="domoticzAdmin" value="No" disabled readonly>
+						</div>
+						<div class="col-md-6" id="div_token" {% if settings['USERS'][user]['googleassistant'] is false %} style="display: none;" {% endif %}>
+						  <label for="token" class="form-label">Auth Token</label>
+						  <input type="text" class="form-control" id="token" value="{{ settings['USERS'][user]['authtoken']}}" disabled readonly>
 						</div>
 						<div class="text-center">
 						  <button type="submit" class="btn btn-primary">Submit</button>
