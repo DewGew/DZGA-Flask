@@ -320,9 +320,11 @@ function showDiv(that) {
     if (that.value == "true") {
         $("#pathcert").fadeIn(1000);
 		$("#pathkey").fadeIn(1000);
+		$("#div_token").fadeIn(1000);
     } else {
         $("#pathcert").fadeOut(500);
 		$("#pathkey").fadeOut(500);
+		$("#div_token").fadeOut(500);
     }
 	if (that.value == "nouser") {
         $(".forms").fadeOut(500);
