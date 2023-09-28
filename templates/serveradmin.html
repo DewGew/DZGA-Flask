@@ -48,11 +48,11 @@
 		<option {% if settings['USE_SSL'] is false %} selected {% endif %}value="false">Disabled</option>
 	  </select>
 	</div>
-	<div id="pathcert" class="col-md-6" style="display: none;">
+	<div id="pathcert" class="col-md-6" {% if settings['USE_SSL'] is false %}style="display: none;"{% endif %}>
 	  <label for="sslcert" class="form-label">Path to SSL Certificate</label>
 	  <input type="text" class="form-control" id="sslcert" value="{{ settings['SSL_CERT']}}">
 	</div>
-	<div id="pathkey" class="col-md-6" style="display: none;">
+	<div id="pathkey" class="col-md-6" {% if settings['USE_SSL'] is false %}style="display: none;"{% endif %}>
 	  <label for="sslkey" class="form-label">Path to SSL key</label>
 	  <input type="text" class="form-control" id="sslkey" value="{{ settings['SSL_KEY']}}">
 	</div>
