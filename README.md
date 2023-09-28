@@ -16,12 +16,33 @@ Required:
 Just open a terminal window and execute this command. Thats it!
 
 ```
-bash <(curl -s https://raw.githubusercontent.com/DewGew/dzga-installer/master/dzga-flask-install.sh)
+bash <(curl -s https://raw.githubusercontent.com/DewGew/dzga-installer/development/dzga-flask-install.sh)
 ```
-Start, stop and restart service
-
+Start/stop Domoticz-Google-Assistant server:
+```bash
+sudo systemctl start dzga-flask
+sudo systemctl stop dzga-flask
 ```
-sudo systemctl start dzga-flask.service
-sudo systemctl stop dzga-flask.service
-sudo systemctl restart dzga-flask.service
+Check if service is running:
+```bash
+sudo systemctl status dzga-flask
+```
+To update run installer again:
+```bash
+bash <(curl -s https://raw.githubusercontent.com/DewGew/dzga-installer/development/dzga-flaskinstall.sh)
+```
+To run manually:
+```
+cd /home/${USER}/
+sudo systemctl stop dzga-flask #If service is running
+source DZGA-Flask-flask/env/bin/activate
+python3 DZGA-Flask/smarthome.py
+```
+Uninstall:
+```bash
+cd /home/${USER/
+sudo systemctl stop dzga-Flask
+sudo systemctl disable dzga-Flask
+sudo rm /etc/systemd/system/dzga-Flask.service
+sudo rm -r /home/${USER}/DZGA-Flask
 ```
