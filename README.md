@@ -18,3 +18,4 @@ Just open a terminal window and execute this command. Thats it!
 ```
 bash <(curl -s https://raw.githubusercontent.com/DewGew/dzga-installer/development/dzga-flask-install.sh)
 ```
+### For more help read [wiki](https://github.com/DewGew/DZGA-Flask/wiki)
