@@ -31,7 +31,8 @@
             "roomplan": "0",
             "password": "smarthome",
             "admin": true,
-            "googleassistant": false
+            "googleassistant": false,
+            "authtoken":"<YOURCOOLTOKOEN>"
         }
     }
 }
