@@ -278,6 +278,7 @@ function modifyConfig(mode, euser='none') {
 		url += "&uipassword=" + $('#uipassword').val()
 		url += "&roomplan=" + $('#roomplan').val()
 		url += "&googleassistant=" + $('#googleassist').val()
+		url += "&authtoken=" + $('#token').val()
 	}
 	if (mode == 'users'){
 		if (euser != 'none'){
