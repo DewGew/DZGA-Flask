@@ -318,16 +318,19 @@ function getUser(user) {
 }
 
 function showDiv(that) {
-    if (that.value == "true") {
+    if (that.value == "true" && that.id == "ssl") {
         $("#pathcert").fadeIn(1000);
-		$("#pathkey").fadeIn(1000);
-		$("#div_token").fadeIn(1000);
+	$("#pathkey").fadeIn(1000);
     } else {
         $("#pathcert").fadeOut(500);
-		$("#pathkey").fadeOut(500);
-		$("#div_token").fadeOut(500);
+	$("#pathkey").fadeOut(500);
     }
-	if (that.value == "nouser") {
+    if (that.value == "true" && that.id == "googleassist") {
+	$("#div_token").fadeIn(1000);
+    } else {
+	$("#div_token").fadeOut(500);
+    }
+    if (that.value == "nouser") {
         $(".forms").fadeOut(500);
     } else {
 		$(".forms").hide();
