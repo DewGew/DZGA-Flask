@@ -1,4 +1,4 @@
-![GitHub (Pre-)Release Date](https://img.shields.io/github/release-date-pre/dewgew/DZGA-Flask) [![Discord](https://img.shields.io/discord/664815298284748830?logo=discord)](https://discordapp.com/invite/AmJV6AC) [![Python Package](https://github.com/DewGew/DZGA-Flask/actions/workflows/python-app.yml/badge.svg?branch=main)](https://github.com/DewGew/DZGA-Flask/actions/workflows/python-app.yml)
+![GitHub release (with filter)](https://img.shields.io/github/v/release/DewGew/DZGA-Flask?logo=Github) [![Discord](https://img.shields.io/discord/664815298284748830?logo=discord)](https://discordapp.com/invite/AmJV6AC) [![Python Package](https://github.com/DewGew/DZGA-Flask/actions/workflows/python-app.yml/badge.svg?branch=main)](https://github.com/DewGew/DZGA-Flask/actions/workflows/python-app.yml) [![Publish Docker Image](https://github.com/DewGew/DZGA-Flask/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/DewGew/DZGA-Flask/actions/workflows/docker-publish.yml)
 # DZGA-Flask - Work in Progress
 
 <img src="/static/img/DZGA-Flask.png" alt="drawing" width="1000"/>
