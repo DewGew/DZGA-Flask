@@ -17,5 +17,5 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
     - name: Build the Docker image
       run: |
-        docker build . --tag ghcr.io/${{secrets.DOCKER_USER}}/domoticz-google-assistant:latest
-        docker push ghcr.io/${{secrets.DOCKER_USER}}/domoticz-google-assistant:latest
+        docker build . --tag ghcr.io/${{secrets.DOCKER_USER}}/DZGA-Flask:latest
+        docker push ghcr.io/${{secrets.DOCKER_USER}}/DZGA-Flask:latest
