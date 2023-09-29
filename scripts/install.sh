@@ -26,9 +26,9 @@ then
     exec sudo -u $RUN_AS $0
 fi
 echo ""
-echo " Updating your system..."
+echo " Installing system requirements..."
 echo ""
-sudo apt-get update -y
+# sudo apt-get update -y
 sed 's/#.*//' ${INSTALL_DIR}/scripts/system-requirements.txt | xargs sudo apt-get install -y
 cd /home/${USER}/
 
