@@ -9,8 +9,8 @@ services:
     ports:
       - 8181:8181
     volumes:
-      - /home/${USER}dzga-flask/config:/config
-      - /home/${USER}dzga-flask/uploads:/uploads
+      - /home/${USER}DZGA-Flask/config:/config
+      - /home/${USER}DZGA-Flask/uploads:/uploads
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     restart: unless-stopped
