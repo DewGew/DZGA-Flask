@@ -15,7 +15,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 from domoticz import getDomoticzDevices, queryDomoticz, saveJson
 from helpers import logger, get_settings, save_settings, remove_user, check_token, get_token, random_string, get_device, get_devices, generateToken, generateCsrfToken, csrfProtect
 from reportstate import ReportState
-from flask import Flask, redirect, request, url_for, render_template, send_from_directory, jsonify, session, flash
+from flask import Flask, redirect, request, url_for, render_template, send_from_directory, jsonify, session, flash, Response
 from secrets import compare_digest
 
 app = Flask(__name__)
