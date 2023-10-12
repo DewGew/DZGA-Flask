@@ -9,7 +9,7 @@ import sys
 import json
 import hashlib
 
-from time import time
+from time import time, sleep
 from werkzeug.utils import secure_filename
 from werkzeug.middleware.proxy_fix import ProxyFix
 from domoticz import getDomoticzDevices, queryDomoticz, saveJson
@@ -397,6 +397,27 @@ def settings():
         devices = devices,
         _csrf_token=session['_csrf_token']        
         )
+
+@app.route('/logging')
+@flask_login.login_required
+def logging():
+    settings=get_settings()
+
+    return render_template('logging.html',
+        user = flask_login.current_user.id,
+        settings = settings)
+        
+@app.route("/log_stream", methods=["GET"])
+@flask_login.login_required
+def stream():
+    """returns logging information"""
+    def generate():
+        filename = os.path.join(config.CONFIG_DIRECTORY, "smarthome.log")
+        with open(filename) as f:
+            while True:
+                yield f.read()
+                sleep(1)
+    return Response(generate(), mimetype='text/plain')
         
 @app.route('/devices')
 @flask_login.login_required
