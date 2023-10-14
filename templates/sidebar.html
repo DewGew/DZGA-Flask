@@ -18,14 +18,20 @@
           <span>Devices</span>
         </a>
       </li>
-	  {% if settings['USERS'][user]['admin'] %}
+      {% if settings['USERS'][user]['admin'] %}
       <li class="nav-item">
         <a class="nav-link collapsed" href="{{ url_for('settings') }}">
           <i class="material-symbols-outlined" style="font-size: 24px">settings</i>
           <span>Settings</span>
         </a>
       </li>
-	  {% endif %}
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{{ url_for('logging') }}">
+          <i class="material-symbols-outlined" style="font-size: 24px">summarize</i>
+          <span>Logs</span>
+        </a>
+      </li>
+      {% endif %}
 
     </ul>
 

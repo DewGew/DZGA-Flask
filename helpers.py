@@ -15,7 +15,7 @@ import config
 logging.basicConfig(level=logging.DEBUG,
                 format="%(asctime)s %(message)s",
                 datefmt="%Y-%m-%d %H:%M:%S",
-                filename="smarthome.log",
+                filename=os.path.join(config.CONFIG_DIRECTORY, "smarthome.log"),
                 filemode='w')
 logging.getLogger().addHandler(logging.StreamHandler())
 logging.getLogger("urllib3").setLevel(logging.WARNING)
