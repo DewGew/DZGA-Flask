@@ -4,6 +4,7 @@ smarthome.log
 # Distribution / packaging
 upload/
 config/
+config/settings.json
 config/token/*
 .github
 .github/*
