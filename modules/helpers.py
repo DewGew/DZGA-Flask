@@ -8,7 +8,7 @@ from flask import request, session, abort
 
 import random
 import string
-import config
+import modules.config as config
 
 # Enable log in config.py if need #
 # if hasattr(config, 'LOG_FILE'):
