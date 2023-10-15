@@ -5,9 +5,9 @@ import base64
 import json
 import os
 import re
-import config
+import modules.config as config
 
-from helpers import logger, get_settings
+from modules.helpers import logger, get_settings
 
 aogDevs = {}
 
