@@ -290,7 +290,7 @@
 					 <small id="data_{{ v['customData']['idx'] }}">Not availible</small>
 					<div class="label">{{ v['name']['name'].replace("_", " ") }}</div>
 				</div>
-				{% elif  v['customData']['domain'] in ('Thermostat') %}
+				{% elif  v['customData']['domain'] in ('Thermostat', 'Setpoint') %}
 				<div class="icon">
 					<div class="click" onclick="" data-bs-toggle="modal" data-bs-target="#thermomodal_{{ v['customData']['idx'] }}">
 					<i class="material-symbols-outlined" id="{% if v['customData']['selector_modes_idx'] %}thermo_icon_{{ v['customData']['selector_modes_idx'] }}{% else %}thermo_icon_{{ v['customData']['idx'] }}{% endif %}">thermostat</i>
@@ -318,7 +318,7 @@
 									<small>Actual: <span id="tdata_{{ v['customData']['idx'] }}">Not availible</span></small>
 									{% endif %}
 									<input id="range_{{ v['customData']['idx'] }}" class="form-range" type="range" min="{{ v['attributes']['thermostatTemperatureRange']['minThresholdCelsius'] }}" max="{{ v['attributes']['thermostatTemperatureRange']['maxThresholdCelsius'] }}" value="" step="0.5" oninput="document.getElementById('slider_value_{{ v['customData']['idx'] }}').innerHTML = this.value">
-									<span id="slider_value_{{ v['customData']['idx'] }}">Nothing yet.</span>
+									Setpoint: <span id="slider_value_{{ v['customData']['idx'] }}">Nothing yet.</span>
 									</div>
 								</div>
 								{% if v['customData']['selector_modes_idx'] %}
@@ -416,7 +416,7 @@
 			  <div class="iconslist" id="other_devices">
 			  {% for k, v in devices.items() %}
 			    {% if  (v['customData']['domain'] not in (
-					'Group','Scene','Thermostat', 'Temp', 'TempHumidity', 'TempHumidityBaro','SmokeDetector', 'Security',
+					'Group','Scene','Thermostat', 'Setpoint','Temp', 'TempHumidity', 'TempHumidityBaro','SmokeDetector', 'Security',
 					'VenetianBlindsEU', 'OnOff', 'Dimmer', 'VenetianBlindsUS', 'Doorbell', 'DoorLock', 'Selector', 'DoorContact',
 					'MotionSensor', 'PushOnButton', 'PushOffButton', 'ColorSwitch') and 'Hidden' not in v['customData']['domain'] ) %}
 				<div class="icon">
@@ -482,7 +482,7 @@ $('#title_security').hide()
 	{% elif v['customData']['domain'] in ['Selector', 'Selector_Hidden'] %}
 		updateSelectors_block.push("{{ v['customData']['idx'] }}")
 		$('#title_switches').show()
-	{% elif  v['customData']['domain'] in ('Thermostat', 'Temp', 'Temp_Hidden', 'TempHumidity', 'TempHumidity_Hidden', 'TempHumidityBaro', 'TempHumidityBaro_Hidden') %}
+	{% elif  v['customData']['domain'] in ('Thermostat', 'Setpoint', 'Temp', 'Temp_Hidden', 'TempHumidity', 'TempHumidity_Hidden', 'TempHumidityBaro', 'TempHumidityBaro_Hidden') %}
 		updateTemp_block.push("{{ v['customData']['idx'] }}")
 		$('#title_temps').show()
 	{% elif v['customData']['domain'] in ('Security', 'SmokeDetector') %}

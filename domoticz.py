@@ -24,7 +24,7 @@ class AogState:
 def AogGetDomain(device):
     if device["Type"] not in ['General', 'Lux', 'UV', 'Rain', 'Wind']:
         devs = device.get('SwitchType')
-        if device['Type'] in ['Color Switch', 'Group', 'Scene', 'Temp', 'Thermostat', 'Temp + Humidity', 'Temp + Humidity + Baro']:
+        if device['Type'] in ['Color Switch', 'Group', 'Scene', 'Temp', 'Thermostat', 'Setpoint','Temp + Humidity', 'Temp + Humidity + Baro']:
             devs = device["Type"].replace(" ", "")
         return devs
     if device['Type'] == 'Value' and device['SwitchType'] is None:
@@ -126,7 +126,7 @@ def getAog(device, user_id=None):
                 'heater', 'kettle', 'media', 'microwave', 'outlet', 'oven', 'speaker', 'switch', 'vacuum', 'boiler', 'cooktop', 'humidfier',
                 'washer', 'waterheater', 'window', 'door', 'gate', 'garage', 'radiator', 'shutter', 'TV' ]:
             aog.type = 'action.devices.types.'+ st.upper()
-        if domain == 'Thermostat':
+        if domain in ['Thermostat', 'Setpoint']:
             minT = desc.get('minThreehold', None)
             if minT is not None:
                 minThreehold = minT
@@ -285,7 +285,7 @@ def getAog(device, user_id=None):
                          'queryOnlyTemperatureSetting': True,
                          'availableThermostatModes': ['heat', 'cool'],
                         }
-    if  domain == 'Thermostat':
+    if  domain in ['Thermostat', 'Setpoint']:
         aog.type = 'action.devices.types.THERMOSTAT'
         aog.traits.append('action.devices.traits.TemperatureSetting')
         aog.attributes = {'thermostatTemperatureUnit': get_settings()['TEMPUNIT'],

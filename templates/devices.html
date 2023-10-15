@@ -137,7 +137,7 @@
 											  {% if v['customData']['domain'] == 'Scene' %}
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'scene' %}selected {% endif %} value="scene">Scene</option>
 											  {% endif %}
-											  {% if v['customData']['domain'] == 'Thermostat' %}
+											  {% if (v['customData']['domain'] in ['Thermostat', 'Setpoint']) %}
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'thermostat' %}selected {% endif %} value="thermostat">Thermostat</option>
 											  {% endif %}
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'light' %}selected {% endif %} value="light">Light</option>
@@ -160,7 +160,7 @@
 											  </select>
 										  </div>
 										</div>
-										 {% if v['customData']['domain'] == 'Thermostat' %}
+										 {% if (v['customData']['domain'] in ['Thermostat', 'Setpoint']) %}
 										<div class="row mb-3">
 										  <label for="inputText" class="col-sm-3 col-form-label">minThreehold</label>
 										  <div class="col-sm-2">
@@ -182,7 +182,7 @@
 										  </div>
 										</div>
 									  {% endif %}
-									  {% if (v['customData']['domain'] == 'Thermostat' and 'actual_temp_idx' in v['customData']) %}
+									  {% if (v['customData']['domain'] in ['Thermostat', 'Setpoint'] and 'actual_temp_idx' in v['customData']) %}
 									   <div class="row mb-3">
 										  <label for="inputText" class="col-sm-3 col-form-label">actual_temp_idx</label>
 										  <div class="col-sm-2">
@@ -190,7 +190,7 @@
 										  </div>
 										</div>
 									  {% endif %}
-									  {% if (v['customData']['domain'] == 'Thermostat' and 'selector_modes_idx' in v['customData']) %}
+									  {% if (v['customData']['domain'] in ['Thermostat', 'Setpoint'] and 'selector_modes_idx' in v['customData']) %}
 										<div class="row mb-3">
 										  <label for="inputText" class="col-sm-3 col-form-label">selector_modes_idx</label>
 										  <div class="col-sm-2">
