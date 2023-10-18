@@ -6,7 +6,7 @@ import logging
 import requests
 import google.auth.crypt
 import google.auth.jwt
-import module.config as config
+import modules.config as config
 
 from modules.helpers import logger, get_settings
 
