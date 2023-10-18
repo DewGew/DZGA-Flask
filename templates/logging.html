@@ -45,9 +45,13 @@
 
                 <div class="card-body">
                   <h5 class="card-title">Logs <span>| {{ user }}</span></h5>
-					<iframe class="logging_window"
+					<iframe class="logging_window" id="logging_window"
 						src="{{ url_for('stream')}}">
 					</iframe>
+					</br>
+					<form class="form-check form-switch">
+					<label><input class="form-check-input" type="checkbox" value="AutoScroll" id="autoScroll" label="Auto Scroll">Auto-Scroll</label>
+					</form>
               </div>
 			</div>
 
@@ -68,3 +72,16 @@
   </main><!-- End #main -->
 
   {% include 'footer.html' %}
+<script>
+$(document).ready(function() {
+    //set initial state.
+    $('#autoScroll').val(this.checked);
+
+    $('#autoScroll').change(function() {
+        if(this.checked) {
+			setInterval('frames[0].scrollTo(0,9999999)',1000)
+        }
+        $('#autoScroll').val(this.checked);        
+    });
+});
+</script>
