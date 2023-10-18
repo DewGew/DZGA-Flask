@@ -2,9 +2,9 @@ import subprocess
 import hashlib
 import base64
 import json
-import config
-from helpers import get_settings, _tempConvert
-from domoticz import getDomoticzState, queryDomoticz
+import modules.config as config
+from modules.helpers import get_settings, _tempConvert
+from modules.domoticz import getDomoticzState, queryDomoticz
 
 attempts = 1
 blocked = {}

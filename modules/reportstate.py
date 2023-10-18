@@ -1,4 +1,3 @@
-import config
 import os
 import io
 import json
@@ -7,8 +6,9 @@ import logging
 import requests
 import google.auth.crypt
 import google.auth.jwt
+import module.config as config
 
-from helpers import logger, get_settings
+from modules.helpers import logger, get_settings
 
 class ReportState:
     """Google Report State implementation."""
