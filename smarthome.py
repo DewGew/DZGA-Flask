@@ -18,6 +18,9 @@ from modules.reportstate import ReportState
 from flask import Flask, redirect, request, url_for, render_template, send_from_directory, jsonify, session, flash, Response
 from secrets import compare_digest
 
+# Path to traits
+sys.path.insert(0, 'modules')
+
 app = Flask(__name__)
 # Create an actual secret key for production
 app.secret_key = 'secret'
