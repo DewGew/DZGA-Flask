@@ -419,7 +419,7 @@ def stream():
         with open(filename) as f:
             while True:
                 yield f.read()
-                sleep(1)
+                sleep(0.5)
     return Response(generate(), mimetype='text/plain')
         
 @app.route('/devices')

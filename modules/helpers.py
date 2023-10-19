@@ -10,15 +10,13 @@ import random
 import string
 import modules.config as config
 
-# Enable log in config.py if need #
-# if hasattr(config, 'LOG_FILE'):
+# Logging
 logging.basicConfig(level=logging.DEBUG,
                 format="%(asctime)s %(message)s",
                 datefmt="%Y-%m-%d %H:%M:%S",
                 filename=os.path.join(config.CONFIG_DIRECTORY, "smarthome.log"),
                 filemode='w')
 logging.getLogger().addHandler(logging.StreamHandler())
-logging.getLogger("urllib3").setLevel(logging.WARNING)
 logging.getLogger('werkzeug').setLevel(logging.ERROR)
 logger = logging.getLogger()
 
