@@ -133,6 +133,6 @@ $(".togglePassword").click(function (e) {
 	$("#label_armlevel").append("<i>Armlevels in <b>" + text.toLowerCase() + "</b>. Adds levels like this <code>['home','armed home']</code></i>")
 {% endif %}
 
-getUser('GaHome')
+getUser("{{ settings['USERS'][user]['domouser']}}")
 
   </script>
