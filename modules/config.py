@@ -1,4 +1,3 @@
-TOKENS_DIRECTORY = "config/tokens"
 DEVICES_DIRECTORY = "config"
 KEYFILE_DIRECTORY = "uploads"
 CONFIG_DIRECTORY = "config"

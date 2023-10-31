@@ -3,7 +3,8 @@ import hashlib
 import base64
 import json
 import modules.config as config
-from modules.helpers import get_settings, _tempConvert
+from modules.database import db, Settings
+from modules.helpers import _tempConvert
 from modules.domoticz import getDomoticzState, queryDomoticz
 
 attempts = 1
@@ -70,9 +71,9 @@ def query(custom_data, device, user_id):
                 current_temp = float(actual_temp_idx['Temp'])
             else:
                 current_temp = float(state['Data'])
-            response['thermostatTemperatureAmbient'] = round(_tempConvert(current_temp, get_settings()['TEMPUNIT']), 1)
+            response['thermostatTemperatureAmbient'] = round(_tempConvert(current_temp, dbsettings.tempunit), 1)
             setpoint = float(state['SetPoint'])
-            response['thermostatTemperatureSetpoint'] = round(_tempConvert(setpoint, get_settings()['TEMPUNIT']), 1)
+            response['thermostatTemperatureSetpoint'] = round(_tempConvert(setpoint, dbsettings.tempunit), 1)
             if 'selector_modes_idx' in custom_data:
                 selectorModesState = getDomoticzState(user_id, custom_data['selector_modes_idx'])
                 selectorLevel = selectorModesState['Level']
@@ -83,12 +84,12 @@ def query(custom_data, device, user_id):
                 response['thermostatMode'] = 'heat'
         elif domain in ['Temp', 'TempHumidity', 'TempHumidityBaro']:
             current_temp = float(state['Temp'])
-            if round(_tempConvert(current_temp, get_settings()['TEMPUNIT']),1) <= 3:
+            if round(_tempConvert(current_temp, dbsettings.tempunit),1) <= 3:
                 response['thermostatMode'] = 'cool'
             else:
                 response['thermostatMode'] = 'heat'
-            response['thermostatTemperatureAmbient'] = round(_tempConvert(current_temp, get_settings()['TEMPUNIT']), 1)
-            response['thermostatTemperatureSetpoint'] = round(_tempConvert(current_temp, get_settings()['TEMPUNIT']), 1)
+            response['thermostatTemperatureAmbient'] = round(_tempConvert(current_temp, dbsettings.tempunit), 1)
+            response['thermostatTemperatureSetpoint'] = round(_tempConvert(current_temp, dbsettings.tempunit), 1)
             if domain != 'Temp':
                 current_humidity = state['Humidity']
                 if current_humidity is not None:
@@ -97,7 +98,7 @@ def query(custom_data, device, user_id):
     if 'action.devices.traits.TemperatureControl' in device['traits']:
         if domain in ['Temp', 'TempHumidity', 'TempHumidityBaro']:
             current_temp = float(state['Temp'])
-            response['temperatureAmbientCelsius'] = round(_tempConvert(current_temp, get_settings()['TEMPUNIT']), 1)
+            response['temperatureAmbientCelsius'] = round(_tempConvert(current_temp, dbsettings.tempunit), 1)
                 
     if 'action.devices.traits.Toggles' in device['traits']:
         levelName = base64.b64decode(state.get("LevelNames")).decode('UTF-8').split("|")
