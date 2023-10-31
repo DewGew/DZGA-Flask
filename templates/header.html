@@ -59,7 +59,7 @@
               <i class="bi bi-x-circle text-danger"></i>
               <div>
                 <h4>Atque rerum nesciunt</h4>
-                <p>{{ settings.USERS[user].admin }}</p>
+                <p>{{ user.admin }}</p>
                 <p>1 hr. ago</p>
               </div>
             </li> -->
@@ -71,20 +71,20 @@
         <li class="nav-item dropdown pe-3">
 
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-		  {% if os.path.exists('./uploads/'+ user + '.png') %}
-		    <img src="uploads/{{ user }}.png" alt="Profile" class="rounded-circle">
-		  {% elif os.path.exists('./uploads/'+ user + '.jpg') %}
-		    <img src="uploads/{{ user }}.jpg" alt="Profile" class="rounded-circle">
+		  {% if os.path.exists('./uploads/'+ user.username + '.png') %}
+		    <img src="uploads/{{ user.username }}.png" alt="Profile" class="rounded-circle">
+		  {% elif os.path.exists('./uploads/'+ user.username + '.jpg') %}
+		    <img src="uploads/{{ user.username }}.jpg" alt="Profile" class="rounded-circle">
 		  {% else %}
             <img src="static/img/blank-profile-circle.png" alt="Profile" class="rounded-circle">
 		  {% endif %}
-            <span class="d-none d-md-block dropdown-toggle ps-2">{{ user }}</span>
+            <span class="d-none d-md-block dropdown-toggle ps-2">{{ user.username }}</span>
           </a><!-- End Profile Iamge Icon -->
 
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
             <li class="dropdown-header">
-              <h6>{{ user }}</h6>
-              <span>{% if settings.USERS[user].admin %} Admin {% else %} User {% endif %}</span>
+              <h6>{{ user.username }}</h6>
+              <span>{% if user.admin %} Admin {% else %} User {% endif %}</span>
             </li>
             <li>
               <hr class="dropdown-divider">

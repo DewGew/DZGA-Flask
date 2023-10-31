@@ -1,80 +1,86 @@
-{% if settings['USERS'][user]['admin'] %}
+{% if user.admin %}
 <div class="card">
 <div class="card-body">
   <h5 class="card-title">Users <span>| Admin</span></h5>
 
-  <form class="row g-3" role="form" name="modifyUsersConfigForm">
-  <input type="hidden" class="form-control" id="modify_users_config" value="modify_users_config" readonly>
+  <form class="row g-3" role="form" name="modifyUsersConfigForm" method="post">
 	<div class="col-md-12">
 	  <label for="user_select" class="form-label">Edit user</label>
 	  <select id="user_select" class="form-select" onchange="showDiv(this);">
 		<option selected value="nouser">Choose user..</option>
-		{% for user in settings['USERS'] %}
-			<option value="{{ user }}">{{ user }}</option>
+		{% for dbuser in dbusers %}
+			<option value="{{ dbuser.username }}">{{ dbuser.username }}</option>
 		{% endfor %}
 			<option value="newuser">Add new user</option>
 	  </select>
 	</div>
-	{% for euser in settings['USERS'] %}	
-	<div id="passdiv_{{ euser }}" class="col-md-6 forms" style="display: none;">
-	  <label for="userpassword" class="form-label">DZGA password <small>(Userinterface)</small></label>
+	{% for euser in dbusers %}
+	<div id="emaildiv_{{ euser.username }}" class="col-md-12 forms" style="display: none;">
+	  <label for="email_{{ euser.username }}" class="form-label">Email</label>
+	  <input type="email" class="form-control" id="email_{{ euser.username }}" name="email_{{ euser.username }}" value="{{ euser.email }}" readonly>
+	</div>	
+	<div id="passdiv_{{ euser.username }}" class="col-md-6 forms" style="display: none;">
+	  <label for="userpassworduserpassword_{{ euser.username }}" class="form-label">DZGA password <small>(Userinterface)</small></label>
 	  <div class="input-group mb-3">
-		<input type="password" class="form-control password" id="userpassword_{{ euser }}" value="{{ settings['USERS'][euser]['password']}}">
+		<input type="password" class="form-control password" id="userpassword_{{ euser.username }}" name="userpassword_{{ euser.username }}" value="{{ euser.password }}">
 		<span class="input-group-text togglePassword bi bi-eye" id="">		
 		</span>
 	  </div>
 	</div>
-	<div id="admindiv_{{ euser }}" class="col-md-6 forms" style="display: none;">
+	<div id="admindiv_{{ euser.username }}" class="col-md-6 forms" style="display: none;">
 	  <label for="admin" class="form-label">Admin</label>
-	  <select id="admin_{{ euser }}" class="form-select">
-		<option {% if settings['USERS'][euser]['admin'] is true %} selected {% endif %} value="true">Yes</option>
-		<option {% if settings['USERS'][euser]['admin'] is false %} selected {% endif %}value="false">No</option>
+	  <select id="admin_{{ euser.username }}" name="admin_{{ euser.username }}" class="form-select">
+		<option {% if euser.admin is true %} selected {% endif %} value="true">Yes</option>
+		<option {% if euser.admin is false %} selected {% endif %}value="false">No</option>
 	  </select>
 	</div>
-	<div id="gassitdiv_{{ euser }}" class="col-md-6 forms" style="display: none;">
+	<div id="gassitdiv_{{ euser.username }}" class="col-md-6 forms" style="display: none;">
 	  <label for="googleassist" class="form-label">Google Assistant</label>
-	  <select id="googleassist_{{ euser }}" class="form-select">
-		<option {% if settings['USERS'][euser]['googleassistant'] is true %} selected {% endif %} value="true">Enabled</option>
-		<option {% if settings['USERS'][euser]['googleassistant'] is false %} selected {% endif %}value="false">Disabled</option>
+	  <select id="googleassist_{{ euser.username }}" name="googleassist_{{ euser.username }}" class="form-select">
+		<option {% if euser.googleassistant is true %} selected {% endif %} value="true">Enabled</option>
+		<option {% if euser.googleassistant is false %} selected {% endif %}value="false">Disabled</option>
 	  </select>
 	</div>
-	<div class="text-center forms" id="submitdiv_{{ euser }}" style="display: none;">
-	  <button type="submit" class="btn btn-primary" onclick="modifyConfig('users', '{{ euser }}')">Submit</button>
+	<div class="text-center forms" id="submitdiv_{{ euser.username }}" style="display: none;">
+	  <button type="submit" class="btn btn-primary" name="submit" value="modify_user_{{ euser.username }}">Submit</button>
 	  <button type="reset" class="btn btn-secondary">Reset</button>
-	  {% if user != euser %}
-	  <button class="btn btn-danger" onclick="removeUser('{{euser}}')">Remove user</button>
+	  {% if user.id != euser.id %}
+	  <button class="btn btn-danger" name="submit" value="remove_user_{{ euser.username }}" >Remove user</button>
 	  {% endif %}
 	</div>
 	{% endfor %}
-	 <input type="hidden" class="form-control" id="new_user" value="new_user" readonly>
 	<div id="userdiv" class="col-md-6 newforms" style="display: none;">
 	  <label for="user" class="form-label">User</label>
-	  <input type="text" class="form-control" id="user" value="">
+	  <input type="text" class="form-control" id="user" name="user" value="">
 	</div>
 	<div id="passdiv" class="col-md-6 newforms" style="display: none;">
 	  <label for="userpassword" class="form-label">Password</label>
 	  <div class="input-group mb-3">
-		<input type="password" class="form-control password" id="userpassword" value="">
+		<input type="password" class="form-control password" id="userpassword" name="userpassword" value="">
 		<span class="input-group-text togglePassword bi bi-eye" id="">		
 		</span>
 	  </div>
 	</div>
+	<div id="emaildiv" class="col-md-12 newforms" style="display: none;">
+	  <label for="email" class="form-label">Email</label>
+	  <input type="email" class="form-control" id="email" name="email" value="">
+	</div>
 	<div id="admindiv" class="col-md-6 newforms" style="display: none;">
 	  <label for="admin" class="form-label">Admin</label>
-	  <select id="admin" class="form-select">
+	  <select id="admin" name="admin" class="form-select">
 		<option value="true">Yes</option>
 		<option selected value="false">No</option>
 	  </select>
 	</div>
 	<div id="gassitdiv}" class="col-md-6 newforms" style="display: none;">
 	  <label for="googleassistant" class="form-label">Google Assistant</label>
-	  <select id="googleassistant" class="form-select">
+	  <select id="googleassistant" name="googleassistant" class="form-select">
 		<option selected value="false">Disabled</option>
 		<option value="true">Enabled</option>
 	  </select>
 	</div>
 	<div class="text-center newforms" id="submitdiv" style="display: none;">
-	  <button type="submit" class="btn btn-primary" onclick="modifyConfig('users')">Submit</button>
+	  <button type="submit" class="btn btn-primary" name="submit" value="new_user">Submit</button>
 	  <button type="reset" class="btn btn-secondary">Reset</button>
 	</div>
   </form>

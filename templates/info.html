@@ -2,24 +2,31 @@
   <div class="card">
 
 	<div class="card-body pb-0">
-	  <h5 class="card-title">Info <span>| {{ user }}</span></h5>
+	  <h5 class="card-title">Info <span>| {{ user.username }}</span></h5>
 
 	  <div class="news">
-	  {% if settings['USERS'][user]['googleassistant'] %}
 		<div class="post-item clearfix">
-		  <h4><a href="https://smarthome-test-suite.withgoogle.com/devices" target="_blank">Home Graph Viewer </a></h4>
-		  <p>The Google Home Graph Viewer is a tool to check the state of devices in the Home Graph of a specific user. It obtains data from your Home Graph and presents it to you, allowing you to verify the data that is stored in it.</p>
+			<h4><a href="https://smarthome-test-suite.withgoogle.com/devices" target="_blank">About </a></h4>
+			<p>
+			<b>DZGA-Flask Version: </b><span id="dzga-version">Not availible</span></br>
+			<b>Domoticz Version: </b><span id="dz-version">Not availible</span></br>
+			</p>
+			
 		</div>
-
+	  {% if user.googleassistant %}
 		<div class="post-item clearfix">
-		  <h4><a href="https://developers.home.google.com/cloud-to-cloud" target="_blank">Ways to build, cloud-to-cloud</a></h4>
-		  <p>Let users control your cloud connected devices through the Google Home app and Google Assistant. Add a local control path for greater reliability.</p>
+			<h4><a href="https://smarthome-test-suite.withgoogle.com/devices" target="_blank">Home Graph Viewer </a></h4>
+			<p>The Google Home Graph Viewer is a tool to check the state of devices in the Home Graph of a specific user. It obtains data from your Home Graph and presents it to you, allowing you to verify the data that is stored in it.</p>
+		</div>
+		<div class="post-item clearfix">
+			<h4><a href="https://developers.home.google.com/cloud-to-cloud" target="_blank">Ways to build, cloud-to-cloud</a></h4>
+			<p>Let users control your cloud connected devices through the Google Home app and Google Assistant. Add a local control path for greater reliability.</p>
 		</div>
 		{% endif %}
 		<div class="post-item clearfix">
-		  <h4><a href="https://developers.home.google.com/cloud-to-cloud" target="_blank">Sync your devices</a></h4>
-		  <p>Click the button to syncronize your domoticz devices {% if settings['USERS'][user]['googleassistant'] %}with Google Assistant or just tell Google Assistant to "Sync my devices"{% endif %}.</p>
-		  <div class="text-center"><button type="button" class="btn btn-primary" onclick="syncdevices();">Sync Devices</button></div>
+			<h4><a href="https://developers.home.google.com/cloud-to-cloud" target="_blank">Sync your devices</a></h4>
+			<p>Click the button to syncronize your domoticz devices {% if user.googleassistant %}with Google Assistant or just tell Google Assistant to "Sync my devices"{% endif %}.</p>
+			<div class="text-center"><button type="button" class="btn btn-primary" onclick="syncdevices();">Sync Devices</button></div>
 		</div>
 		<div class="post-item clearfix">
 

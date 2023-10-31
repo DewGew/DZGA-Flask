@@ -2,15 +2,15 @@
 
   <div class="card">
 	<div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
-	  {% if os.path.exists('./uploads/'+ user + '.png') %}
-		<img src="uploads/{{ user }}.png" alt="Profile" class="rounded-circle">
-	  {% elif os.path.exists('./uploads/'+ user + '.jpg') %}
-		<img src="uploads/{{ user }}.jpg" alt="Profile" class="rounded-circle">
+	  {% if os.path.exists('./uploads/'+ user.username + '.png') %}
+		<img src="uploads/{{ user.username }}.png" alt="Profile" class="rounded-circle">
+	  {% elif os.path.exists('./uploads/'+ user.username + '.jpg') %}
+		<img src="uploads/{{ user.username }}.jpg" alt="Profile" class="rounded-circle">
 	  {% else %}
 		<img src="static/img/blank-profile-circle.png" alt="Profile" class="rounded-circle">
 	  {% endif %}
-	  <h2>{{ user }}</h2>
-	  <h3>{% if settings.USERS[user].admin %} Admin {% else %} User {% endif %}</h3>
+	  <h2>{{ user.username }}</h2>
+	  <h3>{% if user.admin %} Admin {% else %} User {% endif %}</h3>
 <!-- 	  <div class="social-links mt-2">
 		<a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
 		<a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
