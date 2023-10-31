@@ -3,7 +3,7 @@
 
 from flask import request, flash, redirect, url_for
 import flask_login
-import json, os, sys
+import json, os, sys, hashlib
 from werkzeug.security import generate_password_hash
 from smarthome import report_state
 from modules.database import db, User, Settings

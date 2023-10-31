@@ -12,6 +12,7 @@ blocked = {}
         
 def query(custom_data, device, user_id):
 
+    dbsettings = Settings.query.get_or_404(1)
     idx = custom_data['idx']
     domain = custom_data['domain']
     if domain in ['Group', 'Scene']:

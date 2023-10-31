@@ -5,7 +5,7 @@ from flask import Flask, redirect, request, url_for, render_template, send_from_
 from werkzeug.security import generate_password_hash, check_password_hash
 from modules.reportstate import ReportState
 from modules.database import db, User, Settings
-from modules.domoticz import saveJson
+from modules.domoticz import saveJson, getDomoticzDevices
 from modules.helpers import logger, get_device, get_devices, generateToken, remove_user
 from sqlalchemy import or_
 
