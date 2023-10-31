@@ -14,10 +14,12 @@ from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash
 from werkzeug.middleware.proxy_fix import ProxyFix
 from modules.database import db, User, Settings
-from modules.domoticz import getDomoticzDevices, queryDomoticz, saveJson
-from modules.helpers import logger, get_token, random_string, get_device, get_devices, generateToken, generateCsrfToken, csrfProtect
+from modules.domoticz import getDomoticzDevices
+from modules.helpers import logger, get_token, random_string, get_device, get_devices,
+                            generateToken, generateCsrfToken, csrfProtect
 from modules.reportstate import ReportState
-from flask import Flask, redirect, request, url_for, render_template, send_from_directory, jsonify, session, flash, Response
+from flask import Flask, redirect, request, url_for, render_template,
+                  send_from_directory, jsonify, session, flash, Response
 from sqlalchemy import or_
 
 # Path to traits
