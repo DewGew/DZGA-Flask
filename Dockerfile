@@ -6,6 +6,7 @@ FROM python:3-alpine
 RUN mkdir -p config
 
 COPY *.py /
+COPY modules/ /modules/
 COPY templates/ /templates/
 COPY static/ /static/
 COPY requirements.txt /requirements.txt
