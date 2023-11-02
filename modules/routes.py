@@ -66,7 +66,7 @@ def settings():
             dbuser.domopass = request.form.get('domopass')
             dbuser.roomplan = request.form.get('roomplan')
             dbuser.password = request.form.get('uipassword')  # Remove ?
-            dbuser.googleassistant = (request.form.get('googleassistant') == 'true')  # Remove ?
+            dbuser.googleassistant = (request.form.get('googleassist') == 'true')  # Remove ?
 
             db.session.add(dbuser)
             db.session.commit()
@@ -81,8 +81,10 @@ def settings():
             dbsettings.use_ssl = (request.form.get('ssl') == 'true')
             dbsettings.ssl_cert = request.form.get('sslcert')
             dbsettings.ssl_key = request.form.get('sslkey')
-            # dbsettings.armhome = request.form.get('armhome')
-            # dbsettings.armaway = request.form.get('armaway')
+            armhome = request.form.get('armhome')
+            armaway = request.form.get('armaway')
+
+            dbsettings.armlevels.update({'armhome': armhome, 'armaway': armaway})
 
             db.session.add(dbsettings)
             db.session.commit()
