@@ -273,7 +273,7 @@ def notification():
 @flask_login.login_required
 @app.route('/smarthome', methods=['POST'])
 def fulfillment():
-    logger.info(flask_login.current_user)
+
     user_id = flask_login.current_user.username
     user = User.query.filter_by(username=user_id).first()
 
