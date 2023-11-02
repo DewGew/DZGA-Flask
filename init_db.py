@@ -2,7 +2,7 @@ from flask import Flask
 from werkzeug.security import generate_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy_json import mutable_json_type
-from modules.helpers import generateToken
+from modules.helpers import logger, generateToken
 
 app = Flask(__name__)
 
@@ -88,7 +88,8 @@ with app.app_context():
                                    }
                         )
     db.session.add(settings)
-    db.session.commit()
-
-    users = User.query.all()
-    print("Database is created...")
+    try:
+        db.session.commit()
+        logger.info("Database is created...")
+    except Exception:
+        logger.info('Database already created')
