@@ -271,7 +271,7 @@ function getVersion() {
 	requestAPI(url).then(jsonData => {
 		var data = jsonData
 		console.log(data.version);
-		$('#dzga-version').html('23.5')
+		$('#dzga-version').html('23.3')
 		$('#dz-version').html(data.version)
 	});
 }
@@ -283,11 +283,6 @@ function showDiv(that) {
     } else {
         $("#pathcert").fadeOut(500);
 	$("#pathkey").fadeOut(500);
-    }
-    if (that.value == "true" && that.id == "googleassist") {
-	$("#div_token").fadeIn(1000);
-    } else {
-	$("#div_token").fadeOut(500);
     }
     if (that.value == "nouser") {
         $(".forms").fadeOut(500);
