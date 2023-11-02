@@ -50,13 +50,8 @@ last_code = None
 last_code_user = None
 last_code_time = None
 
-logger.info("Smarthome has started.")
-
-
-if report_state.enable_report_state():
-    logger.info('Smart-home-key.json found')
-else:
-    logger.info('Save the smart-home-key.json in %s folder', config.KEYFILE_DIRECTORY)
+if not os.path.exists(os.path.join(config.DATABASE_DIRECTORY, 'db.sqlite')):
+    os.system('python3 init_db.py')
 
 
 @login_manager.user_loader
@@ -382,10 +377,10 @@ def fulfillment():
 
         """ Disconnect intent, need to revoke token """
         if intent == "action.devices.DISCONNECT":
-            access_token = get_token()  # ??
             user.authtoken = generateToken(user)
             db.session.add(user)
             db.session.commit()
+            logger.info('Disconnected from Google Assistant')
 
             return {}
 
@@ -437,6 +432,9 @@ def logout():
 
 
 if __name__ == "__main__":
+    logger.info("Smarthome has started.")
+    if not report_state.enable_report_state():
+        logger.info('Save the smart-home-key.json in %s folder', config.KEYFILE_DIRECTORY)
     app.add_url_rule('/dashboard', 'dashboard', routes.dashboard, methods=['GET', 'POST'])
     app.add_url_rule('/devices', 'devices', routes.devices, methods=['GET', 'POST'])
     app.add_url_rule('/logging', 'logging', routes.logging, methods=['GET', 'POST'])
