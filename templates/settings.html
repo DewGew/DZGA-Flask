@@ -66,7 +66,7 @@
 						</div>
 						<div class="col-md-6">
 						  <label for="googleassist" class="form-label">Google Assistant</label>
-						  <select id="googleassist" name="googleassist" class="form-select" {% if user.admin is false %}disabled{% endif %} onchange="showDiv(this);">
+						  <select id="googleassist" name="googleassist" class="form-select" {% if user.admin is false %}disabled readonly{% endif %}>
 							<option {% if user.googleassistant is true %} selected {% endif %} value="true">Enabled</option>
 							<option {% if user.googleassistant is false %} selected {% endif %}value="false">Disabled</option>
 						  </select>
@@ -75,7 +75,7 @@
 						  <label for="domoticzAdmin" class="form-label">Domoticz Admin</label>
 						  <input type="text" class="form-control" id="domoticzAdmin" value="No" disabled readonly>
 						</div>
-						<div class="col-md-6" id="div_token" {% if user.googleassistant is false %} style="display: none;" {% endif %}>
+						<div class="col-md-6" id="div_token">
 						  <label for="token" class="form-label">Auth Token</label>
 						  <input type="text" class="form-control" id="token" name="authtoken" value="{{ user.authtoken }}" disabled readonly>
 						</div>
