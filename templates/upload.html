@@ -2,7 +2,7 @@
 <div class="card-body">
   <h5 class="card-title">File upload <span>| Admin</span></h5>
   <p>Upload your {% if user.admin %}<code>smart-home-key.json</code> file or{% endif %} profile image here. Optimal size is 120x120px. Name your profile image to <code>{{ user.username }}.png</code> or <code>{{ user.username }}.jpg</code>.</p>
-	<form class="row g-3" action = "{{ url_for('upload_file') }}" method = "POST" enctype="multipart/form-data">
+	<form class="row g-3" action = "{{ url_for('uploader') }}" method = "POST" enctype="multipart/form-data">
 		<div class="col-sm-12">
 			<label for="file" class="col-sm-2 col-form-label">File Upload</label>
 			<input class="form-control" id="file" name="file" type="file" />
