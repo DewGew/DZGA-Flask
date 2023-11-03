@@ -10,8 +10,7 @@ import modules.config as config
 import modules.api as api
 import modules.routes as routes
 
-from time import time, sleep
-from werkzeug.utils import secure_filename
+from time import time
 from werkzeug.security import check_password_hash
 from werkzeug.middleware.proxy_fix import ProxyFix
 from modules.database import db, User, Settings
@@ -25,7 +24,7 @@ from modules.helpers import (logger, get_token, random_string,
 from flask import (Flask, redirect, request,
                    url_for, render_template,
                    send_from_directory, jsonify,
-                   session, flash, Response)
+                   session)
 
 
 # Path to traits
@@ -37,11 +36,12 @@ app.secret_key = 'secret'
 # Database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.json.sort_keys = False
 # Needed for use with reverse proxy
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1)
 # Init database
 db.init_app(app)
-app.json.sort_keys = False
+
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 report_state = ReportState()
@@ -52,6 +52,19 @@ last_code_time = None
 
 if not os.path.exists(os.path.join(config.DATABASE_DIRECTORY, 'db.sqlite')):
     os.system('python3 init_db.py')
+
+
+def statereport(requestId, userID, states):
+    """Send a state report to Google."""
+
+    data = {}
+    data['requestId'] = requestId
+    data['agentUserId'] = userID
+    data['payload'] = {}
+    data['payload']['devices'] = {}
+    data['payload']['devices']['states'] = states
+
+    report_state.call_homegraph_api('state', data)
 
 
 @login_manager.user_loader
@@ -77,19 +90,6 @@ def request_loader(request):
 @login_manager.unauthorized_handler
 def unauthorized_handler():
     return redirect(url_for('login'))
-
-
-def statereport(requestId, userID, states):
-    """Send a state report to Google."""
-
-    data = {}
-    data['requestId'] = requestId
-    data['agentUserId'] = userID
-    data['payload'] = {}
-    data['payload']['devices'] = {}
-    data['payload']['devices']['states'] = states
-
-    report_state.call_homegraph_api('state', data)
 
 
 @app.context_processor
@@ -138,6 +138,19 @@ def login():
 
     generateCsrfToken()
     return redirect(url_for('dashboard'))
+
+
+@app.route('/logout')
+def logout():
+    flask_login.logout_user()
+    session.clear()
+    return redirect(url_for('login'))
+
+
+@app.route('/')
+def index():
+
+    return redirect(url_for('login'))
 
 
 # OAuth entry point
@@ -389,57 +402,17 @@ def fulfillment():
     return jsonify(result)
 
 
-@app.route('/')
-def index():
-
-    return redirect(url_for('login'))
-
-
-@app.route("/log_stream", methods=["GET"])
-@flask_login.login_required
-def stream():
-    """returns logging information"""
-    def generate():
-        filename = os.path.join(config.CONFIG_DIRECTORY, "smarthome.log")
-        with open(filename) as f:
-            while True:
-                yield f.read()
-                sleep(0.5)
-    return Response(generate(), mimetype='text/plain')
-
-
-@app.route('/uploader', methods=['POST'])
-@flask_login.login_required
-def upload_file():
-    if request.method == 'POST':
-        f = request.files['file']
-        if f.filename != '':
-            file_ext = os.path.splitext(f.filename)[1]
-            if file_ext not in ['.jpg', '.png', '.json']:
-                logger.warning("Uploadfile is not allowed")
-                flash("Uploadfile is not allowed, '.jpg','.png' files or 'smart-home-key.json' is allowed!")
-            else:
-                f.save(os.path.join(config.UPLOAD_DIRECTORY, secure_filename(f.filename)))
-                logger.info("Upload success")
-        return redirect(url_for('settings'))
-
-
-@app.route('/logout')
-def logout():
-    flask_login.logout_user()
-    session.clear()
-    return redirect(url_for('login'))
-
-
 if __name__ == "__main__":
     logger.info("Smarthome has started.")
     if not report_state.enable_report_state():
-        logger.info('Save the smart-home-key.json in %s folder', config.KEYFILE_DIRECTORY)
+        logger.info('Upload the smart-home-key.json to %s folder', config.KEYFILE_DIRECTORY)
     app.add_url_rule('/dashboard', 'dashboard', routes.dashboard, methods=['GET', 'POST'])
     app.add_url_rule('/devices', 'devices', routes.devices, methods=['GET', 'POST'])
-    app.add_url_rule('/logging', 'logging', routes.logging, methods=['GET', 'POST'])
+    app.add_url_rule('/logging', 'logging', routes.logging, methods=['GET'])
+    app.add_url_rule('/stream', 'stream', routes.stream, methods=['GET'])
     app.add_url_rule('/settings', 'settings', routes.settings, methods=['GET', 'POST'])
     app.add_url_rule('/api', 'api', api.gateway, methods=['POST'])
+    app.add_url_rule('/uploader', 'uploader', routes.uploader, methods=['POST'])
     app.run('0.0.0.0', port=8181, debug=True)  # Need to fix this!!
     # if dbs.use_ssl:
         # context = (dbs.ssl_cert, dbs.ssl_key)
