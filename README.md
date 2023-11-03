@@ -21,4 +21,8 @@ Just open a terminal window and execute this command. Thats it!
 ```
 bash <(curl -s https://raw.githubusercontent.com/DewGew/dzga-installer/master/DZGA-Flask-install.sh)
 ```
+Or simply run DZGA in a docker:
+```
+https://hub.docker.com/r/dewgew/dzga-flask
+```
 ***For more help read DZGA-Flask [wiki](https://github.com/DewGew/DZGA-Flask/wiki)***
