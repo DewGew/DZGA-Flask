@@ -1,5 +1,11 @@
+import os
+import modules.config as config
+from time import sleep
+
 from flask_login import login_required, current_user
-from flask import redirect, request, url_for, render_template, session, flash
+from flask import (redirect, request, url_for,
+                   render_template, session, flash, Response)
+from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 from modules.reportstate import ReportState
 from modules.database import db, User, Settings
@@ -50,6 +56,19 @@ def logging():
     return render_template('logging.html',
                            user=User.query.filter_by(username=current_user.username).first(),
                            dbsettings=dbsettings)
+
+
+@login_required
+def stream():
+    """returns logging information"""
+    def generate():
+        filename = os.path.join(config.CONFIG_DIRECTORY, "smarthome.log")
+        with open(filename) as f:
+            while True:
+                yield f.read()
+                sleep(0.5)
+
+    return Response(generate(), mimetype='text/plain')
 
 
 @login_required
@@ -156,3 +175,20 @@ def settings():
                                devices=devices,
                                _csrf_token=session['_csrf_token']
                                )
+
+
+@login_required
+def uploader():
+
+    f = request.files['file']
+
+    if f.filename != '':
+        file_ext = os.path.splitext(f.filename)[1]
+        if file_ext not in ['.jpg', '.png', '.json']:
+            logger.warning("Uploadfile is not allowed")
+            flash("Uploadfile is not allowed, '.jpg','.png' files or 'smart-home-key.json' is allowed!")
+        else:
+            f.save(os.path.join(config.UPLOAD_DIRECTORY, secure_filename(f.filename)))
+            logger.info("Upload success")
+
+    return redirect(url_for('settings'))
