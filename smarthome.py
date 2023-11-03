@@ -6,17 +6,26 @@ import urllib
 import os
 import sys
 import json
-import hashlib
 import modules.config as config
+import modules.api as api
+import modules.routes as routes
 
-from time import time, sleep
-from werkzeug.utils import secure_filename
+from time import time
+from werkzeug.security import check_password_hash
 from werkzeug.middleware.proxy_fix import ProxyFix
-from modules.domoticz import getDomoticzDevices, queryDomoticz, saveJson
-from modules.helpers import logger, get_settings, save_settings, remove_user, check_token, get_token, random_string, get_device, get_devices, generateToken, generateCsrfToken, csrfProtect
+from modules.database import db, User, Settings
+from modules.domoticz import getDomoticzDevices
 from modules.reportstate import ReportState
-from flask import Flask, redirect, request, url_for, render_template, send_from_directory, jsonify, session, flash, Response
-from secrets import compare_digest
+from sqlalchemy import or_
+from modules.helpers import (logger, get_token, random_string,
+                             get_device, get_devices, generateToken,
+                             generateCsrfToken, csrfProtect)
+
+from flask import (Flask, redirect, request,
+                   url_for, render_template,
+                   send_from_directory, jsonify,
+                   session)
+
 
 # Path to traits
 sys.path.insert(0, 'modules')
@@ -24,67 +33,27 @@ sys.path.insert(0, 'modules')
 app = Flask(__name__)
 # Create an actual secret key for production
 app.secret_key = 'secret'
+# Database
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.json.sort_keys = False
 # Needed for use with reverse proxy
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1)
-app.json.sort_keys = False
+# Init database
+db.init_app(app)
+
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 report_state = ReportState()
-
 
 last_code = None
 last_code_user = None
 last_code_time = None
 
-class User(flask_login.UserMixin):
-    pass
+if not os.path.exists(os.path.join(config.DATABASE_DIRECTORY, 'db.sqlite')):
+    os.system('python3 init_db.py')
 
-logger.info("Smarthome has started.")
 
-if report_state.enable_report_state():
-    logger.info('Smart-home-key.json found')
-else:
-    logger.info('Save the smart-home-key.json in %s folder', config.KEYFILE_DIRECTORY)
-    
-@login_manager.user_loader
-def user_loader(username):
-    users = get_settings()['USERS']
-    if username not in users:
-        return
-
-    user = User()
-    user.id = username
-    return user
-
-@login_manager.request_loader
-def request_loader(request):
-    users = get_settings()['USERS']
-    if session:
-        csrfProtect()
-    
-    user = User()
-    api_key = request.headers.get('Authorization')
-    if api_key:
-        user.id = check_token()
-        if user.id != None:
-            return user
-      
-    username = request.form.get('username')
-    password = request.form.get('password', '')
-    if username not in users:
-        return
-
-    user.id = username
-    try:
-        user.is_authenticated = compare_digest(password, users[username]['password'])
-    except:
-        return
-    return user
-    
-@login_manager.unauthorized_handler
-def unauthorized_handler():
-    return redirect(url_for('login'))
-    
 def statereport(requestId, userID, states):
     """Send a state report to Google."""
 
@@ -93,173 +62,244 @@ def statereport(requestId, userID, states):
     data['agentUserId'] = userID
     data['payload'] = {}
     data['payload']['devices'] = {}
-    data['payload']['devices']['states'] = states 
-    
-    report_state.call_homegraph_api('state', data) 
+    data['payload']['devices']['states'] = states
+
+    report_state.call_homegraph_api('state', data)
+
+
+@login_manager.user_loader
+def user_loader(username):
+    return db.session.get(User, int(username))
+
+
+@login_manager.request_loader
+def request_loader(request):
+    if session:
+        csrfProtect()
+
+    authtoken = request.headers.get('Authorization')
+    if authtoken:
+        token = get_token()
+        user = User.query.filter_by(authtoken=token).first()
+        if user.username:
+            return user
+
+    return None
+
+
+@login_manager.unauthorized_handler
+def unauthorized_handler():
+    return redirect(url_for('login'))
+
 
 @app.context_processor
 def handle_context():
     """Inject object into jinja2 templates."""
     return dict(os=os)
-    
-## Routes
+
+
+# Routes
 @app.route('/static/css/<path:path>')
 def send_css(path):
-    return  send_from_directory('static/css', path)
-    
+    return send_from_directory('static/css', path)
+
+
 @app.route('/static/js/<path:path>')
 def send_js(path):
-    return  send_from_directory('static/js', path)
-    
+    return send_from_directory('static/js', path)
+
+
 @app.route('/uploads/<path:path>')
 def send_uploads(path):
-    return  send_from_directory('uploads', path)
-    
+    return send_from_directory('uploads', path)
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
         return render_template('login.html')
-    # Check login and password
+
     username = request.form['username']
     password = request.form['password']
-    users = get_settings()['USERS']
-    if username in users and compare_digest(password, users[username]['password']):
-        user = User()
-        user.id = username
-        flask_login.login_user(user)
-        generateCsrfToken()
-        return redirect(url_for('dashboard'))
 
-    if "X-Real-Ip" in request.headers:
-        logger.warning("Login failed from %s", request.headers["X-Real-Ip"])
-    return  render_template('login.html', login_failed=True)
+    user = db.session.query(User).filter(
+        or_(User.email == username, User.username == username)).first()
+
+    # if not user or not check_password_hash(user.password, password):
+    if not user or (user.password != password):
+        if "X-Real-Ip" in request.headers:
+            logger.warning("Login failed from %s",
+                           request.headers["X-Real-Ip"])
+        return render_template('login.html', login_failed=True)
+
+    # lif user and check_password_hash(user.password, password):
+    elif user and (user.password == password):
+        flask_login.login_user(user)
+
+    generateCsrfToken()
+    return redirect(url_for('dashboard'))
+
+
+@app.route('/logout')
+def logout():
+    flask_login.logout_user()
+    session.clear()
+    return redirect(url_for('login'))
+
+
+@app.route('/')
+def index():
+
+    return redirect(url_for('login'))
+
 
 # OAuth entry point
 @app.route('/auth', methods=['GET', 'POST'])
 def auth():
     global last_code, last_code_user, last_code_time
-    users = get_settings()['USERS']
-    if request.method == 'GET':    
-        return  render_template('login.html')
+    dbsettings = Settings.query.get_or_404(1)
+
+    if request.method == 'GET':
+        return render_template('login.html')
     if request.method == 'POST':
-        if ("username" not in  request.form
-                or "password" not in  request.form
+        if ("username" not in request.form
+                or "password" not in request.form
                 or "state" not in request.args
                 or "response_type" not in request.args
                 or request.args["response_type"] != "code"
                 or "client_id" not in request.args
-                or request.args["client_id"] != get_settings()['CLIENT_ID']):
-                    logger.warning("invalid auth request")
-                    return "Invalid request", 400
+                or request.args["client_id"] != dbsettings.client_id):
+            logger.warning("invalid auth request")
+            return "Invalid request", 400
     # Check login and password
     username = request.form['username']
     password = request.form['password']
-    if username in users and compare_digest(password, users[username]['password']):
-        user = User()
-        user.id = username
+
+    user = db.session.query(User).filter(
+        or_(User.email == username, User.username == username)).first()
+
+    # if user and check_password_hash(user.password, password):
+    if user and (user.password == password):
         flask_login.login_user(user)
-        
         # Generate random code and remember this user and time
         last_code = random_string(8)
-        last_code_user = ( request.form)["username"]
+        last_code_user = (request.form)["username"]
         last_code_time = time()
 
-        params = {'state': request.args['state'], 
+        params = {'state': request.args['state'],
                   'code': last_code,
-                  'client_id': get_settings()['CLIENT_ID']}
+                  'client_id': dbsettings.client_id}
         logger.info("generated code")
-        return redirect(request.args["redirect_uri"] + '?' + urllib.parse.urlencode(params))
-        
+        return redirect(request.args["redirect_uri"] +
+                        '?' + urllib.parse.urlencode(params))
+
     if "X-Real-Ip" in request.headers:
         logger.warning("Login failed from %s", request.headers["X-Real-Ip"])
-    return  render_template('login.html', login_failed=True)
+    return render_template('login.html', login_failed=True)
+
 
 # OAuth, token request
 @app.route('/token', methods=['POST'])
 def token():
     global last_code, last_code_user, last_code_time
-    if ("client_secret" not in  request.form
-        or request.form["client_secret"] != get_settings()['CLIENT_SECRET']
-        or "client_id" not in  request.form
-        or request.form["client_id"] != get_settings()['CLIENT_ID']
-        or "code" not in  request.form):
-            logger.warning("invalid token request")
-            return "Invalid request", 400
+    dbsettings = Settings.query.get_or_404(1)
+
+    if ("client_secret" not in request.form
+            or request.form["client_secret"] != dbsettings.client_secret
+            or "client_id" not in request.form
+            or request.form["client_id"] != dbsettings.client_id
+            or "code" not in request.form):
+        logger.warning("invalid token request")
+        return "Invalid request", 400
     # Check code
-    if ( request.form)["code"] != last_code:
+    if (request.form)["code"] != last_code:
         logger.warning("invalid code")
         return "Invalid code", 403
     # Check time
-    if  time() - last_code_time > 10:
+    if time() - last_code_time > 10:
         logger.warning("code is too old")
         return "Code is too old", 403
     # Get token with username
-    access_token = get_settings()['USERS'][last_code_user]['authtoken']
+    dbuser = User.query.filter_by(username=last_code_user).first()
+    access_token = dbuser.authtoken
     # Return token without any expiration time
     return jsonify({'access_token': access_token})
-    
+
+
 # Notification request
 @flask_login.login_required
 @app.route('/notification', methods=['POST'])
-def notification():  
-    user_id = flask_login.current_user.id
-    users = get_settings()['USERS']
-    
-    if users[user_id]['googleassistant'] == False:
+def notification():
+    user_id = flask_login.current_user.username
+    user = User.query.filter_by(username=user_id).first()
+
+    if user.googleassistant is False:
         return "Not found", 404
-    
-    # Reportstate must be enabled to use notification 
+
+    # Reportstate must be enabled to use notification
     if report_state.enable_report_state():
         event_id = random_string(10)
         request_id = random_string(20)
         data = {'requestId': str(request_id),
-            'agentUserId': user_id,
-            'eventId': str(event_id),
-            'payload': {}}      
+                'agentUserId': user_id,
+                'eventId': str(event_id),
+                'payload': {}}
         try:
             message = request.get_json()
-            device =  get_device(user_id, message["id"])
+            device = get_device(user_id, message["id"])
             domain = device['customData']['domain']
-        except:
+        except Exception:
             return '{"title": "SendNotification", "status": "ERR"}'
-        # Send smokedetektor notification 
+        # Send smokedetektor notification
         if domain == 'SmokeDetector':
-            data['payload'] = {'devices': {'states': {message["id"]: {'on': (True if message["state"].lower() in ['on', 'alarm/fire !'] else False)}},
-                                           'notifications': {message["id"]: {'SensorState': {'priority': 0,'name': 'SmokeLevel','currentSensorState': 'smoke detected'}}}
+            data['payload'] = {'devices': {
+                            'states': {message["id"]: {
+                                'on': (
+                                    True if message["state"].lower() in ['on', 'alarm/fire !'] else False)}},
+                            'notifications': {message["id"]: {
+                                'SensorState': {
+                                    'priority': 0, 'name': 'SmokeLevel', 'currentSensorState': 'smoke detected'}}}
                         }
                     }
-        
-        # Send smokedetektor notification 
+
+        # Send smokedetektor notification
         elif domain == 'Doorbell':
-            data['payload'] = {'devices': {'states': {message["id"]: {'on': (True if message["state"].lower() in ['on', 'pressed'] else False)}},
-                                           'notifications': {message["id"]: {"ObjectDetection": {"objects": {"unfamiliar": 1}, 'priority': 0, 'detectionTimestamp': time()}}}                           
+            data['payload'] = {'devices': {
+                            'states': {message["id"]: {
+                                'on': (
+                                    True if message["state"].lower() in ['on', 'pressed'] else False)}},
+                                'notifications': {message["id"]: {
+                                    "ObjectDetection": {
+                                        "objects": {"unfamiliar": 1}, 'priority': 0, 'detectionTimestamp': time()}}}
                         }
                     }
         else:
             return '{"title": "SendNotification", "status": "ERR"}'
-            
+
         report_state.call_homegraph_api('state', data)
         return '{"title": "SendNotification", "status": "OK"}'
-        
+
     return "Not found", 404
-    
+
+
 # Main URL to interact with Google requests
 @flask_login.login_required
 @app.route('/smarthome', methods=['POST'])
 def fulfillment():
-    user_id = flask_login.current_user.id
-    users = get_settings()['USERS']
-    
-    if users[user_id]['googleassistant'] == False:
+
+    user_id = flask_login.current_user.username
+    user = User.query.filter_by(username=user_id).first()
+
+    if user.googleassistant is False:
         return "Not found", 404
 
     r = request.get_json()
 
     logger.debug("request: \r\n%s", json.dumps(r, indent=4))
-    
+
     result = {}
     result['requestId'] = r['requestId']
-          
+
     inputs = r['inputs']
     for i in inputs:
         intent = i['intent']
@@ -270,7 +310,7 @@ def fulfillment():
             devs = get_devices(user_id)
             for device_id in devs.keys():
                 # Loading device info
-                device =  get_device(user_id, device_id)
+                device = get_device(user_id, device_id)
                 if 'Hidden' not in device['customData']['domain']:
                     device['deviceInfo'] = {
                                 "manufacturer": "Domoticz",
@@ -293,10 +333,10 @@ def fulfillment():
                 # Call query method for this device
                 query_method = getattr(device_module, "query")
                 result['payload']['devices'][device_id] = query_method(custom_data, x, user_id)
-            # ReportState    
+            # ReportState
             if report_state.enable_report_state():
-                statereport(result['requestId'],user_id, result['payload']['devices'])
-                
+                statereport(result['requestId'], user_id, result['payload']['devices'])
+
         """ Execute intent, need to execute some action """
         if intent == "action.devices.EXECUTE":
             result['payload'] = {}
@@ -306,7 +346,7 @@ def fulfillment():
                     device_id = device['id']
                     custom_data = device.get("customData", None)
                     device_module = importlib.import_module('trait')
-                    # Call execute method for this device for every execute command
+                    # Call execute method
                     action_method = getattr(device_module, "execute")
                     for e in command['execution']:
                         command = e['command']
@@ -317,274 +357,65 @@ def fulfillment():
                         if protected:
                             acknowledge = False
                             if challenge is None:
-                                action_result = {"status": "ERROR", "errorCode": "challengeNeeded", "challengeNeeded": { "type": "pinNeeded"}, "ids": [device_id]}
+                                action_result = {
+                                    "status": "ERROR", "errorCode": "challengeNeeded", "challengeNeeded": {
+                                        "type": "pinNeeded"}, "ids": [device_id]}
                                 result['payload']['commands'].append(action_result)
                                 logger.debug("response: \r\n%s", json.dumps(result, indent=4))
                                 return jsonify(result)
                             elif not challenge.get('pin', False):
-                                action_result = {"status": "ERROR", "errorCode": "challengeNeeded", "challengeNeeded": { "type": "userCancelled"}, "ids": [device_id]}
+                                action_result = {
+                                    "status": "ERROR", "errorCode": "challengeNeeded", "challengeNeeded": {
+                                        "type": "userCancelled"}, "ids": [device_id]}
                                 result['payload']['commands'].append(action_result)
                                 logger.debug("response: \r\n%s", json.dumps(result, indent=4))
                                 return jsonify(result)
                         if acknowledge:
-                            if challenge is None:                            
-                                action_result = {"status": "ERROR", "errorCode": "challengeNeeded", "challengeNeeded": { "type": "ackNeeded"}, "ids": [device_id]}
+                            if challenge is None:
+                                action_result = {
+                                    "status": "ERROR", "errorCode": "challengeNeeded", "challengeNeeded": {
+                                        "type": "ackNeeded"}, "ids": [device_id]}
                                 result['payload']['commands'].append(action_result)
                                 logger.debug("response: \r\n%s", json.dumps(result, indent=4))
-                                return jsonify(result)                               
-                        action_result = action_method(custom_data, command, params, user_id, challenge)
+                                return jsonify(result)
+                        action_result = action_method(
+                            custom_data, command, params, user_id, challenge)
                         result['payload']['commands'].append(action_result)
                         action_result['ids'] = [device_id]
-            # ReportState           
+            # ReportState
             if report_state.enable_report_state() and action_result['status'] == 'SUCCESS':
                 data = {}
                 data[device_id] = action_result['states']
                 statereport(result['requestId'], user_id, data)
-        
+
         """ Disconnect intent, need to revoke token """
         if intent == "action.devices.DISCONNECT":
-            access_token = get_token()
-            access_token_file = os.path.join(config.TOKENS_DIRECTORY, access_token)
-            if os.path.isfile(access_token_file) and os.access(access_token_file, os.R_OK):
-                os.remove(access_token_file)
-                logger.debug("token %s revoked", access_token)
-                
-            newToken =  generateToken(user_id)
-            newSettings = {
-                    'authtoken':newToken
-                    }
-            save_settings(newSettings, user_id)
-                
+            user.authtoken = generateToken(user)
+            db.session.add(user)
+            db.session.commit()
+            logger.info('Disconnected from Google Assistant')
+
             return {}
-    
+
     logger.debug("response: \r\n%s", json.dumps(result, indent=4))
-            
+
     return jsonify(result)
 
-@app.route('/')
-def index():
-
-    return redirect(url_for('login'))
-    
-@app.route('/dashboard')
-@flask_login.login_required
-def dashboard():
-    reportstate = report_state.enable_report_state()
-    settings=get_settings()
-    
-    devices = get_devices(flask_login.current_user.id)
-    if devices == None:
-        getDomoticzDevices(flask_login.current_user.id)
-        devices = get_devices(flask_login.current_user.id)
-
-
-    return render_template('dashboard.html',
-        user = flask_login.current_user.id,
-        settings = settings,
-        reportstate = reportstate,
-        devices = devices,
-        _csrf_token=session['_csrf_token']        
-        )
-
-@app.route('/settings')
-@flask_login.login_required
-def settings():
-    reportstate = report_state.enable_report_state()
-    settings=get_settings()
-    devices = get_devices(flask_login.current_user.id)
-
-    return render_template('settings.html',
-        user = flask_login.current_user.id,
-        settings = settings,
-        reportstate = reportstate,
-        devices = devices,
-        _csrf_token=session['_csrf_token']        
-        )
-
-@app.route('/logging')
-@flask_login.login_required
-def logging():
-    settings=get_settings()
-
-    return render_template('logging.html',
-        user = flask_login.current_user.id,
-        settings = settings)
-        
-@app.route("/log_stream", methods=["GET"])
-@flask_login.login_required
-def stream():
-    """returns logging information"""
-    def generate():
-        filename = os.path.join(config.CONFIG_DIRECTORY, "smarthome.log")
-        with open(filename) as f:
-            while True:
-                yield f.read()
-                sleep(0.5)
-    return Response(generate(), mimetype='text/plain')
-        
-@app.route('/devices')
-@flask_login.login_required
-def devices():
-    reportstate = report_state.enable_report_state()
-    settings=get_settings()
-    devices = get_devices(flask_login.current_user.id)
-
-    return render_template('devices.html',
-        user = flask_login.current_user.id,
-        settings = settings,
-        reportstate = reportstate,
-        devices = devices,
-        _csrf_token=session['_csrf_token']        
-        )
-        
-@app.route('/uploader', methods = ['GET', 'POST'])
-@flask_login.login_required
-def upload_file():
-   if request.method == 'POST':
-        f = request.files['file']
-        if f.filename != '':
-            file_ext = os.path.splitext(f.filename)[1]
-            if file_ext not in ['.jpg', '.png', '.json']:
-                logger.warning("Uploadfile is not allowed")
-                flash("Uploadfile is not allowed, '.jpg','.png' files or 'smart-home-key.json' is allowed!")
-            else:
-                f.save(os.path.join(config.UPLOAD_DIRECTORY, secure_filename(f.filename)))
-                logger.info("Upload success")
-        return redirect(url_for('settings'))
-      
-@app.route('/api', methods=['POST'])
-@flask_login.login_required
-def gateway():
-    users = get_settings()['USERS']
-    requestedUrl = request.url.split("/api")
-    custom = request.args.get('custom', '')
-    newsettings = {}
-    
-    if custom == "sync":
-        if users[flask_login.current_user.id]['googleassistant'] == True:
-            if report_state.enable_report_state():
-                payload = {"agentUserId": flask_login.current_user.id}
-                r = report_state.call_homegraph_api('sync', payload)
-                result = '{"title": "RequestedSync", "status": "OK"}'
-                flash("Devices synced with domoticz")
-            else:
-                result = '{"title": "RequestedSync", "status": "ERR"}'
-                flash("Error syncing devices with domoticz")
-        else:
-            getDomoticzDevices(flask_login.current_user.id)
-            flash("Devices synced with domoticz")
-            return "Devices synced with domoticz", 200
-            
-    elif custom == "setArmLevel":
-        armLevel = request.args.get('armLevel', '')
-        seccode = idx = request.args.get('seccode', '')
-        result = queryDomoticz(flask_login.current_user.id, '?type=command&param=setsecstatus&secstatus=' + armLevel + '&seccode=' + hashlib.md5(str.encode(seccode)).hexdigest())
-
-    elif custom == "modify_config":
-        ssl = (request.args.get('ssl', '') == 'true')
-            
-        newsettings = {
-            'CLIENT_ID': request.args.get('aogclient', ''),
-            'CLIENT_SECRET': request.args.get('aogsecret', ''),
-            'API_KEY': request.args.get('aogapi', ''),
-            'TEMPUNIT': request.args.get('tempunit', ''),
-            'LANGUAGE': request.args.get('language', ''),
-            'USE_SSL': ssl,
-            'SSL_CERT': request.args.get('sslcert', ''),
-            'SSL_KEY': request.args.get('sslkey', '')
-        }
-               
-        save_settings(newsettings, None)
-
-        return "Settings saved", 200
-        
-    elif custom == "modify_user_config":
-    
-        gass = (request.args.get('googleassistant', '') == 'true')
- 
-        newsettings = {
-            'domo_url': request.args.get('domourl', ''),
-            'domouser':request.args.get('domouser',''),
-            'domopass':request.args.get('domopass',''),
-            'roomplan': request.args.get('roomplan',''),
-            'password':request.args.get('uipassword',''),
-            'googleassistant':gass,
-            'authtoken':request.args.get('authtoken','')
-                }
-        
-        save_settings(newsettings, flask_login.current_user.id)
-        
-        return "Settings saved", 200
-        
-    elif custom == "modify_users_config":
-        userToEdit = request.args.get('user','')
-        admin = (request.args.get('admin', '') == 'true')
-        gass = (request.args.get('googleassistant', '') == 'true')
-
-        newsettings = {
-            'password':request.args.get('userpassword',''),
-            'admin':admin,
-            'googleassistant':gass,
-            }
-            
-        save_settings(newsettings, userToEdit)
-        
-        return "Settings saved", 200
-        
-    elif custom == "new_user":
-        newUser = request.args.get('user','')
-        admin = (request.args.get('admin', '') == 'true')
-        gass = (request.args.get('googleassistant', '') == 'true')
-        # Generate and save random token with username
-        access = generateToken(newUser)
-
-        newsettings = {
-            'domo_url':'http://192.168.1.123:8080',
-            'domouser':'<Domotic User>',
-            'domopass':'<Domotic Pass>',
-            'roomplan': '0',
-            'password':request.args.get('userpassword',''),
-            'admin':admin,
-            'googleassistant':gass,
-			'authtoken':access
-            }
-            
-        save_settings(newsettings, newUser)
-        data = {}
-        saveJson(newUser, data)
-        
-        users = get_settings()['USERS']
-        
-        return "Settings saved", 200
-        
-    elif custom == "removeuser":
-        userToRemove = request.args.get('user','')
-        access_token_to_remove = get_settings()['USERS'][userToRemove]['authtoken']
-        access_token_file_to_remove = os.path.join(config.TOKENS_DIRECTORY, access_token_to_remove)
-        if os.path.isfile(access_token_file_to_remove) and os.access(access_token_file_to_remove, os.R_OK):
-            os.remove(access_token_file_to_remove)
-        remove_user(userToRemove)
-        
-        users = get_settings()['USERS']
-        logger.info("User " + userToRemove + " is deleted")
-
-        return "User removed", 200
-    else:
-        result = queryDomoticz(flask_login.current_user.id, requestedUrl[1])
-    try:
-        return json.loads(result)
-    except:
-        return "No results returned", 404
-
-@app.route('/logout')
-def logout():
-    flask_login.logout_user()
-    session.clear()
-    return redirect(url_for('login'))
 
 if __name__ == "__main__":
-    if get_settings()['USE_SSL']:
-        context = (get_settings()['SSL_CERT'], get_settings()['SSL_KEY'])
-        app.run('0.0.0.0', port=8181, debug=True, ssl_context=context)
-    else:
-        app.run('0.0.0.0', port=8181, debug=True)
+    logger.info("Smarthome has started.")
+    if not report_state.enable_report_state():
+        logger.info('Upload the smart-home-key.json to %s folder', config.KEYFILE_DIRECTORY)
+    app.add_url_rule('/dashboard', 'dashboard', routes.dashboard, methods=['GET', 'POST'])
+    app.add_url_rule('/devices', 'devices', routes.devices, methods=['GET', 'POST'])
+    app.add_url_rule('/logging', 'logging', routes.logging, methods=['GET'])
+    app.add_url_rule('/stream', 'stream', routes.stream, methods=['GET'])
+    app.add_url_rule('/settings', 'settings', routes.settings, methods=['GET', 'POST'])
+    app.add_url_rule('/api', 'api', api.gateway, methods=['POST'])
+    app.add_url_rule('/uploader', 'uploader', routes.uploader, methods=['POST'])
+    app.run('0.0.0.0', port=8181, debug=True)  # Need to fix this!!
+    # if dbs.use_ssl:
+        # context = (dbs.ssl_cert, dbs.ssl_key)
+        # app.run('0.0.0.0', port=8181, debug=True, ssl_context=context)
+    # else:
+        # app.run('0.0.0.0', port=8181, debug=True)

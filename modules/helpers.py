@@ -20,48 +20,7 @@ logging.getLogger().addHandler(logging.StreamHandler())
 logging.getLogger('werkzeug').setLevel(logging.ERROR)
 logger = logging.getLogger()
 
-# Function to load user info #
-def get_settings():
-    filename = os.path.join(config.CONFIG_DIRECTORY, "settings.json")
-    if os.path.isfile(filename) and os.access(filename, os.R_OK):
-        with open(filename, mode='r') as f:
-            text = f.read()
-            data = json.loads(text)
-            return data
-    else:
-        logger.warning("Settings not found")
-        return None
-        
-        
-# Function to save settings #
-def save_settings(data, user):
-    old_data = get_settings()
-    if user is not None:
-        if old_data['USERS'].get(user) is not None:
-            old_data['USERS'][user].update(data)
-        else:
-            old_data['USERS'][user] = {}
-            old_data['USERS'][user].update(data)
-    else:
-        old_data.update(data)
-    
-    filename = os.path.join(config.CONFIG_DIRECTORY, "settings.json")
-    if os.path.isfile(filename) and os.access(filename, os.R_OK):
-        with open(filename, mode='w') as f:          
-            new_text = json.dumps(old_data, indent=4)
-            f.write(new_text)
-
-def remove_user(user):
-    data = get_settings()
-    if data['USERS'].get(user) is not None:
-        del data['USERS'][user]
-    
-    filename = os.path.join(config.CONFIG_DIRECTORY, "settings.json")
-    if os.path.isfile(filename) and os.access(filename, os.R_OK):
-        with open(filename, mode='w') as f:          
-            new_text = json.dumps(data, indent=4)
-            f.write(new_text)
-    
+def remove_user(user):   
     devicesfile = os.path.join(config.DEVICES_DIRECTORY, user + "_devices.json")
     os.remove(devicesfile)
     
@@ -125,13 +84,7 @@ def _tempConvert(temp, unit):
         
 def generateToken(last_code_user):
     access_token = random_string(32)
-    isExist = os.path.exists(config.TOKENS_DIRECTORY)
-    if not isExist:
-        os.makedirs(config.TOKENS_DIRECTORY)
-    access_token_file = os.path.join(config.TOKENS_DIRECTORY, access_token)
-    with open(access_token_file, mode='wb') as f:
-        f.write(last_code_user.encode('utf-8'))
-    logger.info("access granted")
+    logger.info("Access granted for " + last_code_user)
 
     return access_token
     

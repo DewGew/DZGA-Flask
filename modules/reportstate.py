@@ -8,7 +8,8 @@ import google.auth.crypt
 import google.auth.jwt
 import modules.config as config
 
-from modules.helpers import logger, get_settings
+from modules.database import db, Settings
+from modules.helpers import logger
 
 class ReportState:
     """Google Report State implementation."""
@@ -76,8 +77,10 @@ class ReportState:
 
     @staticmethod
     def call_homegraph_api_key(payload):
+    
+        dbsettings = Settings.query.get_or_404(1)
 
-        url = 'https://homegraph.googleapis.com/v1/devices:requestSync?key=' + get_settings()['CLIENT_ID']
+        url = 'https://homegraph.googleapis.com/v1/devices:requestSync?key=' + dbsettings.client_id
 
         r = requests.post(url, json=payload)
 

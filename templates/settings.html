@@ -32,60 +32,58 @@
 				{% include 'profile.html' %}
 				  <div class="card">
 					<div class="card-body">
-					  <h5 class="card-title">User settings <span>| {{ user }}</span></h5>
-					  <p>After changing settings below you need to sync your devices.{% if settings['USERS'][user]['googleassistant'] is true %} If you have change DZGA password and Google Assistant is enabled you need to disconnect and reconnect in Google Home app.{% endif %}</p>
+					  <h5 class="card-title">User settings <span>| {{ user.username }}</span></h5>
+					  <p>After changing settings below you need to sync your devices.{% if user.googleassistant is true %} If you have change DZGA password and Google Assistant is enabled you need to disconnect and reconnect in Google Home app.{% endif %}</p>
 
-					  <form class="row g-3" onsubmit="modifyConfig('user')" role="form" name="modifyUserConfigForm">
-					  <input type="hidden" class="form-control" id="modify_user_config" value="modify_user_config" readonly>
+					  <form class="row g-3" role="form" name="modifyUserConfigForm" method="post">
 					  	<div class="col-md-12">
 						  <label for="domourl" class="form-label">Domoticz url</label>
-						  <input type="text" class="form-control" id="domourl" value="{{ settings['USERS'][user]['domo_url']}}">
+						  <input type="text" class="form-control" id="domourl" name="domourl"value="{{ user.domo_url }}">
 						</div>
 						<div class="col-md-6">
 						  <label for="domouser" class="form-label">Domoticz user</label>
-						  <input type="text" class="form-control" id="domouser" value="{{ settings['USERS'][user]['domouser']}}">
+						  <input type="text" class="form-control" id="domouser" name="domouser" value="{{ user.domouser }}">
 						</div>
 						<div class="col-md-6">
 						  <label for="domopass" class="form-label">Domoticz password</label>
 						  <div class="input-group mb-3">
-							<input type="password" class="form-control password" id="domopass" value="{{ settings['USERS'][user]['domopass']}}">
+							<input type="password" class="form-control password" id="domopass" name="domopass" value="{{ user.domopass }}">
 							<span class="input-group-text togglePassword bi bi-eye" id="">
 							</span>
 						  </div>
 						</div>
 						<div class="col-md-6">
 						  <label for="roomplan" class="form-label">Domoticz roomplan id</label>
-						  <input type="text" class="form-control" id="roomplan" value="{{ settings['USERS'][user]['roomplan']}}">
+						  <input type="text" class="form-control" id="roomplan" name="roomplan" value="{{ user.roomplan }}">
 						</div>
 						<div class="col-md-6">
 						  <label for="uipassword" class="form-label">DZGA password <small>(Userinterface)</small></label>
 						  <div class="input-group mb-3">
-							<input type="password" class="form-control password" id="uipassword" value="{{ settings['USERS'][user]['password']}}">
+							<input type="password" class="form-control password" id="uipassword" name="uipassword" value="{{ user.password }}">
 							<span class="input-group-text togglePassword bi bi-eye" id="">		
 							</span>
 						  </div>
 						</div>
 						<div class="col-md-6">
 						  <label for="googleassist" class="form-label">Google Assistant</label>
-						  <select id="googleassist" class="form-select" {% if settings['USERS'][user]['admin'] is false %}disabled{% endif %} onchange="showDiv(this);">
-							<option {% if settings['USERS'][user]['googleassistant'] is true %} selected {% endif %} value="true">Enabled</option>
-							<option {% if settings['USERS'][user]['googleassistant'] is false %} selected {% endif %}value="false">Disabled</option>
+						  <select id="googleassist" name="googleassist" class="form-select" {% if user.admin is false %}disabled readonly{% endif %}>
+							<option {% if user.googleassistant is true %} selected {% endif %} value="true">Enabled</option>
+							<option {% if user.googleassistant is false %} selected {% endif %}value="false">Disabled</option>
 						  </select>
 						</div>
 						<div class="col-md-6" >
 						  <label for="domoticzAdmin" class="form-label">Domoticz Admin</label>
 						  <input type="text" class="form-control" id="domoticzAdmin" value="No" disabled readonly>
 						</div>
-						<div class="col-md-6" id="div_token" {% if settings['USERS'][user]['googleassistant'] is false %} style="display: none;" {% endif %}>
+						<div class="col-md-6" id="div_token">
 						  <label for="token" class="form-label">Auth Token</label>
-						  <input type="text" class="form-control" id="token" value="{{ settings['USERS'][user]['authtoken']}}" disabled readonly>
+						  <input type="text" class="form-control" id="token" name="authtoken" value="{{ user.authtoken }}" disabled readonly>
 						</div>
 						<div class="text-center">
-						  <button type="submit" class="btn btn-primary">Submit</button>
+						  <button type="submit" name="submit" value="save_user_settings" class="btn btn-primary">Submit</button>
 						  <button type="reset" class="btn btn-secondary">Reset</button>
 						</div>
 					  </form>
-
 					</div>
 				  </div>
 				  
@@ -127,12 +125,12 @@ $(".togglePassword").click(function (e) {
 	  $(this).parent().parent().find(".password").attr("type","password");
 	}
 });
-{% if settings['USERS'][user]['admin'] %}
+{% if user.admin %}
 	var text = $("#language").find(":selected").text();
 
 	$("#label_armlevel").append("<i>Armlevels in <b>" + text.toLowerCase() + "</b>. Adds levels like this <code>['home','armed home']</code></i>")
 {% endif %}
 
-getUser("{{ settings['USERS'][user]['domouser']}}")
+getUser("{{ user.domouser }}")
 
   </script>

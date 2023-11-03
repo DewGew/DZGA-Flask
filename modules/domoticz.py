@@ -7,7 +7,8 @@ import os
 import re
 import modules.config as config
 
-from modules.helpers import logger, get_settings
+from modules.database import db, User, Settings
+from modules.helpers import logger
 
 aogDevs = {}
 
@@ -64,6 +65,7 @@ def getDeviceConfig(descstr):
     
 def getAog(device, user_id=None):
     
+    dbsettings = Settings.query.get_or_404(1)
     domain = AogGetDomain(device)
     minThreehold = -20
     maxThreehold = 40
@@ -166,16 +168,16 @@ def getAog(device, user_id=None):
                     "level_values": [
                         {"level_synonym": ["armed home", "low security", "home and guarding", "level 1", "home", "SL1"],
                         "lang": "en"},
-                        {"level_synonym": get_settings()['ARMLEVELS_ARMHOME'],
-                        "lang": get_settings()['LANGUAGE']}
+                        {"level_synonym": dbsettings.armlevels['armhome'],
+                        "lang": dbsettings.language}
                     ]
                 }, {
                     "level_name": "Arm Away",
                     "level_values": [
                     {"level_synonym": ["armed away", "high security", "away and guarding", "level 2", "away", "SL2"],
                         "lang": "en"},
-                    {"level_synonym": get_settings()['ARMLEVELS_ARMAWAY'],
-                        "lang": get_settings()['LANGUAGE']}
+                    {"level_synonym": dbsettings.armlevels['armaway'],
+                        "lang": dbsettings.language}
                     ]
                 }],
                 "ordered": True
@@ -238,7 +240,7 @@ def getAog(device, user_id=None):
                             {"name_synonym": [s],
                              "lang": "en"},
                             {"name_synonym": [s],
-                             "lang": get_settings()['LANGUAGE']},
+                             "lang": dbsettings.language},
                         ],
                     }
                 )
@@ -259,7 +261,7 @@ def getAog(device, user_id=None):
                             {"name_synonym": [s],
                              "lang": "en"},
                             {"name_synonym": [s],
-                             "lang": get_settings()['LANGUAGE']},
+                             "lang": dbsettings.language},
                         ],
                         "settings":{
                             "setting_name": s.replace(" ","_"),
@@ -267,7 +269,7 @@ def getAog(device, user_id=None):
                                 {"setting_synonym": [s],
                                 "lang": "en"},
                                 {"setting_synonym": [s],
-                                "lang": get_settings()['LANGUAGE']},
+                                "lang": dbsettings.language},
                             ]
                         }
                     }
@@ -278,7 +280,7 @@ def getAog(device, user_id=None):
     if  domain in ['Temp', 'TempHumidity', 'TempHumidityBaro']:
         aog.type = 'action.devices.types.SENSOR'
         aog.traits.append('action.devices.traits.TemperatureSetting')
-        aog.attributes = {'thermostatTemperatureUnit': get_settings()['TEMPUNIT'],
+        aog.attributes = {'thermostatTemperatureUnit': dbsettings.tempunit,
                          "thermostatTemperatureRange": { 
                             'minThresholdCelsius': -30,
                             'maxThresholdCelsius': 40},
@@ -288,7 +290,7 @@ def getAog(device, user_id=None):
     if  domain in ['Thermostat', 'Setpoint']:
         aog.type = 'action.devices.types.THERMOSTAT'
         aog.traits.append('action.devices.traits.TemperatureSetting')
-        aog.attributes = {'thermostatTemperatureUnit': get_settings()['TEMPUNIT'],
+        aog.attributes = {'thermostatTemperatureUnit': dbsettings.tempunit,
                 'thermostatTemperatureRange': { 
                     'minThresholdCelsius': minThreehold,
                     'maxThresholdCelsius': maxThreehold},
@@ -341,9 +343,10 @@ def saveJson(user_id, data):
             
     logger.info('Devices is saved in ' + datafile + ' in ' + config.DEVICES_DIRECTORY + ' folder')
             
-def queryDomoticz(user_id, url):
-    domourl = get_settings()['USERS'][user_id]['domo_url']
-    domoCredits = (get_settings()['USERS'][user_id]['domouser'], get_settings()['USERS'][user_id]['domopass'])
+def queryDomoticz(username, url):
+    user = User.query.filter_by(username=username).first()
+    domourl = user.domo_url
+    domoCredits = (user.domouser, user.domopass)
     
     try:
         r = requests.get(domourl + '/json.htm' + url,
@@ -355,12 +358,14 @@ def queryDomoticz(user_id, url):
 
 def getDomoticzDevices(user_id):
 
+    user = User.query.filter_by(username=user_id).first()
+
     aogDevs.clear()
 
-    room = get_settings()['USERS'][user_id]['roomplan']
     try:
-        r = json.loads(queryDomoticz(user_id, '?type=command&param=getdevices&plan=' + room + '&filter=all&used=true'))
+        r = json.loads(queryDomoticz(user_id, '?type=command&param=getdevices&plan=' + user.roomplan + '&filter=all&used=true'))
     except:
+        logger.error("Error connection to domoticz!")
         saveJson(user_id, aogDevs)
         return
         

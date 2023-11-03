@@ -257,56 +257,6 @@ function setSelectorLevel(div, idx, protect) {
 	requestAPI(requesturl)
 }
 
-// Config modification functions
-function modifyConfig(mode, euser='none') {
-	if (mode == 'server'){
-		var url = "/api?custom=" + $('#modify_config').val()
-		url += "&aogclient=" + $('#aogclient').val()
-		url += "&aogsecret=" + $('#aogsecret').val()
-		url += "&aogapi=" + $('#aogapi').val()
-		url += "&tempunit=" + $('#tempunit').val()
-		url += "&language=" + $('#language').val()
-		url += "&ssl=" + $('#ssl').val()
-		url += "&sslcert=" + $('#sslcert').val()
-		url += "&sslkey=" + $('#sslkey').val()
-	}
-	if (mode == 'user'){
-		var url = "/api?custom=" + $('#modify_user_config').val()
-		url += "&domourl=" + $('#domourl').val()
-		url += "&domouser=" + $('#domouser').val()
-		url += "&domopass=" + $('#domopass').val()
-		url += "&uipassword=" + $('#uipassword').val()
-		url += "&roomplan=" + $('#roomplan').val()
-		url += "&googleassistant=" + $('#googleassist').val()
-		url += "&authtoken=" + $('#token').val()
-	}
-	if (mode == 'users'){
-		if (euser != 'none'){
-			var url = "/api?custom=" + $('#modify_users_config').val()
-			url += "&user=" + euser
-			url += "&admin=" + $('#admin_' + euser).val()
-			url += "&userpassword=" + $('#userpassword_' + euser).val()
-			url += "&googleassistant=" + $('#googleassist_' + euser).val()
-		} else {
-			var url = "/api?custom=" + $('#new_user').val()
-			url += "&user=" + $('#user').val()
-			url += "&admin=" + $('#admin').val()
-			url += "&userpassword=" + $('#userpassword').val()
-			url += "&googleassistant=" + $('#googleassistant').val()
-		}
-	}
-	requestAPI(url);
- 
-}
-// Config modification functions
-function removeUser(user) {
-	if (confirm('Are you sure you want to remove user ' + user + '?') == true){
-		var url = "/api?custom=removeuser"
-		url +="&user=" + user
-		requestAPI(url);
-	}
-}
-
 function getUser(user) {
 	var url = "/api?type=command&param=getusers"
 	requestAPI(url).then(jsonData => {
@@ -314,6 +264,15 @@ function getUser(user) {
 		if (data['status'] != 'ERR') {
 			$('#domoticzAdmin').val('Yes')
 		}			
+	});
+}
+function getVersion() {
+	var url = "/api?type=command&param=getversion"
+	requestAPI(url).then(jsonData => {
+		var data = jsonData
+		console.log(data.version);
+		$('#dzga-version').html('23.3')
+		$('#dz-version').html(data.version)
 	});
 }
 
@@ -325,16 +284,12 @@ function showDiv(that) {
         $("#pathcert").fadeOut(500);
 	$("#pathkey").fadeOut(500);
     }
-    if (that.value == "true" && that.id == "googleassist") {
-	$("#div_token").fadeIn(1000);
-    } else {
-	$("#div_token").fadeOut(500);
-    }
     if (that.value == "nouser") {
         $(".forms").fadeOut(500);
     } else {
 		$(".forms").hide();
         $("#passdiv_" + that.value).fadeIn(1000);
+		$("#emaildiv_" + that.value).fadeIn(1000);
 		$("#gassitdiv_" + that.value).fadeIn(1000);
 		$("#submitdiv_" + that.value).fadeIn(1000);
 		$("#admindiv_" + that.value).fadeIn(1000);

@@ -44,7 +44,7 @@
               <div class="card recent-sales overflow-auto">
 
                 <div class="card-body">
-                  <h5 class="card-title">Logs <span>| {{ user }}</span></h5>
+                  <h5 class="card-title">Logs <span>| {{ user.username }}</span></h5>
 					<iframe class="logging_window" id="logging_window"
 						src="{{ url_for('stream')}}">
 					</iframe>

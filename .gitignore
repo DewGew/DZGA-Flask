@@ -4,13 +4,14 @@ smarthome.log
 # Distribution / packaging
 upload/
 config/
-config/settings.json
+config/*
 config/token/*
 .github
 .github/*
 
 # Flask stuff:
 instance/
+instance/*
 .webassets-cache
 
 # Environments

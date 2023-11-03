@@ -30,7 +30,7 @@
               <div class="card recent-sales overflow-auto">
 
                 <div class="card-body">
-                  <h5 class="card-title">Added devices <span>| {{ user }}</span></h5>
+                  <h5 class="card-title">Added devices <span>| {{ user.username }}</span></h5>
 
                   <table class="table table-borderless datatable">
                     <thead>
@@ -200,28 +200,21 @@
 									  {% endif %}
 									  {% endif %}
 									   {% if v['customData']['domain'] == 'Security' %}
-									   <div class="row mb-3" {% if settings['LANGUAGE'] == 'en' %}style="display: none;"{% endif %}>
+									   <div class="row mb-3" {% if dbsettings.language == 'en' %}style="display: none;"{% endif %}>
 									  	<div id="armhome_div" class="col-md-12">
 										  <label for="armhome" class="col-sm-10 col-form-label" id="label_armhome">Armhome</label>
-										  <input type="text" class="form-control" id="armhome" value="{% for n in settings['ARMLEVELS_ARMHOME'] %}{{ n }}, {% endfor %}">
+										  <input type="text" class="form-control" id="armhome" value="{% for n in dbsettings.armlevels['armhome'] %}{{ n }}, {% endfor %}">
 										</div>
 										<div id="armaway_div" class="col-md-12">
 										  <label for="armaway" class="col-sm-10 col-form-label" id="label_armaway">Armaway</label>
-										  <input type="text" class="form-control" id="armaway" value="{% for n in settings['ARMLEVELS_ARMAWAY'] %}{{ n }}, {% endfor %}">
+										  <input type="text" class="form-control" id="armaway" value="{% for n in dbsettings.armlevels['armaway'] %}{{ n }}, {% endfor %}">
 										</div>
 										</div>
 										{% endif %}
 										</div>
 										</form> <!-- move? -->
 										</div>
-										
-<!-- 										<hr>
-									<pre id="description_{{ v['customData']['idx'] }}">
 									
-Nothing added to description
-
-									</pre> -->
-
 									<div class="modal-footer">
 									  <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 									  <button class="btn btn-primary" >Save changes</button>
@@ -295,8 +288,8 @@ var updateSelectors_block = [];
 	});
 {% endfor %}
 
-{% if settings['USERS'][user]['admin'] %}
-	var text = '{{ settings["LANGUAGE"] }}';
+{% if user.admin %}
+	var text = '{{ dbsettings.language }}';
 	var htext = "<i> in <b>" + text.toUpperCase() + "</b>. (Separate levelnames with comma)</i>"
 	var atext = "<i> in <b>" + text.toUpperCase() + "</b>.</i>"
 
