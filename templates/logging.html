@@ -4,23 +4,6 @@
 
 {% include 'sidebar.html' %}
 
-<style>
-.logging_window{
-    display: block;
-    padding: 9.5px;
-    font-size: 16px;
-    line-height: 1.42857143;
-    color: #333;
-    word-break: break-all;
-    word-wrap: break-word;
-    background-color: #f5f5f5;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    width: 100%;
-	height: 400px;
-    margin: auto;
-}
-</style>
   <main id="main" class="main">
 
     <div class="pagetitle">
@@ -79,7 +62,8 @@ $(document).ready(function() {
 
     $('#autoScroll').change(function() {
         if(this.checked) {
-			setInterval('frames[0].scrollTo(0,9999999)',1000)
+			console.log("On")
+			const scroll = setInterval('frames[0].scrollTo(0,9999999)',1000)
         }
         $('#autoScroll').val(this.checked);        
     });
