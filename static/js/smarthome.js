@@ -270,8 +270,7 @@ function getVersion() {
 	var url = "/api?type=command&param=getversion"
 	requestAPI(url).then(jsonData => {
 		var data = jsonData
-		console.log(data.version);
-		$('#dzga-version').html('23.3')
+		$('#dzga-version').html('23.5')
 		$('#dz-version').html(data.version)
 	});
 }
