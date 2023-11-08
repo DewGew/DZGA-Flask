@@ -55,17 +55,8 @@
 	  <label for="sslkey" class="form-label">Path to SSL key</label>
 	  <input type="text" class="form-control" id="sslkey" name="sslkey" value="{{ dbsettings.ssl_key }}">
 	</div>
-	<div id="armhome_div" class="col-md-12" {% if dbsettings.language == 'en' %}style="display: none;"{% endif %}>
-	<p id="label_armlevel"></p>
-	  <label for="armhome" class="form-label">Armhome</label>
-	  <input type="text" class="form-control" id="armhome" name="armhome" value="{{ dbsettings.armlevels['armhome'] }}">
-	</div>
-	<div id="armaway_div" class="col-md-12" {% if dbsettings.language == 'en' %}style="display: none;"{% endif %}>
-	  <label for="armaway" class="form-label">Armaway</label>
-	  <input type="text" class="form-control" id="armaway" name="armaway" value="{{ dbsettings.armlevels['armaway']}}">
-	</div>
 	<div class="text-center">
-	  <button type="submit" name="submit" value="save_server_settings" class="btn btn-primary">Submit</button>
+	  <button type="submit" name="submit" value="save_server_settings" class="btn btn-primary">Save changes</button>
 	  <button type="reset" class="btn btn-secondary">Reset</button>
 	</div>
 
