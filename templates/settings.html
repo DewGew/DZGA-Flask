@@ -80,7 +80,7 @@
 						  <input type="text" class="form-control" id="token" name="authtoken" value="{{ user.authtoken }}" disabled readonly>
 						</div>
 						<div class="text-center">
-						  <button type="submit" name="submit" value="save_user_settings" class="btn btn-primary">Submit</button>
+						  <button type="submit" name="submit" value="save_user_settings" class="btn btn-primary">Save changes</button>
 						  <button type="reset" class="btn btn-secondary">Reset</button>
 						</div>
 					  </form>
@@ -125,11 +125,6 @@ $(".togglePassword").click(function (e) {
 	  $(this).parent().parent().find(".password").attr("type","password");
 	}
 });
-{% if user.admin %}
-	var text = $("#language").find(":selected").text();
-
-	$("#label_armlevel").append("<i>Armlevels in <b>" + text.toLowerCase() + "</b>. Adds levels like this <code>['home','armed home']</code></i>")
-{% endif %}
 
 getUser("{{ user.domouser }}")
 
