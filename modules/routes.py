@@ -36,17 +36,35 @@ def dashboard():
 
 @login_required
 def devices():
+    
     reportstate = report_state.enable_report_state()
     dbsettings = Settings.query.get_or_404(1)
     devices = get_devices(current_user.username)
+    
+    if request.method == "POST":
 
-    return render_template('devices.html',
-                           user=User.query.filter_by(username=current_user.username).first(),
-                           dbsettings=dbsettings,
-                           reportstate=reportstate,
-                           devices=devices,
-                           _csrf_token=session['_csrf_token']
-                           )
+        dbuser = User.query.filter_by(username=current_user.username).first()
+        
+        if request.form['submit'] == 'device_settings':
+            armedhome = request.form.get('armedhome')
+            armedaway = request.form.get('armedaway')
+            if (armedhome is not None) or (armedaway is not None):
+                dbsettings.armlevels.update({'armhome': armedhome, 'armaway': armedaway})
+            
+                db.session.add(dbsettings)
+                db.session.commit()
+            
+        return redirect(url_for('devices'))
+            
+    if request.method == "GET":
+
+        return render_template('devices.html',
+                               user=User.query.filter_by(username=current_user.username).first(),
+                               dbsettings=dbsettings,
+                               reportstate=reportstate,
+                               devices=devices,
+                               _csrf_token=session['_csrf_token']
+                               )
 
 
 @login_required
@@ -78,7 +96,7 @@ def settings():
 
         dbuser = User.query.filter_by(username=current_user.username).first()
         dbsettings = Settings.query.get_or_404(1)
-
+        
         if request.form['submit'] == 'save_user_settings':
             dbuser.domo_url = request.form.get('domourl')
             dbuser.domouser = request.form.get('domouser')
@@ -100,10 +118,6 @@ def settings():
             dbsettings.use_ssl = (request.form.get('ssl') == 'true')
             dbsettings.ssl_cert = request.form.get('sslcert')
             dbsettings.ssl_key = request.form.get('sslkey')
-            armhome = request.form.get('armhome')
-            armaway = request.form.get('armaway')
-
-            dbsettings.armlevels.update({'armhome': armhome, 'armaway': armaway})
 
             db.session.add(dbsettings)
             db.session.commit()
