@@ -59,7 +59,7 @@ with app.app_context():
                     domouser='domoticz',
                     domopass='password',
                     admin=True,
-                    googleassistant=True,
+                    googleassistant=False,
                     authtoken=generateToken(username),
                     device_config={}
                     )
