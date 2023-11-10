@@ -9,7 +9,7 @@ async function requestAPI(url){
 		}
 	})
 	const data = await response.json();
-	
+
 	if (data.message == 'WRONG CODE'){alert('WRONG CODE')};
 	if (response.status !== 200 || data.message == 'WRONG CODE') throw Error(data.message);	
 		return data;	
@@ -261,7 +261,9 @@ function getUser(user) {
 	var url = "/api?type=command&param=getusers"
 	requestAPI(url).then(jsonData => {
 		var data = jsonData
-		if (data['status'] != 'ERR') {
+		if (data.status == 'ERR' || data.status == null) {
+			$('#domoticzAdmin').val('No')
+		} else {
 			$('#domoticzAdmin').val('Yes')
 		}			
 	});
