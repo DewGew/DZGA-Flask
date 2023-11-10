@@ -32,6 +32,17 @@ def AogGetDomain(device):
         return None
     return None
 
+
+def getDesc(user_id, state):
+    user = User.query.filter_by(username=user_id).first()
+    
+    if state.id in user.device_config:
+        desc = user.device_config[state.id]
+        return desc
+    else:
+        return None
+        
+
 # Get additional settings from domoticz description in <voicecontrol> </voicecontrol>tags
 def getDeviceConfig(descstr):
     ISLIST = ['nicknames']
@@ -60,6 +71,7 @@ def getDeviceConfig(descstr):
         except:
             logger.error('Error parsing device configuration from Domoticz device description:', rawconfig[0])
             return None
+            
         return cfgdict
     return None
     
@@ -80,7 +92,7 @@ def getAog(device, user_id=None):
     aog.id = domain + "_" + device.get('idx')
     aog.name = {
         'name' : device.get('Name').replace(" ","_"),
-        'nicknames': [device.get('Name')]
+        'nicknames': []
         }
     if device.get('Type') in ['Light/Switch', 'Color Switch', 'Lighting 1', 'Lighting 2', 'Lighting 5', 'RFY', 'Value']:
         aog.type = 'action.devices.types.LIGHT'     
@@ -92,6 +104,7 @@ def getAog(device, user_id=None):
         aog.type = 'action.devices.types.FAN'
     if device.get('Image') == 'Heating':
         aog.type = 'action.devices.types.HEATER'
+    aog.customData['dzTags'] = False
     
     """ Get additional settings from domoticz description
      <voicecontrol>
@@ -108,7 +121,16 @@ def getAog(device, user_id=None):
         (supports levelnames: 'off', 'heat', 'cool', 'auto', 'fan-only', 'purifier', 'eco', 'dry')
     </voicecontrol>
    """
-    desc = getDeviceConfig(device.get("Description"))   
+
+    # Try to get device specific voice control configuration from Domoticz
+    desc = getDesc(user_id, aog)
+    if desc is None:
+        desc = getDeviceConfig(device.get("Description"))
+        if desc is not None:
+            logger.info('<voicecontrol> tags found for idx %s in domoticz description.', aog.id)
+            aog.customData['dzTags'] = True
+
+    
     if desc is not None:
         n = desc.get('nicknames', None)
         if n is not None:
@@ -152,7 +174,7 @@ def getAog(device, user_id=None):
     aog.customData['idx'] = device.get('idx')
     aog.customData['domain'] = domain
     aog.customData['protected'] = device.get('Protected')
-    aog.notificationSupportedByAgent = (True if domain in ['SmokeDetector', 'Doorbell'] else False)
+    aog.notificationSupportedByAgent = (True if domain in ['SmokeDetector', 'Doorbell', 'DoorLock'] else False)
        
     if domain == 'Scene':
         aog.type = 'action.devices.types.SCENE'
@@ -353,7 +375,7 @@ def queryDomoticz(username, url):
         auth=domoCredits, timeout=5.00)
     except:
         return "{}"
-        
+
     return r.text
 
 def getDomoticzDevices(user_id):

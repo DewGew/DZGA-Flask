@@ -4,31 +4,6 @@
 
 {% include 'sidebar.html' %}
 
-<style>
-.icon {
-	border: transparent;
-	border-radius: 15px;
-	box-shadow: 0px 0 30px rgba(1, 41, 112, 0.1);
-}
-.click {
-	cursor: pointer;
-  }
-.icon:hover {
-	background: #f6f9ff;
-}
-.input-group button {
-	border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-}
-
-.form-control[type="color"]{
-	display: inline-block;
-	padding: 0.10rem;
-}
-
-</style>
-
-
   <main id="main" class="main">
 
     <div class="pagetitle">
@@ -482,7 +457,7 @@ $('#title_security').hide()
 	{% elif v['customData']['domain'] in ['Selector', 'Selector_Hidden'] %}
 		updateSelectors_block.push("{{ v['customData']['idx'] }}")
 		$('#title_switches').show()
-	{% elif  v['customData']['domain'] in ('Thermostat', 'Setpoint', 'Temp', 'Temp_Hidden', 'TempHumidity', 'TempHumidity_Hidden', 'TempHumidityBaro', 'TempHumidityBaro_Hidden') %}
+	{% elif  v['customData']['domain'] in ('Thermostat', 'Setpoint', 'Temp', 'Temp_Hidden', 'TempHumidity', 'TempHumidityBaro') %}
 		updateTemp_block.push("{{ v['customData']['idx'] }}")
 		$('#title_temps').show()
 	{% elif v['customData']['domain'] in ('Security', 'SmokeDetector') %}

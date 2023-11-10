@@ -76,61 +76,67 @@
 									</div>
 									<div class="modal-body" >
 									<div class="row mb-10">
-									<form> <!-- move? -->
+									<form method="post">
 									<label class="col-sm-4 col-form-label"></label>
-									  <div class="col-sm-10">
+									  <div class="col-sm-12">
+										{% if v['customData']['dzTags'] %}
+										  <div class="alert border-warning fade show text-center" role="alert">
+											Found voicecontrol tags in device description!
+										  </div>
+										{% endif %}
+										<input type="text" class="form-control" name="device_id" value="{{ k }}" hidden>
 										<div class="form-check form-switch">
-										  <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" {% if 'Hidden' in v['customData']['domain'] %}checked{% endif %}>
-										  <label class="form-check-label" for="flexSwitchCheckChecked">hiddenDevice</label>
+										  <input class="form-check-input" type="checkbox" id="hideDevice" name="hideDevice" {% if 'Hidden' in v['customData']['domain'] %}checked{% endif %}>
+										  <label class="form-check-label" for="hideDevice">Hide Device</label>
 										</div>
 										<div class="form-check form-switch">
-										  <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" {% if v['willReportState'] == True %}checked{% endif %}{% if 'Hidden' in v['customData']['domain'] %} disabled{% endif %}>
-										  <label class="form-check-label" for="flexSwitchCheckDefault">willReportState</label>
+										  <input class="form-check-input" type="checkbox" id="willReportState" name="willReportState" {% if v['willReportState'] == True %}checked{% endif %}>
+										  <label class="form-check-label" for="willReportState">Report State</label>
 										</div>
 										<div class="form-check form-switch">
-										  <input class="form-check-input" type="checkbox" id="flexSwitchCheckCheckedDisabled" {% if v['notificationSupportedByAgent'] == True %}checked{% endif %}{% if 'Hidden' in v['customData']['domain'] %} disabled{% endif %}>
-										  <label class="form-check-label" for="flexSwitchCheckCheckedDisabled">notificationSupportedByAgent</label>
+										  <input class="form-check-input" type="checkbox" id="flexSwitchCheckCheckedDisabled" {% if v['notificationSupportedByAgent'] == True %}checked {% endif %} disabled>
+										  <label class="form-check-label" for="flexSwitchCheckCheckedDisabled">Notification Supported By Agent</label>
 										</div>
 										<div class="form-check form-switch">
 										  <input class="form-check-input" type="checkbox" id="secondaryUserVerificationCheck_{{ v['id'] }}" {% if ('acknowledge' in v['customData'] or v['customData']['protected'] == True) %}checked{% endif %}{% if 'Hidden' in v['customData']['domain'] %} disabled{% endif %}>
-										  <label class="form-check-label" for="secondaryUserVerificationCheck_{{ v['id'] }}">secondaryUserVerification</label>
+										  <label class="form-check-label" for="secondaryUserVerificationCheck_{{ v['id'] }}">Secondary User Verification</label>
 										</div>
 										<div id="radioButtons_{{ v['id'] }}">
 										<fieldset class="row mb-3" >
 										  <legend class="col-form-label col-sm-1 pt-0"></legend>
 										  <div class="col-sm-10">
 											<div class="form-check">
-											  <input class="form-check-input" type="radio" name="gridRadios1" id="gridRadios1" value="ackNeeded" {% if ('acknowledge' in v['customData'] and v['customData']['protected'] != True) %}checked{% endif %}{% if 'Hidden' in v['customData']['domain'] %} disabled{% endif %}>
-											  <label class="form-check-label" for="gridRadios1">
-												ackNeeded
+											  <input class="form-check-input" type="radio" name="2FA" id="ackNeeded" value="ackNeeded" {% if ('acknowledge' in v['customData'] and v['customData']['protected'] != True) %}checked{% endif %}{% if ('Hidden' in v['customData']['domain'] or v['customData']['protected'] == True) %} disabled{% endif %}>
+											  <label class="form-check-label" for="ackNeeded">
+												Acknowledge Needed
 											  </label>
 											</div>
 											<div class="form-check">
-											  <input class="form-check-input" type="radio" name="gridRadios2" id="gridRadios2" value="pinNeeded" {% if v['customData']['protected'] == True %}checked{% endif %}{% if 'Hidden' in v['customData']['domain'] %} disabled{% endif %}>
-											  <label class="form-check-label" for="gridRadios2">
-												pinNeeded
-											  </label>
+											  <input class="form-check-input" type="radio" name="2FA" id="pinNeeded" value="pinNeeded" {% if v['customData']['protected'] == True %}checked{% endif %}{% if ('Hidden' in v['customData']['domain'] or v['customData']['protected'] != True) %} disabled{% endif %}>
+											  <label class="form-check-label" for="pinNeeded">
+												Pincode Needed 
+											  </label> <i>(Set device as protected in Domoticz)</i>
 											</div>
 										  </div>
 										</fieldset>
 										</div>
 										{% if 'Hidden' not in v['customData']['domain'] %}
 										<div class="row mb-3">
-										  <label for="inputText" class="col-sm-3 col-form-label">roomHint</label>
+										  <label for="inputText" class="col-sm-3 col-form-label">Room Hint</label>
 										  <div class="col-sm-2">
-											<input type="text" class="form-control" value="{{ v['roomHint'] }}">
+											<input type="text" class="form-control" name="room" value="{{ v['roomHint'] }}">
 										  </div>
 										</div>
 										<div class="row mb-3">
-										  <label for="inputText" class="col-sm-3 col-form-label">nicknames</label>
+										  <label for="nicknames" class="col-sm-3 col-form-label">Nicknames</label>
 										  <div class="col-sm-6">
-											<input type="text" class="form-control" value="{% for n in v['name']['nicknames'] %}{{ n }}, {% endfor %}">
+											<input type="text" class="form-control" name="nicknames" value="{% for n in v['name']['nicknames'] %}{{ n }}, {% endfor %}">
 										  </div>
 										</div>
 										<div class="row mb-3">
-										  <label for="inputText" class="col-sm-3 col-form-label">devicetype</label>
+										  <label for="inputText" class="col-sm-3 col-form-label">Device Type</label>
 										  <div class="col-sm-6"> 
-											  <select id="devicetype" class="form-select" {% if v['customData']['domain'] != 'OnOff' %}disabled{% endif %}>
+											  <select id="devicetype" name="devicetype" class="form-select" {% if v['customData']['domain'] != 'OnOff' %}disabled{% endif %}>
 											  {% if v['customData']['domain'] == 'Security' %}
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'securitysystem' %} selected {% endif %} value="securitysystem" >Securitysystem</option>
 											  {% endif %}
@@ -140,6 +146,7 @@
 											  {% if (v['customData']['domain'] in ['Thermostat', 'Setpoint']) %}
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'thermostat' %}selected {% endif %} value="thermostat">Thermostat</option>
 											  {% endif %}
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'default' %}selected {% endif %} value="default">Set default type</option>
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'light' %}selected {% endif %} value="light">Light</option>
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'switch' %}selected {% endif %} value="switch">Switch</option>
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'outlet' %}selected {% endif %} value="outlet">Outlet</option>
@@ -162,63 +169,86 @@
 										</div>
 										 {% if (v['customData']['domain'] in ['Thermostat', 'Setpoint']) %}
 										<div class="row mb-3">
-										  <label for="inputText" class="col-sm-3 col-form-label">minThreehold</label>
+										  <label for="inputText" class="col-sm-3 col-form-label">Min Threehold</label>
 										  <div class="col-sm-2">
-											<input type="number" class="form-control" value="{{ v['attributes']['thermostatTemperatureRange']['minThresholdCelsius'] }}">
+											<input type="number" class="form-control" name="minThreehold" value="{{ v['attributes']['thermostatTemperatureRange']['minThresholdCelsius'] }}">
 										  </div>
 										</div>
 										<div class="row mb-3">
-										  <label for="inputText" class="col-sm-3 col-form-label">maxThreehold</label>
+										  <label for="inputText" class="col-sm-3 col-form-label">Max Threehold</label>
 										  <div class="col-sm-2">
-											<input type="number" class="form-control" value="{{ v['attributes']['thermostatTemperatureRange']['maxThresholdCelsius'] }}">
+											<input type="number" class="form-control" name="maxThreehold" value="{{ v['attributes']['thermostatTemperatureRange']['maxThresholdCelsius'] }}">
 										  </div>
 										</div>
 									  {% endif %}
 									  {% if (v['customData']['domain'] in ['Doorbell', 'Camera'] and 'camurl' in v['customData']) %}
 										<div class="row mb-3">
-										  <label for="inputText" class="col-sm-3 col-form-label">camurl</label>
+										  <label for="inputText" class="col-sm-3 col-form-label">Camera Url</label>
 										  <div class="col-sm-10">
-											<input type="text" class="form-control" value="{{ v['customData']['camurl'] }}">
+											<input type="text" class="form-control" name="camurl" value="{{ v['customData']['camurl'] }}">
 										  </div>
 										</div>
 									  {% endif %}
-									  {% if (v['customData']['domain'] in ['Thermostat', 'Setpoint'] and 'actual_temp_idx' in v['customData']) %}
+									  {% if v['customData']['domain'] in ['Thermostat', 'Setpoint'] %}
 									   <div class="row mb-3">
-										  <label for="inputText" class="col-sm-3 col-form-label">actual_temp_idx</label>
-										  <div class="col-sm-2">
-											<input type="number" class="form-control" value="{{ v['customData']['actual_temp_idx'] }}">
+										  <label for="inputText" class="col-sm-3 col-form-label">Get actual temp</label>
+										  <div class="col-sm-4">
+											<select id="actual_temp_idx" name="actual_temp_idx" class="form-select">
+											   <option value="" {% if v['customData']['actual_temp_idx'] == None %}selected{% endif %} >None</option>
+											   {% for n, p in devices.items() %}
+													{% if 'Temp' in n %}
+													<option value="{{ p['customData']['idx'] }}" {% if v['customData']['actual_temp_idx'] == p['customData']['idx'] %}selected{% endif %}>{{ p['name']['name'].replace('_',' ') }}, idx: {{ p['customData']['idx'] }}</option>
+													{% endif %}
+												{% endfor %}
+											</select>
+										  </div>
+										  <div class="col-sm-5">
+										  <small>Get temperature from another device</small>
 										  </div>
 										</div>
 									  {% endif %}
-									  {% if (v['customData']['domain'] in ['Thermostat', 'Setpoint'] and 'selector_modes_idx' in v['customData']) %}
-										<div class="row mb-3">
-										  <label for="inputText" class="col-sm-3 col-form-label">selector_modes_idx</label>
-										  <div class="col-sm-2">
-											<input type="number" class="form-control" value="{{ v['customData']['selector_modes_idx'] }}">
+									  {% if v['customData']['domain'] in ['Thermostat', 'Setpoint'] %}
+										<div class="row mb-12">
+										  <label for="inputText" class="col-sm-3 col-form-label">Get modes</label>
+										  <div class="col-sm-4">
+											<select id="actual_temp_idx" name="actual_temp_idx" class="form-select">
+											   <option value="" {% if v['customData']['actual_temp_idx'] == None %}selected{% endif %} >None</option>
+											   {% for n, p in devices.items() %}
+													{% if 'Selector' in n %}
+													<option value="{{ p['customData']['idx'] }}" {% if v['customData']['selector_modes_idx'] == p['customData']['idx'] %}selected{% endif %}>{{ p['name']['name'].replace('_',' ') }}, idx: {{ p['customData']['idx'] }}</option>
+													{% endif %}
+												{% endfor %}
+											</select>
 										  </div>
-										</div>
+										  <div class="col-sm-5">
+										  <small>Get thermostat modes from another device. Supports levelnames: 'off', 'heat', 'cool', 'auto', 'fan-only', 'purifier', 'eco', 'dry'</small>
+										  </div>
+										  </div>
 									  {% endif %}
 									  {% endif %}
-									   {% if v['customData']['domain'] == 'Security' %}
+									   {% if (v['customData']['domain'] == 'Security' and user.admin) %}
 									   <div class="row mb-3" {% if dbsettings.language == 'en' %}style="display: none;"{% endif %}>
 									  	<div id="armhome_div" class="col-md-12">
-										  <label for="armhome" class="col-sm-10 col-form-label" id="label_armhome">Armhome</label>
-										  <input type="text" class="form-control" id="armhome" value="{% for n in dbsettings.armlevels['armhome'] %}{{ n }}, {% endfor %}">
+										  <label for="armedhome" class="col-sm-10 col-form-label" id="label_armhome">Armhome</label>
+										  <input type="text" class="form-control" id="armedhome" name="armedhome" value="{% for x in dbsettings.armlevels['armhome'] %}{{ x }}, {% endfor %}">
 										</div>
 										<div id="armaway_div" class="col-md-12">
-										  <label for="armaway" class="col-sm-10 col-form-label" id="label_armaway">Armaway</label>
-										  <input type="text" class="form-control" id="armaway" value="{% for n in dbsettings.armlevels['armaway'] %}{{ n }}, {% endfor %}">
+										  <label for="armedaway" class="col-sm-10 col-form-label" id="label_armaway">Armaway</label>
+										  <input type="text" class="form-control" id="armedaway" name="armedaway" value="{% for x in dbsettings.armlevels['armaway'] %}{{ x }}, {% endfor %}">
 										</div>
 										</div>
 										{% endif %}
+										<div class="row mb-3">
+										  <small class="text-center text-info">Sync devices after saving for the changes to take effect</small>
 										</div>
-										</form> <!-- move? -->
+										</div>
 										</div>
 									
-									<div class="modal-footer">
-									  <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-									  <button class="btn btn-primary" >Save changes</button>
-									</div>
+										<div class="modal-footer">
+										  <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+										  <button type="submit" name="submit" value="device_settings" class="btn btn-primary">Save changes</button>
+										</div>
+									</form>
 								  </div>
 								</div>
 							  </div><!-- End Vertically centered Modal-->
@@ -290,8 +320,8 @@ var updateSelectors_block = [];
 
 {% if user.admin %}
 	var text = '{{ dbsettings.language }}';
-	var htext = "<i> in <b>" + text.toUpperCase() + "</b>. (Separate levelnames with comma)</i>"
-	var atext = "<i> in <b>" + text.toUpperCase() + "</b>.</i>"
+	var htext = " in <b>" + text.toUpperCase() + "</b>.<small> Add levels like this: <code>home, armed home</code></small>"
+	var atext = " in <b>" + text.toUpperCase() + "</b>.<small> Add levels like this: <code>away, armed away</code></small>"
 
 	$("#label_armhome").append(htext)
 	$("#label_armaway").append(atext)

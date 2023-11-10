@@ -3,6 +3,7 @@ from werkzeug.security import generate_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy_json import mutable_json_type
 from modules.helpers import logger, generateToken
+from modules.domoticz import saveJson
 
 app = Flask(__name__)
 
@@ -23,6 +24,7 @@ class User(db.Model):
     admin = db.Column(db.Boolean, default=False, nullable=False)
     googleassistant = db.Column(db.Boolean, default=False, nullable=False)
     authtoken = db.Column(db.String(100))
+    device_config = db.Column(mutable_json_type(dbtype=db.JSON, nested=True))
 
     def __repr__(self):
         return f"<User {self.id}>"
@@ -58,8 +60,9 @@ with app.app_context():
                     domouser='domoticz',
                     domopass='password',
                     admin=True,
-                    googleassistant=True,
+                    googleassistant=False,
                     authtoken=generateToken(username),
+                    device_config={}
                     )
     db.session.add(new_user)
 
@@ -90,6 +93,8 @@ with app.app_context():
     db.session.add(settings)
     try:
         db.session.commit()
+        data = {}
+        saveJson(username, data)
         logger.info("Database is created...")
     except Exception:
         logger.info('Database already created')

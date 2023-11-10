@@ -1,5 +1,6 @@
 import os
 import modules.config as config
+import json
 from time import sleep
 
 from flask_login import login_required, current_user
@@ -36,17 +37,131 @@ def dashboard():
 
 @login_required
 def devices():
+    
     reportstate = report_state.enable_report_state()
     dbsettings = Settings.query.get_or_404(1)
     devices = get_devices(current_user.username)
+    dbuser = User.query.filter_by(username=current_user.username).first()
+    
+    if request.method == "POST":
+    
+        deviceconfig = dbuser.device_config
+        
+        if request.form['submit'] == 'device_settings':
+            idx = request.form.get('device_id')
+            hideDevice = request.form.get('hideDevice')
+            willReportState = request.form.get('willReportState')
+            challenge = request.form.get('2FA')
+            room = request.form.get('room')
+            nicknames = request.form.get('nicknames')
+            devicetype = request.form.get('devicetype')
+            minThreehold = request.form.get('minThreehold')
+            maxThreehold = request.form.get('maxThreehold')
+            camurl = request.form.get('camurl')
+            actual_temp_idx = request.form.get('actual_temp_idx')
+            selector_modes_idx = request.form.get('selector_modes_idx')
+            
+            if idx not in deviceconfig.keys():
+                 deviceconfig[idx] = {}
+ 
+            if hideDevice == 'on':
+                deviceconfig[idx].update({'hide': True})
+            elif idx in deviceconfig.keys() and 'hide' in deviceconfig[idx]:
+                deviceconfig[idx].pop('hide')
 
-    return render_template('devices.html',
-                           user=User.query.filter_by(username=current_user.username).first(),
-                           dbsettings=dbsettings,
-                           reportstate=reportstate,
-                           devices=devices,
-                           _csrf_token=session['_csrf_token']
-                           )
+            if willReportState != 'on':
+                deviceconfig[idx].update({'report_state': False})
+            elif idx in deviceconfig.keys() and 'report_state' in deviceconfig[idx]:
+                deviceconfig[idx].pop('report_state')
+                
+            if challenge == 'ackNeeded':
+                deviceconfig[idx].update({'ack': True})
+            elif idx in deviceconfig.keys() and 'ack' in deviceconfig[idx]:
+                deviceconfig[idx].pop('ack')
+            
+            if room is not None:
+                if room != '':
+                    deviceconfig[idx].update({'room': room})
+                elif idx in deviceconfig.keys() and 'room' in deviceconfig[idx]:
+                    deviceconfig[idx].pop('room')
+                    
+            if nicknames is not None:
+                if nicknames != '':
+                    names = nicknames.split(", ")
+                    names = list(filter(None, names))
+                    deviceconfig[idx].update({'nicknames':names})
+                elif idx in deviceconfig.keys() and 'nicknames' in deviceconfig[idx]:
+                    deviceconfig[idx].pop('nicknames')
+                    
+            if devicetype is not None:
+                if devicetype != 'default':
+                    deviceconfig[idx].update({'devicetype': devicetype})
+                elif idx in deviceconfig.keys() and 'devicetype' in deviceconfig[idx]:
+                    deviceconfig[idx].pop('devicetype')
+
+            if minThreehold is not None:
+                if minThreehold != '':
+                    deviceconfig[idx].update({'minThreehold': int(minThreehold)})
+                elif idx in deviceconfig.keys() and 'minThreehold' in deviceconfig[idx]:
+                    deviceconfig[idx].pop('minThreehold')
+            
+            if maxThreehold is not None:
+                if maxThreehold != '':
+                    deviceconfig[idx].update({'maxThreehold': int(maxThreehold)})
+                elif idx in deviceconfig.keys() and 'maxThreehold' in deviceconfig[idx]:
+                    deviceconfig[idx].pop('maxThreehold')
+                    
+            if actual_temp_idx is not None:
+                if actual_temp_idx != '':
+                    deviceconfig[idx].update({'actual_temp_idx': actual_temp_idx})
+                elif idx in deviceconfig.keys() and 'actual_temp_idx' in deviceconfig[idx]:
+                    deviceconfig[idx].pop('actual_temp_idx')
+                    
+            if selector_modes_idx is not None:
+                if selector_modes_idx != '':
+                    deviceconfig[idx].update({'selector_modes_idx': selector_modes_idx})
+                elif idx in deviceconfig.keys() and 'selector_modes_idx' in deviceconfig[idx]:
+                    deviceconfig[idx].pop('selector_modes_idx')
+                    
+            if camurl is not None:
+                if camurl != '':
+                    deviceconfig[idx].update({'camurl': camurl})
+                elif idx in deviceconfig.keys() and 'camurl' in deviceconfig[idx]:
+                    deviceconfig[idx].pop('camurl')
+                    
+            if deviceconfig[idx] == {}:
+                deviceconfig.pop(idx)
+            
+            dbuser.device_config.update(deviceconfig)
+            db.session.add(dbuser)
+            db.session.commit()            
+            
+            armedhome = request.form.get('armedhome')
+            armedaway = request.form.get('armedaway')
+            if (armedhome is not None) or (armedaway is not None):
+                armedhome = armedhome.split(", ")
+                armedaway = armedaway.split(", ")
+                armhome = list(filter(None, armedhome))
+                armaway = list(filter(None, armedaway))
+                dbsettings.armlevels.update({'armhome': armhome, 'armaway': armaway})
+            
+                db.session.add(dbsettings)
+                db.session.commit()
+        
+        logger.info("Device settings saved")
+        
+        return redirect(url_for('devices'))
+            
+    if request.method == "GET":
+
+
+        return render_template('devices.html',
+                               user=dbuser,
+                               dbsettings=dbsettings,
+                               reportstate=reportstate,
+                               devices=devices,
+                               _csrf_token=session['_csrf_token']
+                               )
 
 
 @login_required
@@ -78,7 +193,7 @@ def settings():
 
         dbuser = User.query.filter_by(username=current_user.username).first()
         dbsettings = Settings.query.get_or_404(1)
-
+        
         if request.form['submit'] == 'save_user_settings':
             dbuser.domo_url = request.form.get('domourl')
             dbuser.domouser = request.form.get('domouser')
@@ -100,10 +215,6 @@ def settings():
             dbsettings.use_ssl = (request.form.get('ssl') == 'true')
             dbsettings.ssl_cert = request.form.get('sslcert')
             dbsettings.ssl_key = request.form.get('sslkey')
-            armhome = request.form.get('armhome')
-            armaway = request.form.get('armaway')
-
-            dbsettings.armlevels.update({'armhome': armhome, 'armaway': armaway})
 
             db.session.add(dbsettings)
             db.session.commit()
@@ -122,8 +233,8 @@ def settings():
                 return redirect(url_for('settings'))
 
             add_new_user = User(email=newemail, username=newuser, password=newpass,
-                                roomplan='0', domo_url='http://192.168.1.13:8080', domouser='domoticz', domopass='password',
-                                admin=newadmin, googleassistant=newgoogleassistant, authtoken=generateToken(newuser))
+                                roomplan='0', domo_url='http://192.168.1.99:8080', domouser='domoticz', domopass='password',
+                                admin=newadmin, googleassistant=newgoogleassistant, authtoken=generateToken(newuser), device_config={})
 
             db.session.add(add_new_user)
             db.session.commit()
