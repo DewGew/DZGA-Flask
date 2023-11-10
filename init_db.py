@@ -23,6 +23,7 @@ class User(db.Model):
     admin = db.Column(db.Boolean, default=False, nullable=False)
     googleassistant = db.Column(db.Boolean, default=False, nullable=False)
     authtoken = db.Column(db.String(100))
+    device_config = db.Column(mutable_json_type(dbtype=db.JSON, nested=True))
 
     def __repr__(self):
         return f"<User {self.id}>"
@@ -60,6 +61,7 @@ with app.app_context():
                     admin=True,
                     googleassistant=True,
                     authtoken=generateToken(username),
+                    device_config={}
                     )
     db.session.add(new_user)
 
