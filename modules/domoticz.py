@@ -91,7 +91,7 @@ def getAog(device, user_id=None):
     aog = AogState()
     aog.id = domain + "_" + device.get('idx')
     aog.name = {
-        'name' : device.get('Name').replace(" ","_"),
+        'name' : device.get('Name'),
         'nicknames': []
         }
     if device.get('Type') in ['Light/Switch', 'Color Switch', 'Lighting 1', 'Lighting 2', 'Lighting 5', 'RFY', 'Value']:
