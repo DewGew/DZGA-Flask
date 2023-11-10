@@ -154,7 +154,7 @@ def index():
 
 
 # OAuth entry point
-@app.route('/auth', methods=['GET', 'POST'])
+@app.route('/oauth', methods=['GET', 'POST'])
 def auth():
     global last_code, last_code_user, last_code_time
     dbsettings = Settings.query.get_or_404(1)
