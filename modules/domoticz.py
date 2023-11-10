@@ -329,7 +329,7 @@ def getAog(device, user_id=None):
         aog.attributes = {"occupancySensorConfiguration": [{
                             "occupancySensorType": "PIR",
                             }]}
-    if domain == 'DoorContact':
+    if domain in ['DoorContact', 'Contact']:
         aog.type = 'action.devices.types.SENSOR'
         aog.traits.append('action.devices.traits.OpenClose')
         aog.attributes = {'discreteOnlyOpenClose': True,
