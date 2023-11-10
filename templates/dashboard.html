@@ -457,7 +457,7 @@ $('#title_security').hide()
 	{% elif v['customData']['domain'] in ['Selector', 'Selector_Hidden'] %}
 		updateSelectors_block.push("{{ v['customData']['idx'] }}")
 		$('#title_switches').show()
-	{% elif  v['customData']['domain'] in ('Thermostat', 'Setpoint', 'Temp', 'Temp_Hidden', 'TempHumidity', 'TempHumidity_Hidden', 'TempHumidityBaro', 'TempHumidityBaro_Hidden') %}
+	{% elif  v['customData']['domain'] in ('Thermostat', 'Setpoint', 'Temp', 'Temp_Hidden', 'TempHumidity', 'TempHumidityBaro') %}
 		updateTemp_block.push("{{ v['customData']['idx'] }}")
 		$('#title_temps').show()
 	{% elif v['customData']['domain'] in ('Security', 'SmokeDetector') %}
