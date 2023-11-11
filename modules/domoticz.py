@@ -41,7 +41,7 @@ def getDesc(user_id, state):
         return desc
     else:
         return None
-        
+
 
 # Get additional settings from domoticz description in <voicecontrol> </voicecontrol>tags
 def getDeviceConfig(descstr):
@@ -71,10 +71,11 @@ def getDeviceConfig(descstr):
         except:
             logger.error('Error parsing device configuration from Domoticz device description:', rawconfig[0])
             return None
-            
+
         return cfgdict
     return None
-    
+
+
 def getAog(device, user_id=None):
     
     dbsettings = Settings.query.get_or_404(1)
@@ -170,6 +171,9 @@ def getAog(device, user_id=None):
         hide = desc.get('hide', False)
         if hide:
             domain = domain +'_Hidden'
+        # notification = desc.get('notification', False)
+        # if notification:
+            # aog.notificationSupportedByAgent = notification
             
     aog.customData['idx'] = device.get('idx')
     aog.customData['domain'] = domain
