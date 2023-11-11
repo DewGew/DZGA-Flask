@@ -37,21 +37,22 @@ def dashboard():
 
 @login_required
 def devices():
-    
+
     reportstate = report_state.enable_report_state()
     dbsettings = Settings.query.get_or_404(1)
     devices = get_devices(current_user.username)
     dbuser = User.query.filter_by(username=current_user.username).first()
-    
+
     if request.method == "POST":
-    
+
         deviceconfig = dbuser.device_config
-        
+
         if request.form['submit'] == 'device_settings':
             idx = request.form.get('device_id')
             hideDevice = request.form.get('hideDevice')
             willReportState = request.form.get('willReportState')
             challenge = request.form.get('2FA')
+            # notification = request.form.get('notification')
             room = request.form.get('room')
             nicknames = request.form.get('nicknames')
             devicetype = request.form.get('devicetype')
@@ -60,7 +61,7 @@ def devices():
             camurl = request.form.get('camurl')
             actual_temp_idx = request.form.get('actual_temp_idx')
             selector_modes_idx = request.form.get('selector_modes_idx')
-            
+
             if idx not in deviceconfig.keys():
                  deviceconfig[idx] = {}
  
@@ -73,18 +74,23 @@ def devices():
                 deviceconfig[idx].update({'report_state': False})
             elif idx in deviceconfig.keys() and 'report_state' in deviceconfig[idx]:
                 deviceconfig[idx].pop('report_state')
-                
+
             if challenge == 'ackNeeded':
                 deviceconfig[idx].update({'ack': True})
             elif idx in deviceconfig.keys() and 'ack' in deviceconfig[idx]:
                 deviceconfig[idx].pop('ack')
-            
+                
+            # if notification == 'on':
+                # deviceconfig[idx].update({'notification': True})
+            # elif idx in deviceconfig.keys() and 'notification' in deviceconfig[idx]:
+                # deviceconfig[idx].pop('notification')
+
             if room is not None:
                 if room != '':
                     deviceconfig[idx].update({'room': room})
                 elif idx in deviceconfig.keys() and 'room' in deviceconfig[idx]:
                     deviceconfig[idx].pop('room')
-                    
+ 
             if nicknames is not None:
                 if nicknames != '':
                     names = nicknames.split(", ")
@@ -92,7 +98,7 @@ def devices():
                     deviceconfig[idx].update({'nicknames':names})
                 elif idx in deviceconfig.keys() and 'nicknames' in deviceconfig[idx]:
                     deviceconfig[idx].pop('nicknames')
-                    
+
             if devicetype is not None:
                 if devicetype != 'default':
                     deviceconfig[idx].update({'devicetype': devicetype})
@@ -104,38 +110,38 @@ def devices():
                     deviceconfig[idx].update({'minThreehold': int(minThreehold)})
                 elif idx in deviceconfig.keys() and 'minThreehold' in deviceconfig[idx]:
                     deviceconfig[idx].pop('minThreehold')
-            
+
             if maxThreehold is not None:
                 if maxThreehold != '':
                     deviceconfig[idx].update({'maxThreehold': int(maxThreehold)})
                 elif idx in deviceconfig.keys() and 'maxThreehold' in deviceconfig[idx]:
                     deviceconfig[idx].pop('maxThreehold')
-                    
+
             if actual_temp_idx is not None:
                 if actual_temp_idx != '':
                     deviceconfig[idx].update({'actual_temp_idx': actual_temp_idx})
                 elif idx in deviceconfig.keys() and 'actual_temp_idx' in deviceconfig[idx]:
                     deviceconfig[idx].pop('actual_temp_idx')
-                    
+
             if selector_modes_idx is not None:
                 if selector_modes_idx != '':
                     deviceconfig[idx].update({'selector_modes_idx': selector_modes_idx})
                 elif idx in deviceconfig.keys() and 'selector_modes_idx' in deviceconfig[idx]:
                     deviceconfig[idx].pop('selector_modes_idx')
-                    
+
             if camurl is not None:
                 if camurl != '':
                     deviceconfig[idx].update({'camurl': camurl})
                 elif idx in deviceconfig.keys() and 'camurl' in deviceconfig[idx]:
                     deviceconfig[idx].pop('camurl')
-                    
+
             if deviceconfig[idx] == {}:
                 deviceconfig.pop(idx)
-            
+
             dbuser.device_config.update(deviceconfig)
             db.session.add(dbuser)
             db.session.commit()            
-            
+
             armedhome = request.form.get('armedhome')
             armedaway = request.form.get('armedaway')
             if (armedhome is not None) or (armedaway is not None):
@@ -144,16 +150,15 @@ def devices():
                 armhome = list(filter(None, armedhome))
                 armaway = list(filter(None, armedaway))
                 dbsettings.armlevels.update({'armhome': armhome, 'armaway': armaway})
-            
+
                 db.session.add(dbsettings)
                 db.session.commit()
-        
-        logger.info("Device settings saved")
-        
-        return redirect(url_for('devices'))
-            
-    if request.method == "GET":
 
+        logger.info("Device settings saved")
+
+        return redirect(url_for('devices'))
+
+    if request.method == "GET":
 
         return render_template('devices.html',
                                user=dbuser,
@@ -193,7 +198,7 @@ def settings():
 
         dbuser = User.query.filter_by(username=current_user.username).first()
         dbsettings = Settings.query.get_or_404(1)
-        
+
         if request.form['submit'] == 'save_user_settings':
             dbuser.domo_url = request.form.get('domourl')
             dbuser.domouser = request.form.get('domouser')
@@ -209,7 +214,9 @@ def settings():
 
             dbsettings.client_id = request.form.get('aogclient')
             dbsettings.client_secret = request.form.get('aogsecret')
-            dbsettings.api_key = request.form.get('aogapi')
+            api_key = request.form.get('aogapi')
+            if api_key is not None:
+                dbsettings.api_key = api_key
             dbsettings.tempunit = request.form.get('tempunit')
             dbsettings.language = request.form.get('language')
             dbsettings.use_ssl = (request.form.get('ssl') == 'true')
