@@ -58,11 +58,13 @@ def statereport(requestId, userID, states):
     """Send a state report to Google."""
 
     data = {}
+    if 'notifications' in states:
+        data['eventId'] = random_string(10)
     data['requestId'] = requestId
     data['agentUserId'] = userID
     data['payload'] = {}
     data['payload']['devices'] = {}
-    data['payload']['devices']['states'] = states
+    data['payload']['devices'] = states
 
     report_state.call_homegraph_api('state', data)
 
@@ -155,7 +157,7 @@ def index():
 
 # OAuth entry point
 @app.route('/oauth', methods=['GET', 'POST'])
-def auth():
+def oauth():
     global last_code, last_code_user, last_code_time
     dbsettings = Settings.query.get_or_404(1)
 
@@ -188,7 +190,8 @@ def auth():
 
         params = {'state': request.args['state'],
                   'code': last_code,
-                  'client_id': dbsettings.client_id}
+                  'client_id': dbsettings.client_id,
+                  'user_locale': 'sv-SE'}
         logger.info("generated code")
         return redirect(request.args["redirect_uri"] +
                         '?' + urllib.parse.urlencode(params))
@@ -240,43 +243,30 @@ def notification():
     if report_state.enable_report_state():
         event_id = random_string(10)
         request_id = random_string(20)
-        data = {'requestId': str(request_id),
-                'agentUserId': user_id,
-                'eventId': str(event_id),
-                'payload': {}}
+        
         try:
             message = request.get_json()
             device = get_device(user_id, message["id"])
             domain = device['customData']['domain']
         except Exception:
             return '{"title": "SendNotification", "status": "ERR"}'
+            
+        data = {'states':{},'notifications':{}}
+        
         # Send smokedetektor notification
         if domain == 'SmokeDetector':
-            data['payload'] = {'devices': {
-                            'states': {message["id"]: {
-                                'on': (
-                                    True if message["state"].lower() in ['on', 'alarm/fire !'] else False)}},
-                            'notifications': {message["id"]: {
-                                'SensorState': {
-                                    'priority': 0, 'name': 'SmokeLevel', 'currentSensorState': 'smoke detected'}}}
-                        }
-                    }
+            data['states'][message["id"]] = {"on": (True if message["state"].lower() in ['on', 'alarm/fire !'] else False)},
+            data['notifications'][message["id"]] = {'SensorState': {'priority': 0, 'name': 'SmokeLevel', 'currentSensorState': 'smoke detected'}}
 
         # Send smokedetektor notification
         elif domain == 'Doorbell':
-            data['payload'] = {'devices': {
-                            'states': {message["id"]: {
-                                'on': (
-                                    True if message["state"].lower() in ['on', 'pressed'] else False)}},
-                                'notifications': {message["id"]: {
-                                    "ObjectDetection": {
-                                        "objects": {"unfamiliar": 1}, 'priority': 0, 'detectionTimestamp': time()}}}
-                        }
-                    }
+            data['states'][message["id"]] = {"on":(True if message["state"].lower() in ['on', 'pressed'] else False)},
+            data['notifications'][message["id"]] = {"ObjectDetection": {"objects": {"unfamiliar": 1}, 'priority': 0, 'detectionTimestamp': time()}}
+                    
         else:
             return '{"title": "SendNotification", "status": "ERR"}'
 
-        report_state.call_homegraph_api('state', data)
+        statereport(request_id, user_id, data)
         return '{"title": "SendNotification", "status": "OK"}'
 
     return "Not found", 404
@@ -335,7 +325,9 @@ def fulfillment():
                 result['payload']['devices'][device_id] = query_method(custom_data, x, user_id)
             # ReportState
             if report_state.enable_report_state():
-                statereport(result['requestId'], user_id, result['payload']['devices'])
+                qdata={}
+                qdata['states'] = result['payload']['devices']
+                statereport(result['requestId'], user_id, qdata)
 
         """ Execute intent, need to execute some action """
         if intent == "action.devices.EXECUTE":
@@ -382,11 +374,20 @@ def fulfillment():
                             custom_data, command, params, user_id, challenge)
                         result['payload']['commands'].append(action_result)
                         action_result['ids'] = [device_id]
+
             # ReportState
             if report_state.enable_report_state() and action_result['status'] == 'SUCCESS':
-                data = {}
-                data[device_id] = action_result['states']
+                data = {'states':{}} 
+                data['states'][device_id] = action_result['states']
                 statereport(result['requestId'], user_id, data)
+                
+                # if "followUpToken" in params and 'DoorLock' in custom_data['domain']:
+                    # ndata = {'states':{},'notifications':{}}
+                    # ndata['states'][device_id] = action_result['states']
+                    # ndata['notifications'][device_id] = {'LockUnlock':{"priority": 0,"followUpResponse": {
+                                                # "status": "SUCCESS", "followUpToken": params["followUpToken"], "isLocked":params['lock']}}}
+                    # statereport(result['requestId'], user_id, data)
+
 
         """ Disconnect intent, need to revoke token """
         if intent == "action.devices.DISCONNECT":
