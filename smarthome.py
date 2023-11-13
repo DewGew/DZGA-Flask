@@ -50,6 +50,7 @@ last_code = None
 last_code_user = None
 last_code_time = None
 
+
 if not os.path.exists(os.path.join(config.DATABASE_DIRECTORY, 'db.sqlite')):
     os.system('python3 init_db.py')
 
@@ -110,7 +111,7 @@ def send_css(path):
 def send_js(path):
     return send_from_directory('static/js', path)
 
-
+@flask_login.login_required
 @app.route('/uploads/<path:path>')
 def send_uploads(path):
     return send_from_directory('uploads', path)
@@ -141,7 +142,7 @@ def login():
     generateCsrfToken()
     return redirect(url_for('dashboard'))
 
-
+@flask_login.login_required
 @app.route('/logout')
 def logout():
     flask_login.logout_user()
@@ -402,9 +403,13 @@ def fulfillment():
 
     return jsonify(result)
 
+  
+with app.app_context():
+    dbs = Settings.query.get_or_404(1)
+
 
 if __name__ == "__main__":
-    logger.info("Smarthome has started.")
+    logger.info("Smarthome server has started.")
     if not report_state.enable_report_state():
         logger.info('Upload the smart-home-key.json to %s folder', config.KEYFILE_DIRECTORY)
     app.add_url_rule('/dashboard', 'dashboard', routes.dashboard, methods=['GET', 'POST'])
@@ -414,9 +419,11 @@ if __name__ == "__main__":
     app.add_url_rule('/settings', 'settings', routes.settings, methods=['GET', 'POST'])
     app.add_url_rule('/api', 'api', api.gateway, methods=['POST'])
     app.add_url_rule('/uploader', 'uploader', routes.uploader, methods=['POST'])
-    app.run('0.0.0.0', port=8181, debug=True)  # Need to fix this!!
-    # if dbs.use_ssl:
-        # context = (dbs.ssl_cert, dbs.ssl_key)
-        # app.run('0.0.0.0', port=8181, debug=True, ssl_context=context)
-    # else:
-        # app.run('0.0.0.0', port=8181, debug=True)
+    context = (dbs.ssl_cert, dbs.ssl_key)
+    if dbs.use_ssl and os.path.exists(dbs.ssl_cert) and os.path.exists(dbs.ssl_key):
+        logger.info("Running with ssl")
+        context = (dbs.ssl_cert, dbs.ssl_key)
+        app.run('0.0.0.0', port=8181, debug=True, ssl_context=context)
+    else:
+        logger.info("Running without ssl")
+        app.run('0.0.0.0', port=8181, debug=True)

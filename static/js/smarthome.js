@@ -15,6 +15,15 @@ async function requestAPI(url){
 		return data;	
 }
 
+function restart(){
+	requestAPI("/api?custom=restart")
+	$("body").css("cursor", "wait");
+	setTimeout(function(){
+		location.reload();
+		$("body").css("cursor", "default");
+	}, 7000); // 3000 milliseconds = 3 seconds
+}
+
 function syncdevices(){
 	requestAPI("/api?custom=sync")
 	$("body").css("cursor", "progress");

@@ -95,7 +95,7 @@
 										</div>
 										<div class="form-check form-switch">
 										  <input class="form-check-input" type="checkbox" id="notification" name="notification" {% if v['notificationSupportedByAgent'] == True %}checked {% endif %} disabled>
-										  <label class="form-check-label" for="notification">Notification Supported</label> <small>(User can turn on or off notifications in Google Home App)</small>
+										  <label class="form-check-label" for="notification">Notification Supported</label>{% if v['notificationSupportedByAgent'] == True %} <small>(User can turn on or off notifications in Google Home App)</small>{% endif %}
 										</div>
 										<div class="form-check form-switch">
 										  <input class="form-check-input" type="checkbox" id="secondaryUserVerificationCheck_{{ v['id'] }}" {% if ('acknowledge' in v['customData'] or v['customData']['protected'] == True) %}checked{% endif %}{% if 'Hidden' in v['customData']['domain'] %} disabled{% endif %}>
@@ -122,7 +122,7 @@
 										</div>
 										{% if 'Hidden' not in v['customData']['domain'] %}
 										<div class="row mb-3">
-										  <label for="inputText" class="col-sm-3 col-form-label">Room Hint</label>
+										  <label for="inputText" class="col-sm-3 col-form-label">Room</label>
 										  <div class="col-sm-2">
 											<input type="text" class="form-control" name="room" value="{{ v['roomHint'] }}">
 										  </div>
@@ -130,7 +130,7 @@
 										<div class="row mb-3">
 										  <label for="nicknames" class="col-sm-3 col-form-label">Nicknames</label>
 										  <div class="col-sm-6">
-											<input type="text" class="form-control" name="nicknames" value="{% for n in v['name']['nicknames'] %}{{ n }}, {% endfor %}">
+											<input type="text" class="form-control" name="nicknames" value="{% for n in v['name']['nicknames'] %}{{ n }}, {% endfor %}"> <small>(Add like this: <code>Celinglamp, kitchen lamp</code>)</small>
 										  </div>
 										</div>
 										<div class="row mb-3">
@@ -239,11 +239,11 @@
 									  	<div id="armhome_div" class="col-md-12">
 										  <label for="armedhome" class="col-sm-10 col-form-label" id="label_armhome">Armhome</label>
 										  <input type="text" class="form-control" id="armedhome" name="armedhome" value="{% for x in dbsettings.armlevels['armhome'] %}{{ x }}, {% endfor %}">
-										</div>
+										</div><small>(Add levels like this: <code>home, armed home</code>)</small>
 										<div id="armaway_div" class="col-md-12">
 										  <label for="armedaway" class="col-sm-10 col-form-label" id="label_armaway">Armaway</label>
 										  <input type="text" class="form-control" id="armedaway" name="armedaway" value="{% for x in dbsettings.armlevels['armaway'] %}{{ x }}, {% endfor %}">
-										</div>
+										</div><small>(Add levels like this: <code>away, armed away</code>)</small>
 										</div>
 										{% endif %}
 										<div class="row mb-3">
@@ -328,8 +328,8 @@ var updateSelectors_block = [];
 
 {% if user.admin %}
 	var text = '{{ dbsettings.language }}';
-	var htext = " in <b>" + text.toUpperCase() + "</b>.<small> Add levels like this: <code>home, armed home</code></small>"
-	var atext = " in <b>" + text.toUpperCase() + "</b>.<small> Add levels like this: <code>away, armed away</code></small>"
+	var htext = " in <b>" + text.toUpperCase() + "</b>."
+	var atext = " in <b>" + text.toUpperCase() + "</b>."
 
 	$("#label_armhome").append(htext)
 	$("#label_armaway").append(atext)

@@ -46,6 +46,7 @@
 		<option {% if dbsettings.use_ssl is true %} selected {% endif %} value="true" >Enabled</option>
 		<option {% if dbsettings.use_ssl is false %} selected {% endif %}value="false">Disabled</option>
 	  </select>
+	  <small>Restart server for SSL changes to take effect</small>
 	</div>
 	<div id="pathcert" class="col-md-6" {% if dbsettings.use_ssl is false %}style="display: none;"{% endif %}>
 	  <label for="sslcert" class="form-label">Path to SSL Certificate</label>
