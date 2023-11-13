@@ -70,6 +70,11 @@ def gateway():
             flash("Devices synced with domoticz")
             return "Devices synced with domoticz", 200
             
+    if custom == "restart":
+    
+        logger.info('Restarts smarthome server')
+        os.execv(sys.executable, ['python'] + sys.argv)
+            
     elif custom == "setArmLevel":
         armLevel = request.args.get('armLevel', '')
         seccode = idx = request.args.get('seccode', '')
