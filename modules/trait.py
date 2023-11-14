@@ -66,7 +66,7 @@ def query(custom_data, device, user_id):
             response = {}
 
     if 'action.devices.traits.TemperatureSetting' in device['traits']:
-        if 'Thermostat' in domain:
+        if domain in ['Thermostat', 'Setpoint']:
             if 'actual_temp_idx' in custom_data:
                 actual_temp_idx = getDomoticzState(user_id, custom_data['actual_temp_idx'])
                 current_temp = float(actual_temp_idx['Temp'])
