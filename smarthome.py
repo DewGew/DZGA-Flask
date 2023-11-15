@@ -38,7 +38,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.json.sort_keys = False
 # Needed for use with reverse proxy
-app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1)
+app.wsgi_app = ProxyFix(
+  app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
+)
 # Init database
 db.init_app(app)
 
