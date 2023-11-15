@@ -105,6 +105,8 @@ def getAog(device, user_id=None):
         aog.type = 'action.devices.types.FAN'
     if device.get('Image') == 'Heating':
         aog.type = 'action.devices.types.HEATER'
+    if  domain in ['Thermostat', 'Setpoint']:
+        aog.type = 'action.devices.types.THERMOSTAT'
     aog.customData['dzTags'] = False
     
     """ Get additional settings from domoticz description
@@ -146,10 +148,7 @@ def getAog(device, user_id=None):
         if not repState:
             aog.willReportState = repState
         st = desc.get('devicetype', None)
-        if st is not None and st.lower() in [
-                'light', 'ac_unit', 'bathtub', 'coffeemaker', 'doorbell', 'dishwasher', 'dryer', 'fan', 'airfreshener', 'airpurifier', 'blender',
-                'heater', 'kettle', 'media', 'microwave', 'outlet', 'oven', 'speaker', 'switch', 'vacuum', 'boiler', 'cooktop', 'humidfier',
-                'washer', 'waterheater', 'window', 'door', 'gate', 'garage', 'radiator', 'shutter', 'TV' ]:
+        if st is not None and st.lower() in config.TYPES:
             aog.type = 'action.devices.types.'+ st.upper()
         if domain in ['Thermostat', 'Setpoint']:
             minT = desc.get('minThreehold', None)
@@ -226,7 +225,7 @@ def getAog(device, user_id=None):
                             }
                         ]
                     }
-    if domain in ['OnOff', 'Dimmer', 'PushOnButton']:
+    if domain in ['OnOff', 'Dimmer', 'PushOnButton', 'PushOffButton']:
         aog.traits.append('action.devices.traits.OnOff')
     if domain == 'Dimmer':
         aog.traits.append('action.devices.traits.Brightness')    
@@ -314,7 +313,6 @@ def getAog(device, user_id=None):
                          'availableThermostatModes': ['heat', 'cool'],
                         }
     if  domain in ['Thermostat', 'Setpoint']:
-        aog.type = 'action.devices.types.THERMOSTAT'
         aog.traits.append('action.devices.traits.TemperatureSetting')
         aog.attributes = {'thermostatTemperatureUnit': dbsettings.tempunit,
                 'thermostatTemperatureRange': { 
