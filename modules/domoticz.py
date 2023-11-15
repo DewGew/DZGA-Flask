@@ -48,7 +48,7 @@ def getDesc(user_id, device):
     user = User.query.filter_by(username=user_id).first()
     
     if device.id in user.device_config:
-        desc = user.device_config[state.id]
+        desc = user.device_config[device.id]
         return desc
     else:
         return None
