@@ -2,14 +2,14 @@ import os
 import io
 import json
 import time
-import logging
 import requests
 import google.auth.crypt
 import google.auth.jwt
 import modules.config as config
 
-from modules.database import db, Settings
+from modules.database import Settings
 from modules.helpers import logger
+
 
 class ReportState:
     """Google Report State implementation."""
@@ -77,10 +77,10 @@ class ReportState:
 
     @staticmethod
     def call_homegraph_api_key(payload):
-    
+
         dbsettings = Settings.query.get_or_404(1)
 
-        url = 'https://homegraph.googleapis.com/v1/devices:requestSync?key=' + dbsettings.client_id
+        url = 'https://homegraph.googleapis.com/v1/devices:requestSync?key=' + dbsettings.api_key
 
         r = requests.post(url, json=payload)
 
