@@ -381,7 +381,7 @@ def fulfillment():
 
             # ReportState
             if report_state.enable_report_state() and action_result['status'] == 'SUCCESS':
-                data = {'states': {}} 
+                data = {'states': {}}
                 data['states'][device_id] = action_result['states']
                 statereport(result['requestId'], user_id, data)
                 
@@ -391,7 +391,6 @@ def fulfillment():
                     # ndata['notifications'][device_id] = {'LockUnlock':{"priority": 0,"followUpResponse": {
                                                 # "status": "SUCCESS", "followUpToken": params["followUpToken"], "isLocked":params['lock']}}}
                     # statereport(result['requestId'], user_id, data)
-
 
         """ Disconnect intent, need to revoke token """
         if intent == "action.devices.DISCONNECT":
@@ -405,6 +404,7 @@ def fulfillment():
     logger.debug("response: \r\n%s", json.dumps(result, indent=4))
 
     return jsonify(result)
+
 
 with app.app_context():
     dbs = Settings.query.get_or_404(1)
@@ -428,4 +428,4 @@ if __name__ == "__main__":
         app.run('0.0.0.0', port=8181, debug=True, ssl_context=context)
     else:
         logger.info("Running without ssl")
-        app.run('0.0.0.0', port=8181, debug=True)
+        app.run('0.0.0.0', port=8181, threaded=True, debug=True)
