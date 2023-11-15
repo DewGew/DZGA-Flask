@@ -17,6 +17,7 @@ logging.basicConfig(level=logging.DEBUG,
                 filename=os.path.join(config.CONFIG_DIRECTORY, "smarthome.log"),
                 filemode='w')
 logging.getLogger().addHandler(logging.StreamHandler())
+logging.getLogger("urllib3").setLevel(logging.DEBUG)
 logging.getLogger('werkzeug').setLevel(logging.ERROR)
 logger = logging.getLogger()
 
