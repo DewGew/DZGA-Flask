@@ -1,10 +1,9 @@
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
-from sqlalchemy import func, or_
 from sqlalchemy_json import mutable_json_type
 
 db = SQLAlchemy()
+
 
 class User(UserMixin, db.Model):
     __tablename__ = "User"
@@ -20,10 +19,11 @@ class User(UserMixin, db.Model):
     googleassistant = db.Column(db.Boolean, default=False, nullable=False)
     authtoken = db.Column(db.String(100))
     device_config = db.Column(mutable_json_type(dbtype=db.JSON, nested=True))
-    
+
     def __repr__(self):
         return f"<User {self.id}>"
-        
+
+
 class Settings(db.Model):
     __tablename__ = "Settings"
     id = db.Column(db.Integer, primary_key=True)
@@ -36,6 +36,6 @@ class Settings(db.Model):
     ssl_key = db.Column(db.String(255))
     language = db.Column(db.String(255))
     armlevels = db.Column(mutable_json_type(dbtype=db.JSON, nested=True))
-    
+
     def __repr__(self):
         return f"<Settings {self.id}>"
