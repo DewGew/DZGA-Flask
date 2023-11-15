@@ -100,7 +100,9 @@ def gateway():
 
         return "User removed", 200
     else:
+    
         result = queryDomoticz(flask_login.current_user.username, requestedUrl[1])
+
     try:
         return json.loads(result)
     except:
