@@ -7,10 +7,11 @@ import os
 import re
 import modules.config as config
 
-from modules.database import db, User, Settings
+from modules.database import User, Settings
 from modules.helpers import logger
 
 aogDevs = {}
+
 
 class AogState:
     def __init__(self):
@@ -21,23 +22,33 @@ class AogState:
         self.willReportState = True
         self.attributes = {}
         self.customData = {}
-        
-def AogGetDomain(device):
+
+
+def getDomain(device):
+
     if device["Type"] not in ['General', 'Lux', 'UV', 'Rain', 'Wind']:
         devs = device.get('SwitchType')
-        if device['Type'] in ['Color Switch', 'Group', 'Scene', 'Temp', 'Thermostat', 'Setpoint','Temp + Humidity', 'Temp + Humidity + Baro']:
+
+        if device['Type'] in ['Color Switch', 'Group', 'Scene', 'Temp', 'Thermostat', 'Setpoint', 'Temp + Humidity', 'Temp + Humidity + Baro']:
             devs = device["Type"].replace(" ", "")
+
+        devs = devs.replace(" ", "")
+        devs = devs.replace("/", "")
+        devs = devs.replace("+", "") 
+
         return devs
+
     if device['Type'] == 'Value' and device['SwitchType'] is None:
         return None
+
     return None
 
 
-def getDesc(user_id, state):
+def getDesc(user_id, device):
     user = User.query.filter_by(username=user_id).first()
     
-    if state.id in user.device_config:
-        desc = user.device_config[state.id]
+    if device.id in user.device_config:
+        desc = user.device_config[device.id]
         return desc
     else:
         return None
@@ -51,8 +62,8 @@ def getDeviceConfig(descstr):
         try:
             lines = rawconfig[0].strip().splitlines()
             cfgdict = {}
-            for l in lines:
-                assign = l.split('=')
+            for line in lines:
+                assign = line.split('=')
                 varname = assign[0].strip().lower()
                 if varname != "":
                     if varname in ISLIST:
@@ -68,7 +79,7 @@ def getDeviceConfig(descstr):
                         elif varvalue.lower() == "false":
                             varvalue = False
                         cfgdict[varname] = varvalue
-        except:
+        except Exception:
             logger.error('Error parsing device configuration from Domoticz device description:', rawconfig[0])
             return None
 
@@ -77,18 +88,14 @@ def getDeviceConfig(descstr):
 
 
 def getAog(device, user_id=None):
-    
+
     dbsettings = Settings.query.get_or_404(1)
-    domain = AogGetDomain(device)
+    domain = getDomain(device)
     minThreehold = -20
     maxThreehold = 40
     if domain is None:
         return None
-    domain = domain.replace(" ", "")
-    domain = domain.replace("/", "")
-    domain = domain.replace("+", "")
-    
-    
+
     aog = AogState()
     aog.id = domain + "_" + device.get('idx')
     aog.name = {
@@ -105,33 +112,19 @@ def getAog(device, user_id=None):
         aog.type = 'action.devices.types.FAN'
     if device.get('Image') == 'Heating':
         aog.type = 'action.devices.types.HEATER'
-    aog.customData['dzTags'] = False
-    
-    """ Get additional settings from domoticz description
-     <voicecontrol>
-       nicknames = Kitchen Blind One, Left Blind, Blue Blind
-       room = Kitchen
-       ack = True
-       devicetype = oven
-       minThreehold = -10
-       maxThreehold = 10
-       hide = True
-       camurl = http://livefeed.mycam.com:8080
-       actual_temp_idx = 345
-       selector_modes_idx = 346
-        (supports levelnames: 'off', 'heat', 'cool', 'auto', 'fan-only', 'purifier', 'eco', 'dry')
-    </voicecontrol>
-   """
+    if  domain in ['Thermostat', 'Setpoint']:
+        aog.type = 'action.devices.types.THERMOSTAT'
+        
 
     # Try to get device specific voice control configuration from Domoticz
+    aog.customData['dzTags'] = False
     desc = getDesc(user_id, aog)
     if desc is None:
         desc = getDeviceConfig(device.get("Description"))
         if desc is not None:
-            logger.info('<voicecontrol> tags found for idx %s in domoticz description.', aog.id)
+            logger.debug('<voicecontrol> tags found for idx %s in domoticz description.', aog.id)
             aog.customData['dzTags'] = True
-
-    
+  
     if desc is not None:
         n = desc.get('nicknames', None)
         if n is not None:
@@ -146,10 +139,7 @@ def getAog(device, user_id=None):
         if not repState:
             aog.willReportState = repState
         st = desc.get('devicetype', None)
-        if st is not None and st.lower() in [
-                'light', 'ac_unit', 'bathtub', 'coffeemaker', 'doorbell', 'dishwasher', 'dryer', 'fan', 'airfreshener', 'airpurifier', 'blender',
-                'heater', 'kettle', 'media', 'microwave', 'outlet', 'oven', 'speaker', 'switch', 'vacuum', 'boiler', 'cooktop', 'humidfier',
-                'washer', 'waterheater', 'window', 'door', 'gate', 'garage', 'radiator', 'shutter', 'TV' ]:
+        if st is not None and st.lower() in config.TYPES:
             aog.type = 'action.devices.types.'+ st.upper()
         if domain in ['Thermostat', 'Setpoint']:
             minT = desc.get('minThreehold', None)
@@ -158,28 +148,25 @@ def getAog(device, user_id=None):
             maxT = desc.get('maxThreehold', None)
             if maxT is not None:
                 maxThreehold = maxT
-            at_idx = desc.get('actual_temp_idx', None)
-            if at_idx is not None:
-                aog.customData['actual_temp_idx'] = at_idx
+            temp_idx = desc.get('actual_temp_idx', None)
+            if temp_idx is not None:
+                aog.customData['actual_temp_idx'] = temp_idx
             modes_idx = desc.get('selector_modes_idx', None)
             if modes_idx is not None:
                 aog.customData['selector_modes_idx'] = modes_idx
         if domain in ['Doorbell', 'Camera']:
-            dn = desc.get('camurl', None)
-            if dn:
-                aog.customData['camurl'] = dn
+            camurl = desc.get('camurl', None)
+            if camurl:
+                aog.customData['camurl'] = camurl
         hide = desc.get('hide', False)
         if hide:
             domain = domain +'_Hidden'
-        # notification = desc.get('notification', False)
-        # if notification:
-            # aog.notificationSupportedByAgent = notification
-            
+
     aog.customData['idx'] = device.get('idx')
     aog.customData['domain'] = domain
     aog.customData['protected'] = device.get('Protected')
     aog.notificationSupportedByAgent = (True if domain in ['SmokeDetector', 'Doorbell', 'DoorLock'] else False)
-       
+
     if domain == 'Scene':
         aog.type = 'action.devices.types.SCENE'
         aog.traits.append('action.devices.traits.Scene')       
@@ -188,7 +175,7 @@ def getAog(device, user_id=None):
         aog.traits.append('action.devices.traits.ArmDisarm')
         aog.customData['protected'] = True
         aog.attributes = {
-        "availableArmLevels": {
+            "availableArmLevels": {
                 "levels": [{
                     "level_name": "Arm Home",
                     "level_values": [
@@ -207,7 +194,7 @@ def getAog(device, user_id=None):
                     ]
                 }],
                 "ordered": True
-            }
+                }
             }
     if domain == 'Group':
         aog.type = 'action.devices.types.SWITCH'
@@ -226,7 +213,7 @@ def getAog(device, user_id=None):
                             }
                         ]
                     }
-    if domain in ['OnOff', 'Dimmer', 'PushOnButton']:
+    if domain in ['OnOff', 'Dimmer', 'PushOnButton', 'PushOffButton']:
         aog.traits.append('action.devices.traits.OnOff')
     if domain == 'Dimmer':
         aog.traits.append('action.devices.traits.Brightness')    
@@ -271,7 +258,7 @@ def getAog(device, user_id=None):
                     }
                 )
         aog.attributes = {'availableToggles': levels}
-        
+
     # Modes trait for selector not working yet -->
     if domain == 'Selector_modes':
         aog.type = 'action.devices.types.SWITCH'
@@ -302,7 +289,7 @@ def getAog(device, user_id=None):
                 )
         aog.attributes = {'availableModes': levels}
         # <-- Modes trait for selector not working yet
-        
+
     if  domain in ['Temp', 'TempHumidity', 'TempHumidityBaro']:
         aog.type = 'action.devices.types.SENSOR'
         aog.traits.append('action.devices.traits.TemperatureSetting')
@@ -314,7 +301,6 @@ def getAog(device, user_id=None):
                          'availableThermostatModes': ['heat', 'cool'],
                         }
     if  domain in ['Thermostat', 'Setpoint']:
-        aog.type = 'action.devices.types.THERMOSTAT'
         aog.traits.append('action.devices.traits.TemperatureSetting')
         aog.attributes = {'thermostatTemperatureUnit': dbsettings.tempunit,
                 'thermostatTemperatureRange': { 
@@ -326,7 +312,7 @@ def getAog(device, user_id=None):
             data = getDomoticzState(user_id, aog.customData['selector_modes_idx'])
             selectorModes = base64.b64decode(data['LevelNames']).decode('UTF-8').lower().split("|")
             aog.attributes['availableThermostatModes'] = selectorModes
-            
+
     if domain == 'MotionSensor':
         aog.type = 'action.devices.types.SENSOR'
         aog.traits.append('action.devices.traits.OccupancySensing')
@@ -353,9 +339,10 @@ def getAog(device, user_id=None):
             ],
             'cameraStreamNeedAuthToken': False
         }
-        
+
     return aog
-    
+
+
 # Save device info in json format    
 def saveJson(user_id, data):
     
@@ -368,7 +355,8 @@ def saveJson(user_id, data):
             indent=4, ensure_ascii=False)
             
     logger.info('Devices is saved in ' + datafile + ' in ' + config.DEVICES_DIRECTORY + ' folder')
-            
+
+
 def queryDomoticz(username, url):
     user = User.query.filter_by(username=username).first()
     domourl = user.domo_url
@@ -377,10 +365,11 @@ def queryDomoticz(username, url):
     try:
         r = requests.get(domourl + '/json.htm' + url,
         auth=domoCredits, timeout=5.00)
-    except:
+    except Exception:
         return "{}"
 
     return r.text
+
 
 def getDomoticzDevices(user_id):
 
@@ -390,7 +379,7 @@ def getDomoticzDevices(user_id):
 
     try:
         r = json.loads(queryDomoticz(user_id, '?type=command&param=getdevices&plan=' + user.roomplan + '&filter=all&used=true'))
-    except:
+    except Exception:
         logger.error("Error connection to domoticz!")
         saveJson(user_id, aogDevs)
         return
@@ -407,6 +396,7 @@ def getDomoticzDevices(user_id):
     logger.info('Retreiving devices from domoticz')
        
     saveJson(user_id, aogDevs)
+
     
 def getDomoticzState(user_id, idx, device='id'):
         
