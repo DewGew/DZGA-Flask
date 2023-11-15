@@ -113,6 +113,7 @@ def send_css(path):
 def send_js(path):
     return send_from_directory('static/js', path)
 
+
 @flask_login.login_required
 @app.route('/uploads/<path:path>')
 def send_uploads(path):
@@ -143,6 +144,7 @@ def login():
 
     generateCsrfToken()
     return redirect(url_for('dashboard'))
+
 
 @flask_login.login_required
 @app.route('/logout')
@@ -244,18 +246,17 @@ def notification():
 
     # Reportstate must be enabled to use notification
     if report_state.enable_report_state():
-        event_id = random_string(10)
         request_id = random_string(20)
-        
+
         try:
             message = request.get_json()
             device = get_device(user_id, message["id"])
             domain = device['customData']['domain']
         except Exception:
             return '{"title": "SendNotification", "status": "ERR"}'
-            
-        data = {'states':{},'notifications':{}}
-        
+
+        data = {'states': {}, 'notifications': {}}
+
         # Send smokedetektor notification
         if domain == 'SmokeDetector':
             data['states'][message["id"]] = {"on": (True if message["state"].lower() in ['on', 'alarm/fire !'] else False)},
@@ -263,9 +264,9 @@ def notification():
 
         # Send smokedetektor notification
         elif domain == 'Doorbell':
-            data['states'][message["id"]] = {"on":(True if message["state"].lower() in ['on', 'pressed'] else False)},
+            data['states'][message["id"]] = {"on": (True if message["state"].lower() in ['on', 'pressed'] else False)},
             data['notifications'][message["id"]] = {"ObjectDetection": {"objects": {"unfamiliar": 1}, 'priority': 0, 'detectionTimestamp': time()}}
-                    
+
         else:
             return '{"title": "SendNotification", "status": "ERR"}'
 
@@ -328,7 +329,7 @@ def fulfillment():
                 result['payload']['devices'][device_id] = query_method(custom_data, x, user_id)
             # ReportState
             if report_state.enable_report_state():
-                qdata={}
+                qdata = {}
                 qdata['states'] = result['payload']['devices']
                 statereport(result['requestId'], user_id, qdata)
 
@@ -380,7 +381,7 @@ def fulfillment():
 
             # ReportState
             if report_state.enable_report_state() and action_result['status'] == 'SUCCESS':
-                data = {'states':{}} 
+                data = {'states': {}} 
                 data['states'][device_id] = action_result['states']
                 statereport(result['requestId'], user_id, data)
                 
@@ -405,7 +406,6 @@ def fulfillment():
 
     return jsonify(result)
 
-  
 with app.app_context():
     dbs = Settings.query.get_or_404(1)
 
