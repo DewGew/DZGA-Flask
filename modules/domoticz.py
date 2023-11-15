@@ -24,21 +24,30 @@ class AogState:
         self.customData = {}
 
 
-def AogGetDomain(device):
+def getDomain(device):
+
     if device["Type"] not in ['General', 'Lux', 'UV', 'Rain', 'Wind']:
         devs = device.get('SwitchType')
+
         if device['Type'] in ['Color Switch', 'Group', 'Scene', 'Temp', 'Thermostat', 'Setpoint', 'Temp + Humidity', 'Temp + Humidity + Baro']:
             devs = device["Type"].replace(" ", "")
+
+        devs = devs.replace(" ", "")
+        devs = devs.replace("/", "")
+        devs = devs.replace("+", "") 
+
         return devs
+
     if device['Type'] == 'Value' and device['SwitchType'] is None:
         return None
+
     return None
 
 
-def getDesc(user_id, state):
+def getDesc(user_id, device):
     user = User.query.filter_by(username=user_id).first()
     
-    if state.id in user.device_config:
+    if device.id in user.device_config:
         desc = user.device_config[state.id]
         return desc
     else:
@@ -81,14 +90,11 @@ def getDeviceConfig(descstr):
 def getAog(device, user_id=None):
 
     dbsettings = Settings.query.get_or_404(1)
-    domain = AogGetDomain(device)
+    domain = getDomain(device)
     minThreehold = -20
     maxThreehold = 40
     if domain is None:
         return None
-    domain = domain.replace(" ", "")
-    domain = domain.replace("/", "")
-    domain = domain.replace("+", "")
 
     aog = AogState()
     aog.id = domain + "_" + device.get('idx')
@@ -108,9 +114,10 @@ def getAog(device, user_id=None):
         aog.type = 'action.devices.types.HEATER'
     if  domain in ['Thermostat', 'Setpoint']:
         aog.type = 'action.devices.types.THERMOSTAT'
-    aog.customData['dzTags'] = False
+        
 
     # Try to get device specific voice control configuration from Domoticz
+    aog.customData['dzTags'] = False
     desc = getDesc(user_id, aog)
     if desc is None:
         desc = getDeviceConfig(device.get("Description"))
@@ -141,16 +148,16 @@ def getAog(device, user_id=None):
             maxT = desc.get('maxThreehold', None)
             if maxT is not None:
                 maxThreehold = maxT
-            at_idx = desc.get('actual_temp_idx', None)
-            if at_idx is not None:
-                aog.customData['actual_temp_idx'] = at_idx
+            temp_idx = desc.get('actual_temp_idx', None)
+            if temp_idx is not None:
+                aog.customData['actual_temp_idx'] = temp_idx
             modes_idx = desc.get('selector_modes_idx', None)
             if modes_idx is not None:
                 aog.customData['selector_modes_idx'] = modes_idx
         if domain in ['Doorbell', 'Camera']:
-            dn = desc.get('camurl', None)
-            if dn:
-                aog.customData['camurl'] = dn
+            camurl = desc.get('camurl', None)
+            if camurl:
+                aog.customData['camurl'] = camurl
         hide = desc.get('hide', False)
         if hide:
             domain = domain +'_Hidden'
@@ -168,7 +175,7 @@ def getAog(device, user_id=None):
         aog.traits.append('action.devices.traits.ArmDisarm')
         aog.customData['protected'] = True
         aog.attributes = {
-        "availableArmLevels": {
+            "availableArmLevels": {
                 "levels": [{
                     "level_name": "Arm Home",
                     "level_values": [
@@ -187,7 +194,7 @@ def getAog(device, user_id=None):
                     ]
                 }],
                 "ordered": True
-            }
+                }
             }
     if domain == 'Group':
         aog.type = 'action.devices.types.SWITCH'
