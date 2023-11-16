@@ -66,6 +66,10 @@ function refreshTemp(updateTemp) {
 			var data = jsonData.result[0].Data;
 			var temp = jsonData.result[0].Temp;
 			var setpoint = jsonData.result[0].SetPoint
+			var lastUpdate = jsonData.result[0].LastUpdate
+			if (lastUpdate != null){ 
+				$('#lastUpdate_' + idx).html(moment(lastUpdate).fromNow())
+			}
 			$('button[id="switch_' + idx + '"]').html(data)
 			$('#data_'+ idx).html(data)
 			$('#actual_data_'+ idx).html(temp)
@@ -82,12 +86,13 @@ function refreshSwitches(updateSwitches) {
 		var url = "/api?type=command&param=getdevices&rid=" + idx;
 		requestAPI(url).then(jsonData => {
 			var data = jsonData.result[0].Data;
-			var description = jsonData.result[0].Description;
+			var lastUpdate = jsonData.result[0].LastUpdate
+			if (lastUpdate != null){
+				$('#lastUpdate_' + idx).html(moment(lastUpdate).fromNow())
+			};
 			$('button[id="switch_' + idx + '"]').html(data);
 			$('#data_' + idx).html(data);
-			if (description != ''){
-				$('#description_'+ idx).text(description);
-			}				
+
 			if (data == 'On'){
 				if ($('#icon_OnOff_' + idx).html() == 'lightbulb'){
 					$('#icon_OnOff_' + idx).css('color','#ffa700');
@@ -137,6 +142,10 @@ function refreshSelectors(updateSelector) {
 		requestAPI(url).then(jsonData => {
 			var level = jsonData.result[0].Level;
 			var levelnames = jsonData['result'][0]['LevelNames'];
+			var lastUpdate = jsonData.result[0].LastUpdate
+			if (lastUpdate != null){
+				$('#lastUpdate_' + idx).html(moment(lastUpdate).fromNow())
+			}
 			btns = decodeBase64(levelnames).split('|');
 			$.each(btns, function (i, lvlname) {
 				if (i != '0') {
@@ -181,6 +190,10 @@ function refreshScenes(updateScenes) {
 		var url = "/api?type=command&param=getscenes&rid=" + idx;
 		requestAPI(url).then(jsonData => {
 			var data = jsonData.result[0].Status;
+			var lastUpdate = jsonData.result[0].LastUpdate
+			if (lastUpdate != null){
+				$('#lastUpdate_' + idx).html(moment(lastUpdate).fromNow())
+			}
 			$('button[id="switch_' + idx + '"]').html(data)
 			if (data != 'Off'){
 				$('#icon_Group_' + idx).removeClass("bi bi-toggle2-off")
@@ -200,10 +213,11 @@ function refreshDimmers(updateDimmers) {
 		requestAPI(url).then(jsonData => {
 			var level = jsonData.result[0].Level;
 			var data = jsonData.result[0].Data;
-			var description = jsonData.result[0].Description;
-			if (description != ''){
-				$('#description_'+ idx).text(description);
+			var lastUpdate = jsonData.result[0].LastUpdate
+			if (lastUpdate != null){
+				$('#lastUpdate_' + idx).html(moment(lastUpdate).fromNow())
 			}
+
 			if (jsonData.result[0].Type == 'Color Switch'){
 				var color = JSON.parse(jsonData.result[0].Color)
 				var color_decimal = color.r * 65536 + color.g * 256 + color.b
