@@ -65,13 +65,13 @@
 								</div>
 							  </div><!-- End Vertically centered Modal-->
 
-                        <td>{{ v['name']['name'].replace("_", " ") }}</td>
+                        <td>{{ v['name']['name'] }}</td>
                         <td class="text-primary pointer" data-bs-toggle="modal" data-bs-target="#descriptionModal_{{ k }}" >{{ v['customData']['domain'] }}</td>
 						    <div class="modal fade" id="descriptionModal_{{ k }}" tabindex="-1">
 								<div class="modal-dialog modal-lg">
 								  <div class="modal-content">
 									<div class="modal-header">
-									  <h5 class="modal-title">Description {{ v['name']['name'].replace("_", " ") }}</h5>
+									  <h5 class="card-title">Description <span>| {{ v['name']['name'] }}</span></h5>
 									  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 									</div>
 									<div class="modal-body" >
@@ -318,6 +318,7 @@ var updateDimmers_block = [];
 var updateSelectors_block = [];
 
 {% for k, v in devices.items() %}
+
 	{% if v['customData']['domain'] in ('Group', 'Scene') %}
 		updateScenes_block.push("{{ v['customData']['idx'] }}")
 	{% elif v['customData']['domain'] == 'Dimmer' %}

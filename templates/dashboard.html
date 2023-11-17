@@ -33,7 +33,7 @@
 			    <div class="icon">
 					<div class="click" onclick="toogleGroup({{ v['customData']['idx'] }})">
 					  <i class="bi bi-toggle2-off" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}"></i>
-					  <div class="label">{{ v['name']['name'].replace("_", " ") }}</div>
+					  <div class="label">{{ v['name']['name'] }}</div>
 					</div>
 					<div class="card-footer col-sm-11">
 					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
@@ -44,7 +44,7 @@
 			    <div class="icon">
 					<div class="click" onclick="activateScene({{ v['customData']['idx'] }})">
 					  <i class="bi bi-toggle2-off" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}"></i>
-					  <div class="label">{{ v['name']['name'].replace("_", " ") }}</div>
+					  <div class="label">{{ v['name']['name'] }}</div>
 					</div>
 					<div class="card-footer col-sm-11">
 					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
@@ -93,7 +93,7 @@
 					  {% else %}
 					  <i class="material-symbols-outlined" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}">lightbulb</i>
 					  {% endif %}
-					  <div class="label">{{ v['name']['name'].replace("_", " ") }}</div>
+					  <div class="label">{{ v['name']['name'] }}</div>
 					  <small id="data_{{ v['customData']['idx'] }}">Not availible</small>
 					</div>
 					<div class="modal fade" id="onoffpin_{{ v['customData']['idx'] }}" tabindex="-1">
@@ -122,7 +122,7 @@
 				{% elif v['customData']['domain'] == 'Doorbell' %}
 				<div class="icon">
 					<i class="material-symbols-outlined" id="icon_{{ v['customData']['idx'] }}">doorbell_3p</i>
-					<div class="label">{{ v['name']['name'].replace("_", " ") }}</div>
+					<div class="label">{{ v['name']['name'] }}</div>
 					<div class="card-footer col-sm-11">
 					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
 					</div>
@@ -132,7 +132,7 @@
 				<div class="icon">
 					<div class="click" onclick="toogleSwitch({{ v['customData']['idx'] }}, '{{ v['customData']['protected'] }}')">
 						<i class="material-symbols-outlined" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}">lock</i>
-						<div class="label">{{ v['name']['name'].replace("_", " ") }}</div>
+						<div class="label">{{ v['name']['name'] }}</div>
 						<small id="data_{{ v['customData']['idx'] }}">Not availible</small>
 					</div>
 					<div class="modal fade" id="onoffpin_{{ v['customData']['idx'] }}" tabindex="-1">
@@ -162,7 +162,7 @@
 				<div class="icon">
 					<i class="material-symbols-outlined" id="icon_blinds_{{ v['customData']['idx'] }}">roller_shades</i>
 					  <small id="data_{{ v['customData']['idx'] }}">Not availible</small>
-					<div class="label">{{ v['name']['name'].replace("_", " ") }}</div>
+					<div class="label">{{ v['name']['name'] }}</div>
 					{% if v['customData']['domain'] != 'BlindsPercentage' %}
 					<div class="btn-group" role="group" aria-label="Basic outlined blinds">
 						<button type="button" class="btn btn-outline-primary btn-sm" onclick="openCloseBlind({{ v['customData']['idx'] }}, 'Open')"><i class="bi bi-arrow-up-circle" style="font-size: 1rem;"></i></button>
@@ -184,7 +184,7 @@
 					<div class="click" onclick="toogleSwitch({{ v['customData']['idx'] }}, '{{ v['customData']['protected'] }}')">
 					  <i class="material-symbols-outlined" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}">lightbulb</i>
 					  <small id="output_{{ v['customData']['idx'] }}">0</small>		  
-					  <div class="label">{{ v['name']['name'].replace("_", " ") }}</div>
+					  <div class="label">{{ v['name']['name'] }}</div>
 					</div>
 					<input id="slider_{{ v['customData']['idx'] }}" type="range" min="0" max="100" step="1" onchange="changeDimmers({{ v['customData']['idx'] }}, this.value)">
 					<div class="card-footer col-sm-11">
@@ -197,7 +197,7 @@
 					<div class="click" onclick="toogleSwitch({{ v['customData']['idx'] }}, '{{ v['customData']['protected'] }}')">
 					  <i class="material-symbols-outlined" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}">lightbulb</i>
 					  <small id="output_{{ v['customData']['idx'] }}">0</small>					  
-					  <div class="label">{{ v['name']['name'].replace("_", " ") }}</div>
+					  <div class="label">{{ v['name']['name'] }}</div>
 					</div>
 					<input id="slider_{{ v['customData']['idx'] }}" type="range" min="0" max="100" step="1" onchange="changeDimmers({{ v['customData']['idx'] }}, this.value)">
 					<input type="color" class="form-control form-control-color" id="rgb_{{ v['customData']['idx'] }}" value="#4154f1" title="Choose your color" onchange="changeRGB({{ v['customData']['idx'] }}, this.value)">
@@ -210,7 +210,7 @@
 				<div class="icon">
 					<div class="click" onclick="" data-bs-toggle="modal" data-bs-target="#selmodal_{{ v['customData']['idx'] }}">
 						<i class="material-symbols-outlined" id="icon_{{ v['customData']['idx'] }}">event_list</i>
-						<div class="label">{{ v['name']['name'].replace("_", " ") }}</div>
+						<div class="label">{{ v['name']['name'] }}</div>
 						<small id="data_{{ v['customData']['idx'] }}">Not availible</small>
 					</div>
 					<div class="modal fade" id="selmodal_{{ v['customData']['idx'] }}" tabindex="-1">
@@ -247,7 +247,7 @@
 				{% elif (v['customData']['domain'] in ['DoorContact', 'Contact']) %}
 				<div class="icon">
 					<i class="material-symbols-outlined" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}">door_front</i>
-					<div class="label">{{ v['name']['name'].replace("_", " ") }}</div>
+					<div class="label">{{ v['name']['name'] }}</div>
 					<small id="data_{{ v['customData']['idx'] }}">Not availible</small>
 					<div class="card-footer col-sm-11">
 					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
@@ -258,7 +258,7 @@
 			    <div class="icon">
 					<div class="click" id="click_{{ v['customData']['idx'] }}" onclick="toogleSwitch({{ v['customData']['idx'] }}, '{{ v['customData']['protected'] }}')">
 					  <i class="material-symbols-outlined" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}">radio_button_checked</i>
-					  <div class="label">{{ v['name']['name'].replace("_", " ") }}</div>
+					  <div class="label">{{ v['name']['name'] }}</div>
 					</div>
 					<div class="modal fade" id="onoffpin_{{ v['customData']['idx'] }}" tabindex="-1">
 						<div class="modal-dialog modal-dialog-centered modal-sm">
@@ -294,12 +294,36 @@
 			 
 				{% if  v['customData']['domain'] in ('Temp', 'TempHumidity', 'TempHumidityBaro') %}
 				<div class="icon">
+					<div class="card-header col-sm-12">
+						<i class="bi bi-bar-chart-fill float-end" onClick="getlog('domoticz-chart-block_{{ v['customData']['idx'] }}', '{{ v['customData']['idx'] }}', '{{ v['name']['name'] }}', 'month');" data-bs-toggle="modal" data-bs-target="#temp-chart_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
+					</div>
 					<i class="material-symbols-outlined" id="icon_{{ v['customData']['idx'] }}">thermometer</i>
 					 <small id="data_{{ v['customData']['idx'] }}">Not availible</small>
-					<div class="label">{{ v['name']['name'].replace("_", " ") }}</div>
-					<div class="card-footer col-sm-11">
+					<div class="label">{{ v['name']['name'] }}</div>
+					<div class="card-footer col-sm-12 float-end">
 					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
 					</div>
+					<div class="modal fade" id="temp-chart_{{ v['customData']['idx'] }}" tabindex="-1">
+						<div class="modal-dialog modal-dialog-centered modal-lg">
+						  <div class="modal-content">
+							<div class="modal-header">
+							  <h5 class="card-title">Temperature Chart <span>| {{ v['name']['name'] }}</span></h5>
+							 <!--  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+								<div class="btn-group" role="group" aria-label="Basic outlined example">
+								<button type="button" onClick="getlog('domoticz-chart-block_{{ v['customData']['idx'] }}', '{{ v['customData']['idx'] }}', '{{ v['name']['name'] }}', 'day');" class="btn btn-outline-primary btn-sm">Day</button>
+								<button type="button" onClick="getlog('domoticz-chart-block_{{ v['customData']['idx'] }}', '{{ v['customData']['idx'] }}', '{{ v['name']['name'] }}', 'month');" class="btn btn-primary btn-sm">Month</button>
+								<button type="button" onClick="getlog('domoticz-chart-block_{{ v['customData']['idx'] }}', '{{ v['customData']['idx'] }}', '{{ v['name']['name'] }}', 'year');" class="btn btn-outline-primary btn-sm">Year</button>
+							</div>
+							</div>
+							<div class="modal-body">
+								<div class="d-flex" id="domoticz-chart-block_77" style="height: 200px;"></div>
+							</div>
+							<div class="modal-footer">
+								<button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+						    </div>
+						  </div>
+						</div>
+					  </div><!-- End Vertically centered Modal-->
 				</div>
 				{% elif  v['customData']['domain'] in ('Thermostat', 'Setpoint') %}
 				<div class="icon">
@@ -310,7 +334,7 @@
 					{% else %}
 						<small id="data_{{ v['customData']['idx'] }}">Not availible</small>
 					{% endif %}
-					<div class="label">{{ v['name']['name'].replace("_", " ") }}</div>
+					<div class="label">{{ v['name']['name'] }}</div>
 					{% if v['customData']['selector_modes_idx'] %}
 						<small id="mode_data_{{ v['customData']['selector_modes_idx'] }}">Not availible</small>
 					{% endif %}
@@ -374,7 +398,7 @@
 				<div class="icon">
 					<div class="click" onclick="" data-bs-toggle="modal" data-bs-target="#security">
 					<i class="bi bi-house-lock" id="icon_security_{{ v['customData']['idx'] }}"></i>
-					<div class="label">{{ v['name']['name'].replace("_", " ") }}</div>
+					<div class="label">{{ v['name']['name'] }}</div>
 					<small id="data_{{ v['customData']['idx'] }}">Not availible</small>
 					</div>
 					  <div class="modal fade" id="security" tabindex="-1">
@@ -413,7 +437,7 @@
 				<div class="icon">
 					<i class="material-symbols-outlined" id="icon_smoke_{{ v['customData']['idx'] }}">detector</i>
 					<!-- <i class="bi bi-broadcast" id="icon_smokeOff_{{ v['customData']['idx'] }}"></i> -->
-					<div class="label">{{ v['name']['name'].replace("_", " ") }}</div>
+					<div class="label">{{ v['name']['name'] }}</div>
 					<small id="data_smoke_{{ v['customData']['idx'] }}">Not availible</small>
 					<div class="card-footer col-sm-11">
 					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
@@ -423,7 +447,7 @@
 				{% elif v['customData']['domain'] == 'MotionSensor' %}
 				<div class="icon">
 					<i class="material-symbols-outlined" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}">motion_sensor_active</i>
-					<div class="label">{{ v['name']['name'].replace("_", " ") }}</div>
+					<div class="label">{{ v['name']['name'] }}</div>
 					<small id="data_motion_{{ v['customData']['idx'] }}">Not availible</small>
 					<div class="card-footer col-sm-11">
 					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
@@ -445,7 +469,7 @@
 				<div class="icon">
 					<i class="material-symbols-outlined" id="icon_{{ v['customData']['idx'] }}">unknown_2</i>
 					<small id="data_{{ v['customData']['idx'] }}">Not availible</small>
-					<div class="label">{{ v['name']['name'].replace("_", " ") }}</br>Domain: {{ v['customData']['domain'] }}</br>IDX: {{ v['customData']['idx'] }}</div>
+					<div class="label">{{ v['name']['name'] }}</br>Domain: {{ v['customData']['domain'] }}</br>IDX: {{ v['customData']['idx'] }}</div>
 				</div>
 				{% endif %}
 			  {% endfor %}
@@ -458,7 +482,7 @@
 				<div class="icon">
 					<i class="bi bi-incognito" id="icon_{{ v['customData']['idx'] }}"></i>
 					<small id="data_{{ v['customData']['idx'] }}">Not availible</small>
-					<div class="label">{{ v['name']['name'].replace("_", " ") }}</br>Domain: {{ v['customData']['domain'] }}</br>IDX: {{ v['customData']['idx'] }}</div>
+					<div class="label">{{ v['name']['name'] }}</br>Domain: {{ v['customData']['domain'] }}</br>IDX: {{ v['customData']['idx'] }}</div>
 				</div>
 				{% endif %}
 			  {% endfor %}
@@ -495,7 +519,15 @@ $('#title_hidden').hide()
 $('#hidden_devices').hide()
 $('#title_security').hide()
 
+function getlog(div, idx, name, timeline){
+	setTimeout(() => {
+		ShowTempLog(div, idx, name, timeline)
+		}, 500);
+	<!-- setInterval(ShowTempLog, 60000, div, idx, name, timeline); -->
+}
+
 {% for k, v in devices.items() %}
+
 	{% if v['customData']['domain'] in ('Group', 'Scene') %}
 		updateScenes_block.push("{{ v['customData']['idx'] }}")
 		$('#title_scenes').show()
