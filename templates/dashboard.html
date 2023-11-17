@@ -35,6 +35,9 @@
 					  <i class="bi bi-toggle2-off" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}"></i>
 					  <div class="label">{{ v['name']['name'].replace("_", " ") }}</div>
 					</div>
+					<div class="card-footer col-sm-11">
+					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
+					</div>
 				</div>
 				
 			  {% elif v['customData']['domain'] == 'Scene' %}
@@ -42,6 +45,9 @@
 					<div class="click" onclick="activateScene({{ v['customData']['idx'] }})">
 					  <i class="bi bi-toggle2-off" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}"></i>
 					  <div class="label">{{ v['name']['name'].replace("_", " ") }}</div>
+					</div>
+					<div class="card-footer col-sm-11">
+					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
 					</div>
 				</div>
 			  {% endif %}
@@ -108,12 +114,18 @@
 						  </div>
 						</div>
 					  </div><!-- End Vertically centered Modal-->
+					<div class="card-footer col-sm-11">
+					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
+					</div>
 				</div>
 				
 				{% elif v['customData']['domain'] == 'Doorbell' %}
 				<div class="icon">
 					<i class="material-symbols-outlined" id="icon_{{ v['customData']['idx'] }}">doorbell_3p</i>
 					<div class="label">{{ v['name']['name'].replace("_", " ") }}</div>
+					<div class="card-footer col-sm-11">
+					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
+					</div>
 				</div>
 				
 				{% elif v['customData']['domain'] == 'DoorLock' %}
@@ -141,6 +153,9 @@
 						  </div>
 						</div>
 					  </div><!-- End Vertically centered Modal-->
+					 <div class="card-footer col-sm-11">
+					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
+					</div>
 				</div>
 				
 				{% elif v['customData']['domain'] in ('VenetianBlindsUS', 'VenetianBlindsEU', 'Blinds', 'BlindsStop','BlindsPercentage')%}
@@ -159,6 +174,9 @@
 					{% else %}
 					<input id="slider_{{ v['customData']['idx'] }}" type="range" min="0" max="100" step="1" onchange="changeDimmers({{ v['customData']['idx'] }}, this.value)">
 					{% endif %}
+					<div class="card-footer col-sm-11">
+					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
+					</div>
 				</div>
 				
 				{% elif v['customData']['domain'] == 'Dimmer' %}
@@ -169,6 +187,9 @@
 					  <div class="label">{{ v['name']['name'].replace("_", " ") }}</div>
 					</div>
 					<input id="slider_{{ v['customData']['idx'] }}" type="range" min="0" max="100" step="1" onchange="changeDimmers({{ v['customData']['idx'] }}, this.value)">
+					<div class="card-footer col-sm-11">
+					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
+					</div>
 				</div>
 				
 				{% elif v['customData']['domain'] == 'ColorSwitch' %}
@@ -180,6 +201,9 @@
 					</div>
 					<input id="slider_{{ v['customData']['idx'] }}" type="range" min="0" max="100" step="1" onchange="changeDimmers({{ v['customData']['idx'] }}, this.value)">
 					<input type="color" class="form-control form-control-color" id="rgb_{{ v['customData']['idx'] }}" value="#4154f1" title="Choose your color" onchange="changeRGB({{ v['customData']['idx'] }}, this.value)">
+					<div class="card-footer col-sm-11">
+					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
+					</div>
 				</div>
 				
 				{% elif v['customData']['domain'] == 'Selector' %}
@@ -215,6 +239,9 @@
 						  </div>
 						</div>
 					  </div><!-- End Vertically centered Modal-->
+					<div class="card-footer col-sm-11">
+					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
+					</div>
 				</div>
 				
 				{% elif (v['customData']['domain'] in ['DoorContact', 'Contact']) %}
@@ -222,6 +249,9 @@
 					<i class="material-symbols-outlined" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}">door_front</i>
 					<div class="label">{{ v['name']['name'].replace("_", " ") }}</div>
 					<small id="data_{{ v['customData']['idx'] }}">Not availible</small>
+					<div class="card-footer col-sm-11">
+					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
+					</div>
 				</div>
 				
 				{% elif v['customData']['domain'] in ('PushOnButton', 'PushOffButton') %}
@@ -248,6 +278,9 @@
 						  </div>
 						</div>
 					  </div><!-- End Vertically centered Modal-->
+					<div class="card-footer col-sm-11">
+					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
+					</div>
 				</div>
 				
 				{% endif %}
@@ -264,6 +297,9 @@
 					<i class="material-symbols-outlined" id="icon_{{ v['customData']['idx'] }}">thermometer</i>
 					 <small id="data_{{ v['customData']['idx'] }}">Not availible</small>
 					<div class="label">{{ v['name']['name'].replace("_", " ") }}</div>
+					<div class="card-footer col-sm-11">
+					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
+					</div>
 				</div>
 				{% elif  v['customData']['domain'] in ('Thermostat', 'Setpoint') %}
 				<div class="icon">
@@ -319,6 +355,9 @@
 						  </div>
 						</div>
 					  </div><!-- End Vertically centered Modal-->
+					<div class="card-footer col-sm-11">
+					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
+					</div>
 				</div>
 			  {% endif %}
 			  
@@ -365,6 +404,9 @@
 						  </div>
 						</div>
 					  </div><!-- End Vertically centered Modal-->
+					<div class="card-footer col-sm-11">
+					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
+					</div>
 				</div>
 				
 				{%elif v['customData']['domain'] == 'SmokeDetector' %}
@@ -373,6 +415,9 @@
 					<!-- <i class="bi bi-broadcast" id="icon_smokeOff_{{ v['customData']['idx'] }}"></i> -->
 					<div class="label">{{ v['name']['name'].replace("_", " ") }}</div>
 					<small id="data_smoke_{{ v['customData']['idx'] }}">Not availible</small>
+					<div class="card-footer col-sm-11">
+					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
+					</div>
 				</div>
 				
 				{% elif v['customData']['domain'] == 'MotionSensor' %}
@@ -380,6 +425,9 @@
 					<i class="material-symbols-outlined" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}">motion_sensor_active</i>
 					<div class="label">{{ v['name']['name'].replace("_", " ") }}</div>
 					<small id="data_motion_{{ v['customData']['idx'] }}">Not availible</small>
+					<div class="card-footer col-sm-11">
+					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
+					</div>
 				</div>
 				
 				{% endif %}
