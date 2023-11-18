@@ -422,7 +422,7 @@ if __name__ == "__main__":
     app.add_url_rule('/api', 'api', api.gateway, methods=['POST'])
     app.add_url_rule('/uploader', 'uploader', routes.uploader, methods=['POST'])
     context = (dbs.ssl_cert, dbs.ssl_key)
-    if dbs.use_ssl and os.path.exists(dbs.ssl_cert) and os.path.exists(dbs.ssl_key):
+    if dbs.use_ssl:
         logger.info("Running with ssl")
         context = (dbs.ssl_cert, dbs.ssl_key)
         app.run('0.0.0.0', port=8181, debug=True, ssl_context=context)
