@@ -143,6 +143,7 @@ function refreshSelectors(updateSelector) {
 			var level = jsonData.result[0].Level;
 			var levelnames = jsonData['result'][0]['LevelNames'];
 			var lastUpdate = jsonData.result[0].LastUpdate
+			var offHidden = jsonData.result[0].LevelOffHidden
 			if (lastUpdate != null){
 				$('#lastUpdate_' + idx).html(moment(lastUpdate).fromNow())
 			}
@@ -171,11 +172,13 @@ function refreshSelectors(updateSelector) {
 					if (lvlname.toLowerCase() == 'dry'){$('#thermo_icon_' + idx).html('cool_to_dry').removeAttr('style')};
 					
 				}else{
-					if ($('#Selector_' + idx + ' option[value="' + i + '"]').length == 0) {
-						$('#Selector_' + idx).append('<option value="' + i +'">' + lvlname +'</option>')
-					}
-					if ($('#thermo_Selector_' + idx + ' option[value="' + i + '"]').length == 0) {
+					if (offHidden == true && i != '0'){
+						if ($('#Selector_' + idx + ' option[value="' + i + '"]').length == 0) {
+							$('#Selector_' + idx).append('<option value="' + i +'">' + lvlname +'</option>')
+						}
+						if ($('#thermo_Selector_' + idx + ' option[value="' + i + '"]').length == 0) {
 						$('#thermo_Selector_' + idx).append('<option value="' + i +'">' + lvlname +'</option>')
+						}
 					}
 				}
 				
@@ -298,6 +301,37 @@ function getVersion() {
 		$('#dzga-version').html('23.7')
 		$('#dz-version').html(data.version)
 	});
+}
+
+function getDeviceLog(idx) {
+	var url = '/api?type=command&param=getlightlog&idx=' + idx
+	requestAPI(url).then(jsonData => {
+		var data = jsonData
+		var html = '<table class="table table-sm small">'
+        html += '<thead><tr><th scope="col">Date</th><th scope="col">Data</th><th scope="col">User</th></tr></thead><tbody>'
+		html += '<tr><th scope="row">' + data.result[0].Date + '</th>'
+        html += '<td>' + data.result[0].Data + '</td>'
+        html += '<td>' + data.result[0].User + '</td></tr>'
+		html += '<tr><th scope="row">' + data.result[1].Date + '</th>'
+        html += '<td>' + data.result[1].Data + '</td>'
+        html += '<td>' + data.result[1].User + '</td></tr>'
+		html += '<tr><th scope="row">' + data.result[2].Date + '</th>'
+        html += '<td>' + data.result[2].Data + '</td>'
+        html += '<td>' + data.result[2].User + '</td></tr>'
+		html += '<tr><th scope="row">' + data.result[3].Date + '</th>'
+        html += '<td>' + data.result[3].Data + '</td>'
+        html += '<td>' + data.result[3].User + '</td></tr>'
+		html += '<tr><th scope="row">' + data.result[4].Date + '</th>'
+        html += '<td>' + data.result[4].Data + '</td>'
+        html += '<td>' + data.result[4].User + '</td></tr>'
+		html += '<tr><th scope="row">' + data.result[5].Date + '</th>'
+        html += '<td>' + data.result[5].Data + '</td>'
+        html += '<td>' + data.result[5].User + '</td></tr>'
+		html += '</tbody></table>'
+
+		$('#device_log_' + idx).html(html)
+		console.log(data.result[0])
+	});	
 }
 
 function showDiv(that) {
