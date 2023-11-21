@@ -4,7 +4,7 @@ Description=DZGA-Flask dashboard
 [Service]
 Environment=VIRTUAL_ENV=/home/__USER__/DZGA-Flask/env
 ExecStart=/home/__USER__/DZGA-Flask/env/bin/python /home/__USER__/DZGA-Flask/smarthome.py -d
-WorkingDirectory=/home/pi/DZGA-Flask/
+WorkingDirectory=/home/__USER__/DZGA-Flask/
 User=__USER__
 Restart=on-failure
 
