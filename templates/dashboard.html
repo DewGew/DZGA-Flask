@@ -35,8 +35,8 @@
 					  <i class="bi bi-toggle2-off" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}"></i>
 					  <div class="label">{{ v['name']['name'] }}</div>
 					</div>
-					<div class="card-footer col-sm-11">
-					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
+					<div class="card-footer col-sm-12">
+					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
 					</div>
 				</div>
 				
@@ -46,8 +46,8 @@
 					  <i class="bi bi-toggle2-off" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}"></i>
 					  <div class="label">{{ v['name']['name'] }}</div>
 					</div>
-					<div class="card-footer col-sm-11">
-					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
+					<div class="card-footer col-sm-12">
+					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
 					</div>
 				</div>
 			  {% endif %}
@@ -114,8 +114,24 @@
 						  </div>
 						</div>
 					  </div><!-- End Vertically centered Modal-->
-					<div class="card-footer col-sm-11">
-					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
+					<div class="card-footer col-sm-12">
+					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small><i class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
+					 <div class="modal fade" id="light-log_{{ v['customData']['idx'] }}" tabindex="-1">
+						<div class="modal-dialog modal-dialog-centered modal-lg">
+						  <div class="modal-content">
+							<div class="modal-header">
+							  <h5 class="card-title">Device log <span>| {{ v['name']['name'] }}</span></h5>
+							 <!--  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+							</div>
+							<div class="modal-body">
+								<div class="d-flex justify-content-center" id="device_log_{{ v['customData']['idx'] }}"></div>
+							</div>
+							<div class="modal-footer">
+								<button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+						    </div>
+						  </div>
+						</div>
+					  </div><!-- End Vertically centered Modal-->
 					</div>
 				</div>
 				
@@ -123,11 +139,26 @@
 				<div class="icon">
 					<i class="material-symbols-outlined" id="icon_{{ v['customData']['idx'] }}">doorbell_3p</i>
 					<div class="label">{{ v['name']['name'] }}</div>
-					<div class="card-footer col-sm-11">
-					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
+					<div class="card-footer col-sm-12">
+					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small><i class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
+					 <div class="modal fade" id="light-log_{{ v['customData']['idx'] }}" tabindex="-1">
+						<div class="modal-dialog modal-dialog-centered modal-lg">
+						  <div class="modal-content">
+							<div class="modal-header">
+							  <h5 class="card-title">Device log <span>| {{ v['name']['name'] }}</span></h5>
+							 <!--  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+							</div>
+							<div class="modal-body">
+								<div class="d-flex justify-content-center" id="device_log_{{ v['customData']['idx'] }}"></div>
+							</div>
+							<div class="modal-footer">
+								<button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+						    </div>
+						  </div>
+						</div>
+					  </div><!-- End Vertically centered Modal-->
 					</div>
-				</div>
-				
+				</div>		
 				{% elif v['customData']['domain'] == 'DoorLock' %}
 				<div class="icon">
 					<div class="click" onclick="toogleSwitch({{ v['customData']['idx'] }}, '{{ v['customData']['protected'] }}')">
@@ -153,8 +184,24 @@
 						  </div>
 						</div>
 					  </div><!-- End Vertically centered Modal-->
-					 <div class="card-footer col-sm-11">
-					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
+					 <div class="card-footer col-sm-12">
+					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small><i class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
+					 <div class="modal fade" id="light-log_{{ v['customData']['idx'] }}" tabindex="-1">
+						<div class="modal-dialog modal-dialog-centered modal-lg">
+						  <div class="modal-content">
+							<div class="modal-header">
+							  <h5 class="card-title">Device log <span>| {{ v['name']['name'] }}</span></h5>
+							 <!--  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+							</div>
+							<div class="modal-body">
+								<div class="d-flex justify-content-center" id="device_log_{{ v['customData']['idx'] }}"></div>
+							</div>
+							<div class="modal-footer">
+								<button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+						    </div>
+						  </div>
+						</div>
+					  </div><!-- End Vertically centered Modal-->
 					</div>
 				</div>
 				
@@ -174,8 +221,24 @@
 					{% else %}
 					<input id="slider_{{ v['customData']['idx'] }}" type="range" min="0" max="100" step="1" onchange="changeDimmers({{ v['customData']['idx'] }}, this.value)">
 					{% endif %}
-					<div class="card-footer col-sm-11">
-					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
+					<div class="card-footer col-sm-12">
+					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small><i class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
+					 <div class="modal fade" id="light-log_{{ v['customData']['idx'] }}" tabindex="-1">
+						<div class="modal-dialog modal-dialog-centered modal-lg">
+						  <div class="modal-content">
+							<div class="modal-header">
+							  <h5 class="card-title">Device log <span>| {{ v['name']['name'] }}</span></h5>
+							 <!--  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+							</div>
+							<div class="modal-body">
+								<div class="d-flex justify-content-center" id="device_log_{{ v['customData']['idx'] }}"></div>
+							</div>
+							<div class="modal-footer">
+								<button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+						    </div>
+						  </div>
+						</div>
+					  </div><!-- End Vertically centered Modal-->
 					</div>
 				</div>
 				
@@ -187,8 +250,24 @@
 					  <div class="label">{{ v['name']['name'] }}</div>
 					</div>
 					<input id="slider_{{ v['customData']['idx'] }}" type="range" min="0" max="100" step="1" onchange="changeDimmers({{ v['customData']['idx'] }}, this.value)">
-					<div class="card-footer col-sm-11">
-					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
+					<div class="card-footer col-sm-12">
+					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small><i class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
+					 <div class="modal fade" id="light-log_{{ v['customData']['idx'] }}" tabindex="-1">
+						<div class="modal-dialog modal-dialog-centered modal-lg">
+						  <div class="modal-content">
+							<div class="modal-header">
+							  <h5 class="card-title">Device log <span>| {{ v['name']['name'] }}</span></h5>
+							 <!--  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+							</div>
+							<div class="modal-body">
+								<div class="d-flex justify-content-center" id="device_log_{{ v['customData']['idx'] }}"></div>
+							</div>
+							<div class="modal-footer">
+								<button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+						    </div>
+						  </div>
+						</div>
+					  </div><!-- End Vertically centered Modal-->
 					</div>
 				</div>
 				
@@ -201,8 +280,24 @@
 					</div>
 					<input id="slider_{{ v['customData']['idx'] }}" type="range" min="0" max="100" step="1" onchange="changeDimmers({{ v['customData']['idx'] }}, this.value)">
 					<input type="color" class="form-control form-control-color" id="rgb_{{ v['customData']['idx'] }}" value="#4154f1" title="Choose your color" onchange="changeRGB({{ v['customData']['idx'] }}, this.value)">
-					<div class="card-footer col-sm-11">
-					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
+					<div class="card-footer col-sm-12">
+					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small><i class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
+					 <div class="modal fade" id="light-log_{{ v['customData']['idx'] }}" tabindex="-1">
+						<div class="modal-dialog modal-dialog-centered modal-lg">
+						  <div class="modal-content">
+							<div class="modal-header">
+							  <h5 class="card-title">Device log <span>| {{ v['name']['name'] }}</span></h5>
+							 <!--  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+							</div>
+							<div class="modal-body">
+								<div class="d-flex justify-content-center" id="device_log_{{ v['customData']['idx'] }}"></div>
+							</div>
+							<div class="modal-footer">
+								<button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+						    </div>
+						  </div>
+						</div>
+					  </div><!-- End Vertically centered Modal-->
 					</div>
 				</div>
 				
@@ -239,8 +334,24 @@
 						  </div>
 						</div>
 					  </div><!-- End Vertically centered Modal-->
-					<div class="card-footer col-sm-11">
-					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
+					<div class="card-footer col-sm-12">
+					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small><i class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
+					 <div class="modal fade" id="light-log_{{ v['customData']['idx'] }}" tabindex="-1">
+						<div class="modal-dialog modal-dialog-centered modal-lg">
+						  <div class="modal-content">
+							<div class="modal-header">
+							  <h5 class="card-title">Device log <span>| {{ v['name']['name'] }}</span></h5>
+							 <!--  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+							</div>
+							<div class="modal-body">
+								<div class="d-flex justify-content-center" id="device_log_{{ v['customData']['idx'] }}"></div>
+							</div>
+							<div class="modal-footer">
+								<button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+						    </div>
+						  </div>
+						</div>
+					  </div><!-- End Vertically centered Modal-->
 					</div>
 				</div>
 				
@@ -249,8 +360,24 @@
 					<i class="material-symbols-outlined" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}">door_front</i>
 					<div class="label">{{ v['name']['name'] }}</div>
 					<small id="data_{{ v['customData']['idx'] }}">Not availible</small>
-					<div class="card-footer col-sm-11">
-					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
+					<div class="card-footer col-sm-12">
+					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small><i class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
+					 <div class="modal fade" id="light-log_{{ v['customData']['idx'] }}" tabindex="-1">
+						<div class="modal-dialog modal-dialog-centered modal-lg">
+						  <div class="modal-content">
+							<div class="modal-header">
+							  <h5 class="card-title">Device log <span>| {{ v['name']['name'] }}</span></h5>
+							 <!--  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+							</div>
+							<div class="modal-body">
+								<div class="d-flex justify-content-center" id="device_log_{{ v['customData']['idx'] }}"></div>
+							</div>
+							<div class="modal-footer">
+								<button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+						    </div>
+						  </div>
+						</div>
+					  </div><!-- End Vertically centered Modal-->
 					</div>
 				</div>
 				
@@ -278,8 +405,24 @@
 						  </div>
 						</div>
 					  </div><!-- End Vertically centered Modal-->
-					<div class="card-footer col-sm-11">
-					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
+					<div class="card-footer col-sm-12">
+					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small><i class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
+					 <div class="modal fade" id="light-log_{{ v['customData']['idx'] }}" tabindex="-1">
+						<div class="modal-dialog modal-dialog-centered modal-lg">
+						  <div class="modal-content">
+							<div class="modal-header">
+							  <h5 class="card-title">Device log <span>| {{ v['name']['name'] }}</span></h5>
+							 <!--  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+							</div>
+							<div class="modal-body">
+								<div class="d-flex justify-content-center" id="device_log_{{ v['customData']['idx'] }}"></div>
+							</div>
+							<div class="modal-footer">
+								<button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+						    </div>
+						  </div>
+						</div>
+					  </div><!-- End Vertically centered Modal-->
 					</div>
 				</div>
 				
@@ -294,14 +437,11 @@
 			 
 				{% if  v['customData']['domain'] in ('Temp', 'TempHumidity', 'TempHumidityBaro') %}
 				<div class="icon">
-					<div class="card-header col-sm-12">
-						<i class="bi bi-bar-chart-fill float-end" onClick="getlog('domoticz-chart-block_{{ v['customData']['idx'] }}', '{{ v['customData']['idx'] }}', '{{ v['name']['name'] }}', 'month');" data-bs-toggle="modal" data-bs-target="#temp-chart_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
-					</div>
 					<i class="material-symbols-outlined" id="icon_{{ v['customData']['idx'] }}">thermometer</i>
 					 <small id="data_{{ v['customData']['idx'] }}">Not availible</small>
 					<div class="label">{{ v['name']['name'] }}</div>
-					<div class="card-footer col-sm-12 float-end">
-					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
+					<div class="card-footer col-sm-12">
+					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small><i class="bi bi-bar-chart-fill float-end" onClick="getlog('domoticz-chart-block_{{ v['customData']['idx'] }}', '{{ v['customData']['idx'] }}', '{{ v['name']['name'] }}', 'month');" data-bs-toggle="modal" data-bs-target="#temp-chart_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
 					</div>
 					<div class="modal fade" id="temp-chart_{{ v['customData']['idx'] }}" tabindex="-1">
 						<div class="modal-dialog modal-dialog-centered modal-lg">
@@ -379,9 +519,30 @@
 						  </div>
 						</div>
 					  </div><!-- End Vertically centered Modal-->
-					<div class="card-footer col-sm-11">
-					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
+					<div class="card-footer col-sm-12">
+					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small><i class="bi bi-bar-chart-fill float-end" onClick="getlog('domoticz-chart-block_{{ v['customData']['idx'] }}', '{{ v['customData']['idx'] }}', '{{ v['name']['name'] }}', 'month');" data-bs-toggle="modal" data-bs-target="#temp-chart_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
 					</div>
+					<div class="modal fade" id="temp-chart_{{ v['customData']['idx'] }}" tabindex="-1">
+						<div class="modal-dialog modal-dialog-centered modal-lg">
+						  <div class="modal-content">
+							<div class="modal-header">
+							  <h5 class="card-title">Temperature Chart <span>| {{ v['name']['name'] }}</span></h5>
+							 <!--  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+								<div class="btn-group" role="group" aria-label="Basic outlined example">
+								<button type="button" onClick="getlog('domoticz-chart-block_{{ v['customData']['idx'] }}', '{{ v['customData']['idx'] }}', '{{ v['name']['name'] }}', 'day');" class="btn btn-outline-primary btn-sm">Day</button>
+								<button type="button" onClick="getlog('domoticz-chart-block_{{ v['customData']['idx'] }}', '{{ v['customData']['idx'] }}', '{{ v['name']['name'] }}', 'month');" class="btn btn-primary btn-sm">Month</button>
+								<button type="button" onClick="getlog('domoticz-chart-block_{{ v['customData']['idx'] }}', '{{ v['customData']['idx'] }}', '{{ v['name']['name'] }}', 'year');" class="btn btn-outline-primary btn-sm">Year</button>
+							</div>
+							</div>
+							<div class="modal-body">
+								<div class="d-flex" id="domoticz-chart-block_{{ v['customData']['idx'] }}" style="height: 200px;"></div>
+							</div>
+							<div class="modal-footer">
+								<button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+						    </div>
+						  </div>
+						</div>
+					  </div><!-- End Vertically centered Modal-->
 				</div>
 			  {% endif %}
 			  
@@ -428,8 +589,24 @@
 						  </div>
 						</div>
 					  </div><!-- End Vertically centered Modal-->
-					<div class="card-footer col-sm-11">
-					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
+					<div class="card-footer col-sm-12">
+					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small><i class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
+					 <div class="modal fade" id="light-log_{{ v['customData']['idx'] }}" tabindex="-1">
+						<div class="modal-dialog modal-dialog-centered modal-lg">
+						  <div class="modal-content">
+							<div class="modal-header">
+							  <h5 class="card-title">Device log <span>| {{ v['name']['name'] }}</span></h5>
+							 <!--  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+							</div>
+							<div class="modal-body">
+								<div class="d-flex justify-content-center" id="device_log_{{ v['customData']['idx'] }}"></div>
+							</div>
+							<div class="modal-footer">
+								<button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+						    </div>
+						  </div>
+						</div>
+					  </div><!-- End Vertically centered Modal-->
 					</div>
 				</div>
 				
@@ -439,8 +616,24 @@
 					<!-- <i class="bi bi-broadcast" id="icon_smokeOff_{{ v['customData']['idx'] }}"></i> -->
 					<div class="label">{{ v['name']['name'] }}</div>
 					<small id="data_smoke_{{ v['customData']['idx'] }}">Not availible</small>
-					<div class="card-footer col-sm-11">
-					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
+					<div class="card-footer col-sm-12">
+					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small><i class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
+					 <div class="modal fade" id="light-log_{{ v['customData']['idx'] }}" tabindex="-1">
+						<div class="modal-dialog modal-dialog-centered modal-lg">
+						  <div class="modal-content">
+							<div class="modal-header">
+							  <h5 class="card-title">Device log <span>| {{ v['name']['name'] }}</span></h5>
+							 <!--  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+							</div>
+							<div class="modal-body">
+								<div class="d-flex justify-content-center" id="device_log_{{ v['customData']['idx'] }}"></div>
+							</div>
+							<div class="modal-footer">
+								<button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+						    </div>
+						  </div>
+						</div>
+					  </div><!-- End Vertically centered Modal-->
 					</div>
 				</div>
 				
@@ -449,8 +642,24 @@
 					<i class="material-symbols-outlined" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}">motion_sensor_active</i>
 					<div class="label">{{ v['name']['name'] }}</div>
 					<small id="data_motion_{{ v['customData']['idx'] }}">Not availible</small>
-					<div class="card-footer col-sm-11">
-					 <small class="float-end" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
+					<div class="card-footer col-sm-12">
+					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small><i class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
+					 <div class="modal fade" id="light-log_{{ v['customData']['idx'] }}" tabindex="-1">
+						<div class="modal-dialog modal-dialog-centered modal-lg">
+						  <div class="modal-content">
+							<div class="modal-header">
+							  <h5 class="card-title">Device log <span>| {{ v['name']['name'] }}</span></h5>
+							 <!--  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+							</div>
+							<div class="modal-body">
+								<div class="d-flex justify-content-center" id="device_log_{{ v['customData']['idx'] }}"></div>
+							</div>
+							<div class="modal-footer">
+								<button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+						    </div>
+						  </div>
+						</div>
+					  </div><!-- End Vertically centered Modal-->
 					</div>
 				</div>
 				
@@ -524,6 +733,13 @@ function getlog(div, idx, name, timeline){
 		ShowTempLog(div, idx, name, timeline)
 		}, 500);
 	<!-- setInterval(ShowTempLog, 60000, div, idx, name, timeline); -->
+}
+
+function getLigthLog(idx){
+setTimeout(() => {
+		getDeviceLog(idx)
+		}, 100);
+
 }
 
 {% for k, v in devices.items() %}
