@@ -673,7 +673,7 @@
 			  {% for k, v in devices.items() %}
 			    {% if  (v['customData']['domain'] not in (
 					'Group','Scene','Thermostat', 'Setpoint','Temp', 'TempHumidity', 'TempHumidityBaro','SmokeDetector', 'Security',
-					'VenetianBlindsEU', 'OnOff', 'Dimmer', 'VenetianBlindsUS', 'Doorbell', 'DoorLock', 'Selector', 'DoorContact', 
+					'VenetianBlindsEU', 'OnOff', 'Dimmer', 'VenetianBlindsUS', 'Doorbell', 'DoorLock', 'Selector', 'DoorContact', 'BlindsPercentage',
 					'MotionSensor', 'PushOnButton', 'PushOffButton', 'ColorSwitch', 'Contact') and 'Hidden' not in v['customData']['domain'] ) %}
 				<div class="icon">
 					<i class="material-symbols-outlined" id="icon_{{ v['customData']['idx'] }}">unknown_2</i>
@@ -760,7 +760,7 @@ setTimeout(() => {
 		updateSwitches_block.push("{{ v['customData']['idx'] }}")
 		$('#title_security').show()
 	{% elif  (v['customData']['domain'] not in (
-					'SmokeDetector', 'Security', 'VenetianBlindsEU', 'OnOff', 'VenetianBlindsUS', 'Doorbell', 'DoorLock', 'DoorContact',
+					'SmokeDetector', 'Security', 'VenetianBlindsEU', 'OnOff', 'VenetianBlindsUS', 'Doorbell', 'DoorLock', 'DoorContact', 'BlindsPercentage',
 					'MotionSensor', 'PushOnButton', 'PushOffButton', 'Contact') and 'Hidden' not in v['customData']['domain']) %}
 		updateOthers_block.push("{{ v['customData']['idx'] }}")
 		$('#title_other').show()
