@@ -20,4 +20,4 @@ jobs:
     - name: Build the Docker Image
       run: docker build . --file Dockerfile --tag ${{secrets.DOCKER_USER}}/dzga-flask:arm32v7
     - name: Docker Push
-      run: docker push ${{secrets.DOCKER_USER}}/dzga-flask
+      run: docker push ${{secrets.DOCKER_USER}}/dzga-flask:arm32v7
