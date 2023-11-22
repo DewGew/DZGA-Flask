@@ -1,10 +1,8 @@
 name: Docker arm32v7/python Image CI
 
 on:
-  pull_request:
+  workflow_dispatch:
     branches: [ "arm32v7/python" ]
-    types:
-      - closed
 
 jobs:
 
