@@ -12,11 +12,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
       name: Docker login
-      env:
-        DOCKER_USER: ${{secrets.DOCKER_USER}}
-        DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
-      run: |
-        docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+
     - uses: mr-smithers-excellent/docker-build-push@v6
       name: Build & push Docker image
       with:
