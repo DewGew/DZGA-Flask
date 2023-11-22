@@ -23,7 +23,7 @@ bash <(curl -s https://raw.githubusercontent.com/DewGew/dzga-installer/master/DZ
 ```
 Or simply run DZGA in with Docker and Docker-compose:
 ```
-curl -LJO https://raw.githubusercontent.com/DewGew/DZGA-Flask/development/docker-compose.yaml
-docker-compose -f docker-compose.yaml up -d
+curl -LJO https://raw.githubusercontent.com/DewGew/DZGA-Flask/development/dzga-compose.yaml
+docker-compose -f dzga-compose.yaml up -d
 ```
 ***For more help read DZGA-Flask [wiki](https://github.com/DewGew/DZGA-Flask/wiki)***
