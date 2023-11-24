@@ -36,7 +36,7 @@
 					  <div class="label">{{ v['name']['name'] }}</div>
 					</div>
 					<div class="card-footer col-sm-12">
-					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
+					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not available</small>
 					</div>
 				</div>
 				
@@ -47,7 +47,7 @@
 					  <div class="label">{{ v['name']['name'] }}</div>
 					</div>
 					<div class="card-footer col-sm-12">
-					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small>
+					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not available</small>
 					</div>
 				</div>
 			  {% endif %}
@@ -94,7 +94,7 @@
 					  <i class="material-symbols-outlined" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}">lightbulb</i>
 					  {% endif %}
 					  <div class="label">{{ v['name']['name'] }}</div>
-					  <small id="data_{{ v['customData']['idx'] }}">Not availible</small>
+					  <small id="data_{{ v['customData']['idx'] }}">Not available</small>
 					</div>
 					<div class="modal fade" id="onoffpin_{{ v['customData']['idx'] }}" tabindex="-1">
 						<div class="modal-dialog modal-dialog-centered modal-sm">
@@ -115,7 +115,7 @@
 						</div>
 					  </div><!-- End Vertically centered Modal-->
 					<div class="card-footer col-sm-12">
-					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small><i class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
+					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not available</small><i class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
 					 <div class="modal fade" id="light-log_{{ v['customData']['idx'] }}" tabindex="-1">
 						<div class="modal-dialog modal-dialog-centered modal-lg">
 						  <div class="modal-content">
@@ -140,7 +140,7 @@
 					<i class="material-symbols-outlined" id="icon_{{ v['customData']['idx'] }}">doorbell_3p</i>
 					<div class="label">{{ v['name']['name'] }}</div>
 					<div class="card-footer col-sm-12">
-					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small><i class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
+					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not available</small><i class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
 					 <div class="modal fade" id="light-log_{{ v['customData']['idx'] }}" tabindex="-1">
 						<div class="modal-dialog modal-dialog-centered modal-lg">
 						  <div class="modal-content">
@@ -164,7 +164,7 @@
 					<div class="click" onclick="toogleSwitch({{ v['customData']['idx'] }}, '{{ v['customData']['protected'] }}')">
 						<i class="material-symbols-outlined" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}">lock</i>
 						<div class="label">{{ v['name']['name'] }}</div>
-						<small id="data_{{ v['customData']['idx'] }}">Not availible</small>
+						<small id="data_{{ v['customData']['idx'] }}">Not available</small>
 					</div>
 					<div class="modal fade" id="onoffpin_{{ v['customData']['idx'] }}" tabindex="-1">
 						<div class="modal-dialog modal-dialog-centered modal-sm">
@@ -185,7 +185,7 @@
 						</div>
 					  </div><!-- End Vertically centered Modal-->
 					 <div class="card-footer col-sm-12">
-					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small><i class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
+					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not available</small><i class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
 					 <div class="modal fade" id="light-log_{{ v['customData']['idx'] }}" tabindex="-1">
 						<div class="modal-dialog modal-dialog-centered modal-lg">
 						  <div class="modal-content">
@@ -208,7 +208,7 @@
 				{% elif v['customData']['domain'] in ('VenetianBlindsUS', 'VenetianBlindsEU', 'Blinds', 'BlindsStop','BlindsPercentage')%}
 				<div class="icon">
 					<i class="material-symbols-outlined" id="icon_blinds_{{ v['customData']['idx'] }}">roller_shades</i>
-					  <small id="data_{{ v['customData']['idx'] }}">Not availible</small>
+					  <small id="data_{{ v['customData']['idx'] }}">Not available</small>
 					<div class="label">{{ v['name']['name'] }}</div>
 					{% if v['customData']['domain'] != 'BlindsPercentage' %}
 					<div class="btn-group" role="group" aria-label="Basic outlined blinds">
@@ -222,7 +222,7 @@
 					<input id="slider_{{ v['customData']['idx'] }}" type="range" min="0" max="100" step="1" onchange="changeDimmers({{ v['customData']['idx'] }}, this.value)">
 					{% endif %}
 					<div class="card-footer col-sm-12">
-					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small><i class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
+					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not available</small><i class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
 					 <div class="modal fade" id="light-log_{{ v['customData']['idx'] }}" tabindex="-1">
 						<div class="modal-dialog modal-dialog-centered modal-lg">
 						  <div class="modal-content">
@@ -251,7 +251,7 @@
 					</div>
 					<input id="slider_{{ v['customData']['idx'] }}" type="range" min="0" max="100" step="1" onchange="changeDimmers({{ v['customData']['idx'] }}, this.value)">
 					<div class="card-footer col-sm-12">
-					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small><i class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
+					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not available</small><i class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
 					 <div class="modal fade" id="light-log_{{ v['customData']['idx'] }}" tabindex="-1">
 						<div class="modal-dialog modal-dialog-centered modal-lg">
 						  <div class="modal-content">
@@ -281,7 +281,7 @@
 					<input id="slider_{{ v['customData']['idx'] }}" type="range" min="0" max="100" step="1" onchange="changeDimmers({{ v['customData']['idx'] }}, this.value)">
 					<input type="color" class="form-control form-control-color" id="rgb_{{ v['customData']['idx'] }}" value="#4154f1" title="Choose your color" onchange="changeRGB({{ v['customData']['idx'] }}, this.value)">
 					<div class="card-footer col-sm-12">
-					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small><i class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
+					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not available</small><i class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
 					 <div class="modal fade" id="light-log_{{ v['customData']['idx'] }}" tabindex="-1">
 						<div class="modal-dialog modal-dialog-centered modal-lg">
 						  <div class="modal-content">
@@ -306,7 +306,7 @@
 					<div class="click" onclick="" data-bs-toggle="modal" data-bs-target="#selmodal_{{ v['customData']['idx'] }}">
 						<i class="material-symbols-outlined" id="icon_{{ v['customData']['idx'] }}">event_list</i>
 						<div class="label">{{ v['name']['name'] }}</div>
-						<small id="data_{{ v['customData']['idx'] }}">Not availible</small>
+						<small id="data_{{ v['customData']['idx'] }}">Not available</small>
 					</div>
 					<div class="modal fade" id="selmodal_{{ v['customData']['idx'] }}" tabindex="-1">
 						<div class="modal-dialog modal-dialog-centered modal-sm">
@@ -335,7 +335,7 @@
 						</div>
 					  </div><!-- End Vertically centered Modal-->
 					<div class="card-footer col-sm-12">
-					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small><i class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
+					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not available</small><i class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
 					 <div class="modal fade" id="light-log_{{ v['customData']['idx'] }}" tabindex="-1">
 						<div class="modal-dialog modal-dialog-centered modal-lg">
 						  <div class="modal-content">
@@ -359,9 +359,9 @@
 				<div class="icon">
 					<i class="material-symbols-outlined" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}">door_front</i>
 					<div class="label">{{ v['name']['name'] }}</div>
-					<small id="data_{{ v['customData']['idx'] }}">Not availible</small>
+					<small id="data_{{ v['customData']['idx'] }}">Not available</small>
 					<div class="card-footer col-sm-12">
-					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small><i class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
+					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not available</small><i class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
 					 <div class="modal fade" id="light-log_{{ v['customData']['idx'] }}" tabindex="-1">
 						<div class="modal-dialog modal-dialog-centered modal-lg">
 						  <div class="modal-content">
@@ -406,7 +406,7 @@
 						</div>
 					  </div><!-- End Vertically centered Modal-->
 					<div class="card-footer col-sm-12">
-					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small><i class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
+					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not available</small><i class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
 					 <div class="modal fade" id="light-log_{{ v['customData']['idx'] }}" tabindex="-1">
 						<div class="modal-dialog modal-dialog-centered modal-lg">
 						  <div class="modal-content">
@@ -438,10 +438,10 @@
 				{% if  v['customData']['domain'] in ('Temp', 'TempHumidity', 'TempHumidityBaro') %}
 				<div class="icon">
 					<i class="material-symbols-outlined" id="icon_{{ v['customData']['idx'] }}">thermometer</i>
-					 <small id="data_{{ v['customData']['idx'] }}">Not availible</small>
+					 <small id="data_{{ v['customData']['idx'] }}">Not available</small>
 					<div class="label">{{ v['name']['name'] }}</div>
 					<div class="card-footer col-sm-12">
-					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small><i class="bi bi-bar-chart-fill float-end" onClick="getlog('domoticz-chart-block_{{ v['customData']['idx'] }}', '{{ v['customData']['idx'] }}', '{{ v['name']['name'] }}', 'month');" data-bs-toggle="modal" data-bs-target="#temp-chart_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
+					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not available</small><i class="bi bi-bar-chart-fill float-end" onClick="getlog('domoticz-chart-block_{{ v['customData']['idx'] }}', '{{ v['customData']['idx'] }}', '{{ v['name']['name'] }}', 'month');" data-bs-toggle="modal" data-bs-target="#temp-chart_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
 					</div>
 					<div class="modal fade" id="temp-chart_{{ v['customData']['idx'] }}" tabindex="-1">
 						<div class="modal-dialog modal-dialog-centered modal-lg">
@@ -470,13 +470,13 @@
 					<div class="click" onclick="" data-bs-toggle="modal" data-bs-target="#thermomodal_{{ v['customData']['idx'] }}">
 					<i class="material-symbols-outlined" id="{% if v['customData']['selector_modes_idx'] %}thermo_icon_{{ v['customData']['selector_modes_idx'] }}{% else %}thermo_icon_{{ v['customData']['idx'] }}{% endif %}">thermostat</i>
 					{% if v['customData']['actual_temp_idx'] %}
-						<small id="actual_data_{{ v['customData']['actual_temp_idx'] }}">Not availible</small>
+						<small id="actual_data_{{ v['customData']['actual_temp_idx'] }}">Not available</small>
 					{% else %}
-						<small id="data_{{ v['customData']['idx'] }}">Not availible</small>
+						<small id="data_{{ v['customData']['idx'] }}">Not available</small>
 					{% endif %}
 					<div class="label">{{ v['name']['name'] }}</div>
 					{% if v['customData']['selector_modes_idx'] %}
-						<small id="mode_data_{{ v['customData']['selector_modes_idx'] }}">Not availible</small>
+						<small id="mode_data_{{ v['customData']['selector_modes_idx'] }}">Not available</small>
 					{% endif %}
 					</div>
 					<div class="modal fade" id="thermomodal_{{ v['customData']['idx'] }}" tabindex="-1">
@@ -488,9 +488,9 @@
 									<label for="range_{{ v['customData']['idx'] }}" class="form-label">Set Temperature</label>
 									<div>
 									{% if v['customData']['actual_temp_idx'] %}
-									<small>Actual: <span id="actual_tdata_{{ v['customData']['actual_temp_idx'] }}">Not availible</span></small>
+									<small>Actual: <span id="actual_tdata_{{ v['customData']['actual_temp_idx'] }}">Not available</span></small>
 									{% else %}
-									<small>Actual: <span id="tdata_{{ v['customData']['idx'] }}">Not availible</span></small>
+									<small>Actual: <span id="tdata_{{ v['customData']['idx'] }}">Not available</span></small>
 									{% endif %}
 									<input id="range_{{ v['customData']['idx'] }}" class="form-range" type="range" min="{{ v['attributes']['thermostatTemperatureRange']['minThresholdCelsius'] }}" max="{{ v['attributes']['thermostatTemperatureRange']['maxThresholdCelsius'] }}" value="" step="0.5" oninput="document.getElementById('slider_value_{{ v['customData']['idx'] }}').innerHTML = this.value">
 									Setpoint: <span id="slider_value_{{ v['customData']['idx'] }}">Nothing yet.</span>
@@ -520,7 +520,7 @@
 						</div>
 					  </div><!-- End Vertically centered Modal-->
 					<div class="card-footer col-sm-12">
-					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small><i class="bi bi-bar-chart-fill float-end" onClick="getlog('domoticz-chart-block_{{ v['customData']['idx'] }}', '{{ v['customData']['idx'] }}', '{{ v['name']['name'] }}', 'month');" data-bs-toggle="modal" data-bs-target="#temp-chart_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
+					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not available</small><i class="bi bi-bar-chart-fill float-end" onClick="getlog('domoticz-chart-block_{{ v['customData']['idx'] }}', '{{ v['customData']['idx'] }}', '{{ v['name']['name'] }}', 'month');" data-bs-toggle="modal" data-bs-target="#temp-chart_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
 					</div>
 					<div class="modal fade" id="temp-chart_{{ v['customData']['idx'] }}" tabindex="-1">
 						<div class="modal-dialog modal-dialog-centered modal-lg">
@@ -560,7 +560,7 @@
 					<div class="click" onclick="" data-bs-toggle="modal" data-bs-target="#security">
 					<i class="bi bi-house-lock" id="icon_security_{{ v['customData']['idx'] }}"></i>
 					<div class="label">{{ v['name']['name'] }}</div>
-					<small id="data_{{ v['customData']['idx'] }}">Not availible</small>
+					<small id="data_{{ v['customData']['idx'] }}">Not available</small>
 					</div>
 					  <div class="modal fade" id="security" tabindex="-1">
 						<div class="modal-dialog modal-dialog-centered modal-sm">
@@ -590,7 +590,7 @@
 						</div>
 					  </div><!-- End Vertically centered Modal-->
 					<div class="card-footer col-sm-12">
-					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small><i class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
+					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not available</small><i class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
 					 <div class="modal fade" id="light-log_{{ v['customData']['idx'] }}" tabindex="-1">
 						<div class="modal-dialog modal-dialog-centered modal-lg">
 						  <div class="modal-content">
@@ -615,9 +615,9 @@
 					<i class="material-symbols-outlined" id="icon_smoke_{{ v['customData']['idx'] }}">detector</i>
 					<!-- <i class="bi bi-broadcast" id="icon_smokeOff_{{ v['customData']['idx'] }}"></i> -->
 					<div class="label">{{ v['name']['name'] }}</div>
-					<small id="data_smoke_{{ v['customData']['idx'] }}">Not availible</small>
+					<small id="data_smoke_{{ v['customData']['idx'] }}">Not available</small>
 					<div class="card-footer col-sm-12">
-					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small><i class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
+					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not available</small><i class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
 					 <div class="modal fade" id="light-log_{{ v['customData']['idx'] }}" tabindex="-1">
 						<div class="modal-dialog modal-dialog-centered modal-lg">
 						  <div class="modal-content">
@@ -641,9 +641,9 @@
 				<div class="icon">
 					<i class="material-symbols-outlined" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}">motion_sensor_active</i>
 					<div class="label">{{ v['name']['name'] }}</div>
-					<small id="data_motion_{{ v['customData']['idx'] }}">Not availible</small>
+					<small id="data_motion_{{ v['customData']['idx'] }}">Not available</small>
 					<div class="card-footer col-sm-12">
-					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not availible</small><i class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
+					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not available</small><i class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
 					 <div class="modal fade" id="light-log_{{ v['customData']['idx'] }}" tabindex="-1">
 						<div class="modal-dialog modal-dialog-centered modal-lg">
 						  <div class="modal-content">
@@ -677,7 +677,7 @@
 					'MotionSensor', 'PushOnButton', 'PushOffButton', 'ColorSwitch', 'Contact') and 'Hidden' not in v['customData']['domain'] ) %}
 				<div class="icon">
 					<i class="material-symbols-outlined" id="icon_{{ v['customData']['idx'] }}">unknown_2</i>
-					<small id="data_{{ v['customData']['idx'] }}">Not availible</small>
+					<small id="data_{{ v['customData']['idx'] }}">Not available</small>
 					<div class="label">{{ v['name']['name'] }}</br>Domain: {{ v['customData']['domain'] }}</br>IDX: {{ v['customData']['idx'] }}</div>
 				</div>
 				{% endif %}
@@ -690,7 +690,7 @@
 			    {% if  'Hidden' in v['customData']['domain'] %}
 				<div class="icon">
 					<i class="bi bi-incognito" id="icon_{{ v['customData']['idx'] }}"></i>
-					<small id="data_{{ v['customData']['idx'] }}">Not availible</small>
+					<small id="data_{{ v['customData']['idx'] }}">Not available</small>
 					<div class="label">{{ v['name']['name'] }}</br>Domain: {{ v['customData']['domain'] }}</br>IDX: {{ v['customData']['idx'] }}</div>
 				</div>
 				{% endif %}
