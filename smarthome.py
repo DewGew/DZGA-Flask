@@ -11,6 +11,7 @@ import modules.api as api
 import modules.routes as routes
 
 from time import time
+from itertools import product
 from werkzeug.security import check_password_hash
 from werkzeug.middleware.proxy_fix import ProxyFix
 from modules.database import db, User, Settings
@@ -293,14 +294,15 @@ def fulfillment():
 
     result = {}
     result['requestId'] = r['requestId']
+    result['payload'] = {}
 
     inputs = r['inputs']
     for i in inputs:
         intent = i['intent']
         """ Sync intent, need to response with devices list """
         if intent == "action.devices.SYNC":
-            getDomoticzDevices(user_id)
             result['payload'] = {"agentUserId": user_id, "devices": []}
+            getDomoticzDevices(user_id)
             devs = get_devices(user_id)
             for device_id in devs.keys():
                 # Loading device info
@@ -317,7 +319,6 @@ def fulfillment():
         """ Query intent, need to response with current device status """
         if intent == "action.devices.QUERY":
             devs = get_devices(user_id)
-            result['payload'] = {}
             result['payload']['devices'] = {}
             for device in i['payload']['devices']:
                 device_id = device['id']
@@ -338,51 +339,51 @@ def fulfillment():
             result['payload'] = {}
             result['payload']['commands'] = []
             for command in i['payload']['commands']:
-                for device in command['devices']:
-                    device_id = device['id']
-                    custom_data = device.get("customData", None)
-                    device_module = importlib.import_module('trait')
+                for device, execution in product(command['devices'], command['execution']):
+                
+                    entity_id = device['id']
+                    custom_data = device['customData']
+                    params = execution.get('params', None)
+                    challenge = execution.get('challenge', None)
+                    command = execution.get('command', None)
+                    module = importlib.import_module('trait')
+                    action = getattr(module, "execute")
+                    acknowledge = custom_data.get('acknowledge', None)
+                    protected = custom_data.get('protected', None)
+                    if protected:
+                        acknowledge = False
+                        if challenge is None:
+                            action_result = {
+                                "status": "ERROR", "errorCode": "challengeNeeded", "challengeNeeded": {
+                                    "type": "pinNeeded"}, "ids": [entity_id]}
+                            result['payload']['commands'].append(action_result)
+                            logger.debug("response: \r\n%s", json.dumps(result, indent=4))
+                            return jsonify(result)
+                        elif not challenge.get('pin', False):
+                            action_result = {
+                                "status": "ERROR", "errorCode": "challengeNeeded", "challengeNeeded": {
+                                    "type": "userCancelled"}, "ids": [entity_id]}
+                            result['payload']['commands'].append(action_result)
+                            logger.debug("response: \r\n%s", json.dumps(result, indent=4))
+                            return jsonify(result)
+                    if acknowledge:
+                        if challenge is None:
+                            action_result = {
+                                "status": "ERROR", "errorCode": "challengeNeeded", "challengeNeeded": {
+                                    "type": "ackNeeded"}, "ids": [entity_id]}
+                            result['payload']['commands'].append(action_result)
+                            logger.debug("response: \r\n%s", json.dumps(result, indent=4))
+                            return jsonify(result)
                     # Call execute method
-                    action_method = getattr(device_module, "execute")
-                    for e in command['execution']:
-                        command = e['command']
-                        params = e.get("params", None)
-                        challenge = e.get("challenge", None)
-                        acknowledge = custom_data.get('acknowledge', None)
-                        protected = custom_data.get('protected', None)
-                        if protected:
-                            acknowledge = False
-                            if challenge is None:
-                                action_result = {
-                                    "status": "ERROR", "errorCode": "challengeNeeded", "challengeNeeded": {
-                                        "type": "pinNeeded"}, "ids": [device_id]}
-                                result['payload']['commands'].append(action_result)
-                                logger.debug("response: \r\n%s", json.dumps(result, indent=4))
-                                return jsonify(result)
-                            elif not challenge.get('pin', False):
-                                action_result = {
-                                    "status": "ERROR", "errorCode": "challengeNeeded", "challengeNeeded": {
-                                        "type": "userCancelled"}, "ids": [device_id]}
-                                result['payload']['commands'].append(action_result)
-                                logger.debug("response: \r\n%s", json.dumps(result, indent=4))
-                                return jsonify(result)
-                        if acknowledge:
-                            if challenge is None:
-                                action_result = {
-                                    "status": "ERROR", "errorCode": "challengeNeeded", "challengeNeeded": {
-                                        "type": "ackNeeded"}, "ids": [device_id]}
-                                result['payload']['commands'].append(action_result)
-                                logger.debug("response: \r\n%s", json.dumps(result, indent=4))
-                                return jsonify(result)
-                        action_result = action_method(
+                    action_result = action(
                             custom_data, command, params, user_id, challenge)
-                        result['payload']['commands'].append(action_result)
-                        action_result['ids'] = [device_id]
+                    result['payload']['commands'].append(action_result)
+                    action_result['ids'] = [entity_id]
 
             # ReportState
             if report_state.enable_report_state() and action_result['status'] == 'SUCCESS':
                 data = {'states': {}}
-                data['states'][device_id] = action_result['states']
+                data['states'][entity_id] = action_result['states']
                 statereport(result['requestId'], user_id, data)
                 
                 # if "followUpToken" in params and 'DoorLock' in custom_data['domain']:
