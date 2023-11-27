@@ -20,7 +20,7 @@ class ReportState:
         self._access_token_expires = None
 
     @staticmethod
-    def enable_report_state():
+    def report_state_enabled():
         filename = os.path.join(config.KEYFILE_DIRECTORY, "smart-home-key.json")
         if os.path.isfile(filename):
             with open(filename, mode='r') as f:
