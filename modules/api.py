@@ -8,7 +8,7 @@ import os
 import sys
 import hashlib
 from werkzeug.security import generate_password_hash
-from app import rs
+from smarthome import rs
 from modules.database import db, User, Settings
 from modules.domoticz import getDomoticzDevices, queryDomoticz
 from modules.helpers import logger, remove_user
