@@ -1,35 +1,36 @@
 # -*- coding: utf-8 -*-
 
 import flask_login
-import importlib
 import urllib
 import os
-import sys
 import json
 import modules.config as config
 import modules.api as api
 import modules.routes as routes
 
 from time import time
-from itertools import product
+
 from werkzeug.security import check_password_hash
 from werkzeug.middleware.proxy_fix import ProxyFix
 from modules.database import db, User, Settings
 from modules.domoticz import getDomoticzDevices
 from modules.reportstate import ReportState
+from modules.smarthome import SmartHomeHandler
 from sqlalchemy import or_
-from modules.helpers import (logger, get_token, random_string,
-                             get_device, get_devices, generateToken,
-                             generateCsrfToken, csrfProtect)
+from modules.helpers import (
+        logger,
+        get_token,
+        random_string,
+        get_device,
+        generateToken,
+        generateCsrfToken,
+        csrfProtect,
+        )
 
 from flask import (Flask, redirect, request,
                    url_for, render_template,
                    send_from_directory, jsonify,
                    session)
-
-
-# Path to traits
-sys.path.insert(0, 'modules')
 
 app = Flask(__name__)
 # Create an actual secret key for production
@@ -47,7 +48,8 @@ db.init_app(app)
 
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
-report_state = ReportState()
+rs = ReportState()
+smarthome = SmartHomeHandler()
 
 last_code = None
 last_code_user = None
@@ -56,21 +58,6 @@ last_code_time = None
 
 if not os.path.exists(os.path.join(config.DATABASE_DIRECTORY, 'db.sqlite')):
     os.system('python3 init_db.py')
-
-
-def statereport(requestId, userID, states):
-    """Send a state report to Google."""
-
-    data = {}
-    if 'notifications' in states:
-        data['eventId'] = random_string(10)
-    data['requestId'] = requestId
-    data['agentUserId'] = userID
-    data['payload'] = {}
-    data['payload']['devices'] = {}
-    data['payload']['devices'] = states
-
-    report_state.call_homegraph_api('state', data)
 
 
 @login_manager.user_loader
@@ -246,7 +233,7 @@ def notification():
         return "Not found", 404
 
     # Reportstate must be enabled to use notification
-    if report_state.enable_report_state():
+    if rs.report_state_enabled():
         request_id = random_string(20)
 
         try:
@@ -260,18 +247,24 @@ def notification():
 
         # Send smokedetektor notification
         if domain == 'SmokeDetector':
-            data['states'][message["id"]] = {"on": (True if message["state"].lower() in ['on', 'alarm/fire !'] else False)},
-            data['notifications'][message["id"]] = {'SensorState': {'priority': 0, 'name': 'SmokeLevel', 'currentSensorState': 'smoke detected'}}
+            data['states'][message["id"]] = {
+                "on": (True if message["state"].lower() in ['on', 'alarm/fire !'] else False)},
+            data['notifications'][message["id"]] = {
+                'SensorState': {
+                    'priority': 0, 'name': 'SmokeLevel', 'currentSensorState': 'smoke detected'}}
 
         # Send smokedetektor notification
         elif domain == 'Doorbell':
-            data['states'][message["id"]] = {"on": (True if message["state"].lower() in ['on', 'pressed'] else False)},
-            data['notifications'][message["id"]] = {"ObjectDetection": {"objects": {"unfamiliar": 1}, 'priority': 0, 'detectionTimestamp': time()}}
+            data['states'][message["id"]] = {
+                "on": (True if message["state"].lower() in ['on', 'pressed'] else False)},
+            data['notifications'][message["id"]] = {
+                "ObjectDetection": {
+                    "objects": {"unfamiliar": 1}, 'priority': 0, 'detectionTimestamp': time()}}
 
         else:
             return '{"title": "SendNotification", "status": "ERR"}'
 
-        statereport(request_id, user_id, data)
+        smarthome.statereport(request_id, user_id, data)
         return '{"title": "SendNotification", "status": "OK"}'
 
     return "Not found", 404
@@ -290,108 +283,32 @@ def fulfillment():
 
     r = request.get_json()
 
-    logger.debug("request: \r\n%s", json.dumps(r, indent=4))
-
-    result = {}
-    result['requestId'] = r['requestId']
-    result['payload'] = {}
+    logger.debug("request: \r\n%s", json.dumps(r, indent=2))
 
     inputs = r['inputs']
+    requestId = r['requestId']
+    result = {'requestId': requestId, 'payload': {}}
+
     for i in inputs:
         intent = i['intent']
         """ Sync intent, need to response with devices list """
         if intent == "action.devices.SYNC":
-            result['payload'] = {"agentUserId": user_id, "devices": []}
+
             getDomoticzDevices(user_id)
-            devs = get_devices(user_id)
-            for device_id in devs.keys():
-                # Loading device info
-                device = get_device(user_id, device_id)
-                if 'Hidden' not in device['customData']['domain']:
-                    device['deviceInfo'] = {
-                                "manufacturer": "Domoticz",
-                                "model": "1",
-                                "hwVersion": "1",
-                                "swVersion": "1"
-                            }
-                    result['payload']['devices'].append(device)
+            sync = smarthome.sync(user_id)
+            result['payload'] = sync
 
         """ Query intent, need to response with current device status """
         if intent == "action.devices.QUERY":
-            devs = get_devices(user_id)
-            result['payload']['devices'] = {}
-            for device in i['payload']['devices']:
-                device_id = device['id']
-                x = devs.get(device_id)
-                custom_data = device.get("customData", None)
-                device_module = importlib.import_module('trait')
-                # Call query method for this device
-                query_method = getattr(device_module, "query")
-                result['payload']['devices'][device_id] = query_method(custom_data, x, user_id)
-            # ReportState
-            if report_state.enable_report_state():
-                qdata = {}
-                qdata['states'] = result['payload']['devices']
-                statereport(result['requestId'], user_id, qdata)
+
+            query = smarthome.query(user_id, i['payload'], requestId)
+            result['payload'] = query
 
         """ Execute intent, need to execute some action """
         if intent == "action.devices.EXECUTE":
-            result['payload'] = {}
-            result['payload']['commands'] = []
-            for command in i['payload']['commands']:
-                for device, execution in product(command['devices'], command['execution']):
-                
-                    entity_id = device['id']
-                    custom_data = device['customData']
-                    params = execution.get('params', None)
-                    challenge = execution.get('challenge', None)
-                    command = execution.get('command', None)
-                    module = importlib.import_module('trait')
-                    action = getattr(module, "execute")
-                    acknowledge = custom_data.get('acknowledge', None)
-                    protected = custom_data.get('protected', None)
-                    if protected:
-                        acknowledge = False
-                        if challenge is None:
-                            action_result = {
-                                "status": "ERROR", "errorCode": "challengeNeeded", "challengeNeeded": {
-                                    "type": "pinNeeded"}, "ids": [entity_id]}
-                            result['payload']['commands'].append(action_result)
-                            logger.debug("response: \r\n%s", json.dumps(result, indent=4))
-                            return jsonify(result)
-                        elif not challenge.get('pin', False):
-                            action_result = {
-                                "status": "ERROR", "errorCode": "challengeNeeded", "challengeNeeded": {
-                                    "type": "userCancelled"}, "ids": [entity_id]}
-                            result['payload']['commands'].append(action_result)
-                            logger.debug("response: \r\n%s", json.dumps(result, indent=4))
-                            return jsonify(result)
-                    if acknowledge:
-                        if challenge is None:
-                            action_result = {
-                                "status": "ERROR", "errorCode": "challengeNeeded", "challengeNeeded": {
-                                    "type": "ackNeeded"}, "ids": [entity_id]}
-                            result['payload']['commands'].append(action_result)
-                            logger.debug("response: \r\n%s", json.dumps(result, indent=4))
-                            return jsonify(result)
-                    # Call execute method
-                    action_result = action(
-                            custom_data, command, params, user_id, challenge)
-                    result['payload']['commands'].append(action_result)
-                    action_result['ids'] = [entity_id]
 
-            # ReportState
-            if report_state.enable_report_state() and action_result['status'] == 'SUCCESS':
-                data = {'states': {}}
-                data['states'][entity_id] = action_result['states']
-                statereport(result['requestId'], user_id, data)
-                
-                # if "followUpToken" in params and 'DoorLock' in custom_data['domain']:
-                    # ndata = {'states':{},'notifications':{}}
-                    # ndata['states'][device_id] = action_result['states']
-                    # ndata['notifications'][device_id] = {'LockUnlock':{"priority": 0,"followUpResponse": {
-                                                # "status": "SUCCESS", "followUpToken": params["followUpToken"], "isLocked":params['lock']}}}
-                    # statereport(result['requestId'], user_id, data)
+            execute = smarthome.execute(user_id, i['payload']['commands'], requestId)
+            result['payload'] = execute
 
         """ Disconnect intent, need to revoke token """
         if intent == "action.devices.DISCONNECT":
@@ -402,7 +319,7 @@ def fulfillment():
 
             return {}
 
-    logger.debug("response: \r\n%s", json.dumps(result, indent=4))
+    logger.debug("response: \r\n%s", json.dumps(result, indent=2))
 
     return jsonify(result)
 
@@ -413,7 +330,7 @@ with app.app_context():
 
 if __name__ == "__main__":
     logger.info("Smarthome server has started.")
-    if not report_state.enable_report_state():
+    if not rs.report_state_enabled():
         logger.info('Upload the smart-home-key.json to %s folder', config.KEYFILE_DIRECTORY)
     app.add_url_rule('/dashboard', 'dashboard', routes.dashboard, methods=['GET', 'POST'])
     app.add_url_rule('/devices', 'devices', routes.devices, methods=['GET', 'POST'])
@@ -429,4 +346,4 @@ if __name__ == "__main__":
         app.run('0.0.0.0', port=8181, debug=True, ssl_context=context)
     else:
         logger.info("Running without ssl")
-        app.run('0.0.0.0', port=8181, threaded=True, debug=True)
+        app.run('0.0.0.0', port=8181, debug=True)
