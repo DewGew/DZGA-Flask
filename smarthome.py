@@ -15,7 +15,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 from modules.database import db, User, Settings
 from modules.domoticz import getDomoticzDevices
 from modules.reportstate import ReportState
-from modules.smarthome import SmartHomeHandler
+from modules.intents import SmartHomeHandler
 from sqlalchemy import or_
 from modules.helpers import (
         logger,
