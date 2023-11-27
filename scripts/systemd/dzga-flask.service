@@ -1,6 +1,6 @@
 [Unit]
 Description=DZGA-Flask dashboard
-After=multi-user.target
+After=network.target
 
 [Service]
 User=__USER__
