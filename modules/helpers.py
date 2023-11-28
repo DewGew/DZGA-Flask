@@ -3,7 +3,6 @@
 import os
 import json
 import logging
-import requests
 from flask import request, session, abort
 
 import random
@@ -12,20 +11,21 @@ import modules.config as config
 
 # Logging
 logging.basicConfig(level=logging.DEBUG,
-                format="%(asctime)s %(message)s",
-                datefmt="%Y-%m-%d %H:%M:%S",
-                filename=os.path.join(config.CONFIG_DIRECTORY, "smarthome.log"),
-                filemode='w')
+                    format="%(asctime)s %(message)s",
+                    datefmt="%Y-%m-%d %H:%M:%S",
+                    filename=os.path.join(config.CONFIG_DIRECTORY, "smarthome.log"),
+                    filemode='w')
 logging.getLogger().addHandler(logging.StreamHandler())
 logging.getLogger("urllib3").setLevel(logging.DEBUG)
 logging.getLogger('werkzeug').setLevel(logging.ERROR)
 logger = logging.getLogger()
 
-def remove_user(user):   
+
+def remove_user(user):
     devicesfile = os.path.join(config.DEVICES_DIRECTORY, user + "_devices.json")
     os.remove(devicesfile)
-    
-    
+
+
 # Function to retrieve token from header #
 def get_token():
     auth = request.headers.get('Authorization')
@@ -36,6 +36,7 @@ def get_token():
         logger.warning("invalid token: %s", auth)
         return None
 
+
 # Function to check current token, returns username #
 def check_token():
     access_token = get_token()
@@ -45,6 +46,7 @@ def check_token():
             return f.read()
     else:
         return None
+
 
 # Function to load device info
 def get_device(user_id, device_id):
@@ -58,7 +60,8 @@ def get_device(user_id, device_id):
             return data
     else:
         return None
-        
+
+
 # Function to load devices info
 def get_devices(user_id):
     filename = os.path.join(config.DEVICES_DIRECTORY, user_id + "_devices.json")
@@ -70,11 +73,13 @@ def get_devices(user_id):
     else:
         return None
 
+
 # Random string generator
 def random_string(stringLength=8):
     chars = string.ascii_letters + string.digits
     return ''.join(random.choice(chars) for i in range(stringLength))
-    
+
+
 def _tempConvert(temp, unit):
     """ Convert Fahrenheit to Celsius """
     if unit == 'F':
@@ -82,23 +87,27 @@ def _tempConvert(temp, unit):
         return celsius
     else:
         return temp
-        
+
+  
 def generateToken(last_code_user):
     access_token = random_string(32)
     logger.info("Access granted for " + last_code_user)
 
     return access_token
-    
+
+
 def csrfProtect():
     if request.method == "POST":
         token = session.get('_csrf_token')
         if not token or token != request.form['_csrf_token']:
             abort(403)
-    
+
+
 def generateCsrfToken():
     if '_csrf_token' not in session:
         session['_csrf_token'] = generate_API_key()
     return session['_csrf_token']
-    
+
+
 def generate_API_key():
     return random_string(16)

@@ -1,6 +1,5 @@
 import os
 import modules.config as config
-import json
 from time import sleep
 
 from flask_login import login_required, current_user
@@ -20,7 +19,7 @@ report_state = ReportState()
 @login_required
 def dashboard():
 
-    reportstate = report_state.enable_report_state()
+    reportstate = report_state.report_state_enabled()
     devices = get_devices(current_user.username)
 
     if devices is None:
@@ -38,7 +37,7 @@ def dashboard():
 @login_required
 def devices():
 
-    reportstate = report_state.enable_report_state()
+    reportstate = report_state.report_state_enabled()
     dbsettings = Settings.query.get_or_404(1)
     devices = get_devices(current_user.username)
     dbuser = User.query.filter_by(username=current_user.username).first()
@@ -63,8 +62,8 @@ def devices():
             selector_modes_idx = request.form.get('selector_modes_idx')
 
             if idx not in deviceconfig.keys():
-                 deviceconfig[idx] = {}
- 
+                deviceconfig[idx] = {}
+
             if hideDevice == 'on':
                 deviceconfig[idx].update({'hide': True})
             elif idx in deviceconfig.keys() and 'hide' in deviceconfig[idx]:
@@ -79,7 +78,7 @@ def devices():
                 deviceconfig[idx].update({'ack': True})
             elif idx in deviceconfig.keys() and 'ack' in deviceconfig[idx]:
                 deviceconfig[idx].pop('ack')
-                
+
             # if notification == 'on':
                 # deviceconfig[idx].update({'notification': True})
             # elif idx in deviceconfig.keys() and 'notification' in deviceconfig[idx]:
@@ -90,12 +89,12 @@ def devices():
                     deviceconfig[idx].update({'room': room})
                 elif idx in deviceconfig.keys() and 'room' in deviceconfig[idx]:
                     deviceconfig[idx].pop('room')
- 
+
             if nicknames is not None:
                 if nicknames != '':
                     names = nicknames.split(", ")
                     names = list(filter(None, names))
-                    deviceconfig[idx].update({'nicknames':names})
+                    deviceconfig[idx].update({'nicknames': names})
                 elif idx in deviceconfig.keys() and 'nicknames' in deviceconfig[idx]:
                     deviceconfig[idx].pop('nicknames')
 
@@ -140,7 +139,7 @@ def devices():
 
             dbuser.device_config.update(deviceconfig)
             db.session.add(dbuser)
-            db.session.commit()            
+            db.session.commit()
 
             armedhome = request.form.get('armedhome')
             armedaway = request.form.get('armedaway')
@@ -282,7 +281,7 @@ def settings():
     if request.method == "GET":
         dbsettings = Settings.query.get_or_404(1)
         dbusers = User.query.all()
-        reportstate = report_state.enable_report_state()
+        reportstate = report_state.report_state_enabled()
         devices = get_devices(current_user.username)
 
         return render_template('settings.html',
