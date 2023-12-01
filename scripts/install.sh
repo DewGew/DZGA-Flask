@@ -52,6 +52,6 @@ echo ""
 pip3 install -r ${INSTALL_DIR}/requirements.txt
 echo ""
 echo " Installing db.sqlite"
-cd /home/${USER}/${INSTALL_DIR}
+cd ${INSTALL_DIR}
 python3 init_db.py
 cd ..
