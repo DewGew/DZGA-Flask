@@ -50,3 +50,6 @@ echo ""
 echo " Installing python packages..."
 echo ""
 pip3 install -r ${INSTALL_DIR}/requirements.txt
+echo ""
+echo " Installing db.sqlite"
+python3 ${INSTALL_DIR}/init_db.py
