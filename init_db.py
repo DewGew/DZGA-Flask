@@ -2,7 +2,7 @@ from flask import Flask
 from werkzeug.security import generate_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy_json import mutable_json_type
-from modules.helpers import logger, generateToken
+from modules.helpers import generateToken
 from modules.domoticz import saveJson
 
 app = Flask(__name__)
@@ -95,6 +95,6 @@ with app.app_context():
         db.session.commit()
         data = {}
         saveJson(username, data)
-        logger.info("Database is created...")
+        print("Database is created...")
     except Exception:
-        logger.info('Database already created')
+        print('Database already created')
