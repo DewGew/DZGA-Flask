@@ -175,10 +175,12 @@ def devices():
 @login_required
 def logging():
     dbsettings = Settings.query.get_or_404(1)
+    version = getVersion()
 
     return render_template('logging.html',
                            user=User.query.filter_by(username=current_user.username).first(),
-                           dbsettings=dbsettings)
+                           dbsettings=dbsettings, 
+                           version=version)
 
 
 @login_required
