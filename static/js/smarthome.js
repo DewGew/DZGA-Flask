@@ -376,7 +376,7 @@ function checkVersion() {
     var compare = versionCompare(dataFloat, dzga_version);
     if (compare == 1) {
 	  console.log(compare)
-      $('#newver').html("<i>New version " + dataFloat + " is avalible.</i>");
+      $('#newver').html(" <i> (New version " + dataFloat + " is avalible.)</i>");
 	  $('#newver_note').html('A new version ' + dataFloat + ' is avalible <a href="https://github.com/DewGew/DZGA-Flask" target="_blank">here</a>');  
 	  $('#badge').show();
       $("#notes").html('You have 1 new notifications');
