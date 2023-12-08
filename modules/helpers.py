@@ -37,6 +37,18 @@ def get_token():
         return None
 
 
+# Function to load device info
+def getVersion():
+    filename = os.path.join("VERSION.md")
+    if os.path.isfile(filename) and os.access(filename, os.R_OK):
+        with open(filename, mode='r') as f:
+            text = f.read()
+            
+            return text
+    else:
+        return None
+        
+
 # Function to check current token, returns username #
 def check_token():
     access_token = get_token()
