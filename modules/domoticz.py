@@ -25,18 +25,22 @@ class AogState:
 
 
 def getDomain(device):
-
-    if device["Type"] not in ['General', 'Lux', 'UV', 'Rain', 'Wind']:
+    
+    if device["Type"] in ['Color Switch', 'Group', 'Scene', 'Temp', 'Thermostat', 'Setpoint', 'Temp + Humidity', 'Temp + Humidity + Baro']:
+        devs = device["Type"].replace(" ", "")
+        devs = devs.replace("+", "")
+        return devs
+    elif device["Type"] in ['Light/Switch', 'Lighting 1', 'Lighting 2', 'Lighting 5', 'RFY', 'Value']:
+        if device["Type"] == 'Value' and device.get('SwitchType') is None:
+            return None
         devs = device.get('SwitchType')
-
-        if device['Type'] in ['Color Switch', 'Group', 'Scene', 'Temp', 'Thermostat', 'Setpoint', 'Temp + Humidity', 'Temp + Humidity + Baro']:
-            devs = device["Type"].replace(" ", "")
-
         devs = devs.replace(" ", "")
         devs = devs.replace("/", "")
         devs = devs.replace("+", "")
 
         return devs
+
+    return None
 
     if device['Type'] == 'Value' and device['SwitchType'] is None:
         return None
