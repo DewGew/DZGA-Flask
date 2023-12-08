@@ -43,8 +43,9 @@ def getVersion():
     if os.path.isfile(filename) and os.access(filename, os.R_OK):
         with open(filename, mode='r') as f:
             text = f.read()
-            
-            return text
+            text = text.split()
+
+            return text[0]
     else:
         return None
         
