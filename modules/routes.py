@@ -10,7 +10,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from modules.reportstate import ReportState
 from modules.database import db, User, Settings
 from modules.domoticz import saveJson, getDomoticzDevices
-from modules.helpers import logger, get_devices, generateToken, remove_user
+from modules.helpers import logger, get_devices, generateToken, remove_user, getVersion
 from sqlalchemy import or_
 
 report_state = ReportState()
@@ -21,6 +21,7 @@ def dashboard():
 
     reportstate = report_state.report_state_enabled()
     devices = get_devices(current_user.username)
+    version = getVersion()
 
     if devices is None:
         getDomoticzDevices(current_user.username)
@@ -30,7 +31,8 @@ def dashboard():
                            user=User.query.filter_by(username=current_user.username).first(),
                            reportstate=reportstate,
                            devices=devices,
-                           _csrf_token=session['_csrf_token']
+                           _csrf_token=session['_csrf_token'],
+                           version = version
                            )
 
 
@@ -41,6 +43,7 @@ def devices():
     dbsettings = Settings.query.get_or_404(1)
     devices = get_devices(current_user.username)
     dbuser = User.query.filter_by(username=current_user.username).first()
+    version = getVersion()
 
     if request.method == "POST":
 
@@ -164,7 +167,8 @@ def devices():
                                dbsettings=dbsettings,
                                reportstate=reportstate,
                                devices=devices,
-                               _csrf_token=session['_csrf_token']
+                               _csrf_token=session['_csrf_token'],
+                               version = version
                                )
 
 
@@ -283,6 +287,7 @@ def settings():
         dbusers = User.query.all()
         reportstate = report_state.report_state_enabled()
         devices = get_devices(current_user.username)
+        version = getVersion()
 
         return render_template('settings.html',
                                user=User.query.filter_by(username=current_user.username).first(),
@@ -290,7 +295,8 @@ def settings():
                                dbusers=dbusers,
                                reportstate=reportstate,
                                devices=devices,
-                               _csrf_token=session['_csrf_token']
+                               _csrf_token=session['_csrf_token'],
+                               version = version
                                )
 
 
