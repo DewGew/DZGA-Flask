@@ -294,11 +294,11 @@ function getUser(user) {
 		}			
 	});
 }
-function getVersion() {
+function getDzVersion() {
 	var url = "/api?type=command&param=getversion"
 	requestAPI(url).then(jsonData => {
 		var data = jsonData
-		$('#dzga-version').html('23.9')
+		$('#dzga-version').html(dzga_version)
 		$('#dz-version').html(data.version)
 	});
 }
@@ -365,6 +365,50 @@ function showDiv(that) {
         $("#armhome_div").fadeIn(1000);
 		$("#armaway_div").fadeIn(1000);
     }
+}
+
+function checkVersion() {
+  $.ajax({
+    url: "https://raw.githubusercontent.com/DewGew/DZGA-Flask/development/VERSION.md",
+    cache: false,
+    success: function( data ) {
+		dataFloat = data.split(",")[0];
+    var compare = versionCompare(dataFloat, dzga_version);
+    if (compare == 1) {
+	  console.log(compare)
+      $('#newver').html(" <i> (New version " + dataFloat + " is avalible.)</i>");
+	  $('#newver_note').html('A new version ' + dataFloat + ' is avalible <a href="https://github.com/DewGew/DZGA-Flask" target="_blank">here</a>');  
+	  $('#badge').show();
+      $("#notes").html('You have 1 new notifications');
+      $("#shownotes" ).show();
+      }
+    },
+    async:true
+    });
+}
+  
+function versionCompare(a, b) {
+    if (a === b) {
+       return 0;
+    }
+    var a_components = a.split(".");
+    var b_components = b.split(".");
+    var len = Math.min(a_components.length, b_components.length);
+    for (var i = 0; i < len; i++) {
+        if (parseInt(a_components[i]) > parseInt(b_components[i])) {
+            return 1;
+        }
+        if (parseInt(a_components[i]) < parseInt(b_components[i])) {
+            return -1;
+        }
+    }
+    if (a_components.length > b_components.length) {
+        return 1;
+    }
+    if (a_components.length < b_components.length) {
+        return -1;
+    }
+    return 0;
 }
 
 function decodeBase64(string) {
