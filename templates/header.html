@@ -30,28 +30,29 @@
 
           <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
             <i class="bi bi-bell"></i>
-            <!-- <span class="badge bg-primary badge-number">2</span> -->
+            <span class="badge bg-primary badge-number" id="badge" style="display: none;">1</span>
           </a><!-- End Notification Icon -->
 
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
-            <li class="dropdown-header">
-              You have 0 new notifications
+            <li class="dropdown-header" id="notes">
+              You have 0 notifications
               <!-- <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a> -->
             </li>
-<!--             <li>
+			<div id="shownotes" style="display: none;">
+			<li>
               <hr class="dropdown-divider">
             </li>
 
             <li class="notification-item">
-              <i class="bi bi-exclamation-circle text-warning"></i>
+              <i class="bi bi-exclamation-circle text-success"></i>
               <div>
-                <h4>Lorem Ipsum</h4>
-                <p>Quae dolorem earum veritatis oditseno</p>
-                <p>30 min. ago</p>
+                <h4>New version</h4>
+                <p>A new version is availible</p>
+                <p>just now</p>
               </div>
             </li>
-
-            <li>
+			</div>
+<!--            <li>
               <hr class="dropdown-divider">
             </li>
 
