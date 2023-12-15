@@ -124,3 +124,16 @@ def generateCsrfToken():
 
 def generate_API_key():
     return random_string(16)
+
+class SmartHomeError(Exception):
+    def __init__(self, code, msg):
+        """Log error code."""
+        super().__init__(msg)
+        self.code = code
+        
+class SmartHomeErrorNoChallenge(Exception):
+    def __init__(self, code, desc, msg):
+        """Log error code."""
+        super().__init__(msg)
+        self.code = code
+        self.desc = desc
