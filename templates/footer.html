@@ -37,7 +37,7 @@
 </html>
 <script>
 var csrf_token = "{{ _csrf_token }}";
-var flask_server = "{{ request.url_root[:-1] }}";
+var flask_server = "{{ request.url_root[:-1] }}".replace('http://', '//');
 var dzga_version = "{{ version }}";
 getDzVersion()
 checkVersion()
