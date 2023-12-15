@@ -3,11 +3,8 @@ import base64
 import json
 
 from modules.database import Settings
-from modules.helpers import _tempConvert
+from modules.helpers import _tempConvert, SmartHomeError, SmartHomeErrorNoChallenge
 from modules.domoticz import getDomoticzState, queryDomoticz
-
-attempts = 1
-blocked = {}
 
 
 def query(custom_data, device, user_id):
@@ -133,23 +130,18 @@ def query(custom_data, device, user_id):
     return response
 
 
-def execute(custom_data, command, params, user_id, challenge):
+def execute(device, command, params, user_id, challenge):
 
-    global attempts
-    global blocked
-
-    idx = custom_data['idx']
-    domain = custom_data['domain']
+    custom_data = device['customData']
+    idx = device['customData']['idx']
+    domain = device['customData']['domain']
 
     if domain in ['Group', 'Scene']:
         state = getDomoticzState(user_id, idx, 'scene')
     else:
         state = getDomoticzState(user_id, idx)
 
-    if idx in blocked:
-        return {"status": "ERROR", "errorCode": "tooManyFailedAttempts"}
-
-    response = {"status": "SUCCESS", "states": {}}
+    response = {}
     url = '?type=command&param='
 
     if command == "action.devices.commands.OnOff":
@@ -161,14 +153,14 @@ def execute(custom_data, command, params, user_id, challenge):
             url += 'switchlight&idx=' + idx + '&switchcmd=' + (
                         'On' if params['on'] else 'Off')
 
-        response['states']['on'] = params['on']
+        response['on'] = params['on']
 
     if command == 'action.devices.commands.LockUnlock':
 
         url += 'switchlight&idx=' + idx + '&switchcmd=' + (
                         'On' if params['lock'] else 'Off')
 
-        response['states']['isLocked'] = params['lock']
+        response['isLocked'] = params['lock']
 
     if command == "action.devices.commands.ActivateScene":
 
@@ -180,7 +172,7 @@ def execute(custom_data, command, params, user_id, challenge):
         url += 'switchlight&idx=' + idx + '&switchcmd=Set%20Level&level=' + str(
             int(params['brightness'] * state['MaxDimLevel'] / 100))
 
-        response['states']['brightness'] = params['brightness']
+        response['brightness'] = params['brightness']
 
     if command == "action.devices.commands.ColorAbsolute":
 
@@ -204,14 +196,14 @@ def execute(custom_data, command, params, user_id, challenge):
 
             url += 'setcolbrightnessvalue&idx=' + idx + '&hex=' + color_hex_str
 
-        response['states']['color'] = params['color']
+        response['color'] = params['color']
 
     if command == 'action.devices.commands.ThermostatTemperatureSetpoint':
 
         url += 'setsetpoint&idx=' + idx + '&setpoint=' + str(
                     params['thermostatTemperatureSetpoint'])
 
-        response['states']['thermostatTemperatureSetpoint'] = params['thermostatTemperatureSetpoint']
+        response['thermostatTemperatureSetpoint'] = params['thermostatTemperatureSetpoint']
 
     if command == 'action.devices.commands.ThermostatSetMode':
 
@@ -239,7 +231,7 @@ def execute(custom_data, command, params, user_id, challenge):
             if p == 0:
                 url += 'Close'
 
-        response['states']['openState'] = [{'openPercent': params['openPercent']}]
+        response['openState'] = [{'openPercent': params['openPercent']}]
 
     if command == 'action.devices.commands.StartStop':
 
@@ -253,7 +245,7 @@ def execute(custom_data, command, params, user_id, challenge):
 
         if custom_data['camurl']:
             response['cameraStreamAccessUrl'] = custom_data['camurl']
-            response['states']['online'] = True
+            response['online'] = True
             return response
         else:
             return {"status": "ERROR", "errorCode": "streamUnavailable"}
@@ -270,9 +262,9 @@ def execute(custom_data, command, params, user_id, challenge):
 
         url += '&seccode=' + hashlib.md5(str.encode(challenge.get('pin'))).hexdigest()
 
-        response['states']['isArmed'] = params['arm']
-        if response['states']["isArmed"]:
-            response['states']['currentArmLevel'] = params['armLevel']
+        response['isArmed'] = params['arm']
+        if response["isArmed"]:
+            response['currentArmLevel'] = params['armLevel']
 
     if command == 'action.devices.commands.SetToggles':
 
@@ -294,18 +286,10 @@ def execute(custom_data, command, params, user_id, challenge):
     status = result.get('status')
 
     if status == 'ERR':
-        return {"status": "ERROR", "errorCode": "actionNotAvailable"}
+        raise SmartHomeError('functionNotSupported',
+                             'Unable to execute {} for {}'.format(command, device['id']))
     elif status == 'ERROR':
-        if attempts > 2:
-            blocked = {idx: True}
-            return {"status": "ERROR", "errorCode": "challengeNeeded", "challengeNeeded": {
-                    "type": "tooManyFailedAttempts"}}
-        attempts += 1
-        return {"status": "ERROR", "errorCode": "challengeNeeded", "challengeNeeded": {
-                "type": "challengeFailedPinNeeded"}}
-    else:
-        attempts = 1
-
-    response['states']['online'] = True
+        raise SmartHomeErrorNoChallenge('challengeNeeded', 'challengeFailedPinNeeded',
+                                        'Unable to execute {} for {} - challenge needed '.format(command, device['id']))
 
     return response
