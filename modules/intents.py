@@ -6,7 +6,9 @@ from modules.helpers import (
         logger,
         get_device,
         get_devices,
-        random_string
+        random_string,
+        SmartHomeError,
+        SmartHomeErrorNoChallenge
         )
 
 repstate = ReportState()
@@ -101,11 +103,25 @@ class SmartHomeHandler:
                         response['commands'].append(action_result)
 
                         return response
-
-                action_result = trait.execute(
-                        custom_data, command, params, user_id, challenge)
-                action_result['ids'] = [device['id']]
-                response['commands'].append(action_result)
+                try:    
+                    states = trait.execute(
+                            device, command, params, user_id, challenge)
+                    states['online'] = True
+                    action_result = {'ids': [device['id']], 'status': 'SUCCESS', 'states': states}
+                    response['commands'].append(action_result)
+                    print(response)
+                except SmartHomeErrorNoChallenge as err:
+                    action_failed = {'ids': [device['id']], 'status': 'ERROR', 'errorCode': err.code,
+                                          'challengeNeeded': {'type': err.desc}}
+                    logger.error(err)
+                    response['commands'].append(action_failed)
+                    return response
+                except SmartHomeError as err:
+                    action_failed = {'ids': [device['id']], 'status': 'ERROR', 'errorCode': err.code}
+                    logger.error(err)
+                    response['commands'].append(action_failed)
+                    return response
+                    
 
             if repstate.report_state_enabled():
                 data = {'states': {device['id']: action_result['states']}}
