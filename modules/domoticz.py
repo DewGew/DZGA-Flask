@@ -30,7 +30,7 @@ def getDomain(device):
         devs = device["Type"].replace(" ", "")
         devs = devs.replace("+", "")
         return devs
-    elif device["Type"] in ['Light/Switch', 'Lighting 1', 'Lighting 2', 'Lighting 5', 'RFY', 'Value']:
+    elif device["Type"] in ['Light/Switch', 'Lighting 1', 'Lighting 2', 'Lighting 3', 'Lighting 4', 'Lighting 5', 'RFY', 'Value']:
         if device["Type"] == 'Value' and device.get('SwitchType') is None:
             return None
         devs = device.get('SwitchType')
