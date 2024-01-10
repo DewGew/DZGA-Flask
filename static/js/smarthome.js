@@ -330,7 +330,6 @@ function getDeviceLog(idx) {
 		html += '</tbody></table>'
 
 		$('#device_log_' + idx).html(html)
-		console.log(data.result[0])
 	});	
 }
 
