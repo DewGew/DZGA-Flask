@@ -8,9 +8,9 @@ services:
     ports:
       - 8181:8181
     volumes:
-      - /home/${USER}/DZGA-Flask/config:/config
-      - /home/${USER}/DZGA-Flask/uploads:/uploads
-      - /home/${USER}/DZGA-Flask/instance:/instance
+      - /opt/DZGA-Flask/config:/config
+      - /opt/DZGA-Flask/uploads:/uploads
+      - /opt/DZGA-Flask/instance:/instance
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     environment:
