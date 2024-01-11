@@ -28,8 +28,12 @@
 		<div class="post-item clearfix">
 			<h4><a href="" target="_blank">Sync your devices</a></h4>
 			<p>When you click 'Sync Devices' button to syncronize your domoticz devices {% if user.googleassistant %}with Google Assistant or just tell Google Assistant to "Sync my devices"{% endif %}.</p>
-			<div class="text-center"><button type="button" class="btn btn-primary" onclick="syncdevices();">Sync Devices</button>
-			<button type="button" class="btn btn-danger" onclick="restart();">Restart Server</button></div>
+			<div class="text-center">
+			<button type="button" class="btn btn-primary" onclick="syncdevices();">Sync Devices</button>
+			{% if user.admin %}
+			<button type="button" class="btn btn-danger" onclick="restart();">Restart Server</button>
+			{% endif %}
+			</div>
 		</div>
 		<div class="post-item clearfix">
 
