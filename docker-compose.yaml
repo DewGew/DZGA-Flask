@@ -1,0 +1,19 @@
+version: '3.3'
+
+services:
+  dzga-flask:
+    image: dewgew/dzga-flask:latest
+    container_name: dzga-flask
+    restart: unless-stopped
+    ports:
+      - 8181:8181
+    volumes:
+      - /opt/DZGA-Flask/config:/config
+      - /opt/DZGA-Flask/uploads:/uploads
+      - /opt/DZGA-Flask/instance:/instance
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - PUID=1010
+      - PGID=1010
+    

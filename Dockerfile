@@ -11,6 +11,7 @@ COPY templates/ /templates/
 COPY modules/ /modules/
 COPY static/ /static/
 COPY requirements.txt /requirements.txt
+COPY VERSION.md /VERSION.md
 RUN pip install --no-cache-dir -r /requirements.txt
 
 # Create volume
