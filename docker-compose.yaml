@@ -1,8 +1,8 @@
 version: '3.3'
 
 services:
-  dz-googleassistant:
-    image: dewgew/dzga-flask
+  dzga-flask:
+    image: dewgew/dzga-flask:latest
     container_name: dzga-flask
     restart: unless-stopped
     ports:
