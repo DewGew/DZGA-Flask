@@ -1,11 +1,10 @@
-version: '3'
+version: '3.3'
+
 services:
   dz-googleassistant:
     image: dewgew/dzga-flask
     container_name: dzga-flask
-    environment:
-      - PUID=1010
-      - PGID=1010
+    restart: unless-stopped
     ports:
       - 8181:8181
     volumes:
@@ -14,4 +13,7 @@ services:
       - /home/${USER}/DZGA-Flask/instance:/instance
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
-    restart: unless-stopped
+    environment:
+      - PUID=1010
+      - PGID=1010
+    
