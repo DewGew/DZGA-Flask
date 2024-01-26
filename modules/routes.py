@@ -313,7 +313,10 @@ def uploader():
             logger.warning("Uploadfile is not allowed")
             flash("Uploadfile is not allowed, '.jpg','.png' files or 'smart-home-key.json' is allowed!")
         else:
-            f.save(os.path.join(config.UPLOAD_DIRECTORY, secure_filename(f.filename)))
+            if f.filename == 'smart-home-key.json':
+                f.save(os.path.join(config.KEYFILE_DIRECTORY, secure_filename(f.filename)))
+            else:
+                f.save(os.path.join(config.UPLOAD_DIRECTORY, secure_filename(f.filename)))
             logger.info("Upload success")
 
     return redirect(url_for('settings'))
