@@ -15,6 +15,16 @@
 			</p>
 			
 		</div>
+		<div class="post-item clearfix">
+			<h4><a href="https://smarthome-test-suite.withgoogle.com/devices" target="_blank">Latest Updates </a></h4>
+			<p>
+			{% for x in version %}
+				{% if x != version[0] %}
+					{{ x }} </br>
+				{% endif %}
+			{% endfor %}
+			</p>
+		</div>
 	  {% if user.googleassistant %}
 		<div class="post-item clearfix">
 			<h4><a href="https://smarthome-test-suite.withgoogle.com/devices" target="_blank">Home Graph Viewer </a></h4>

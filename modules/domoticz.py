@@ -168,7 +168,7 @@ def getAog(device, user_id=None):
     aog.customData['idx'] = device.get('idx')
     aog.customData['domain'] = domain
     aog.customData['protected'] = device.get('Protected')
-    aog.notificationSupportedByAgent = (True if domain in ['SmokeDetector', 'Doorbell', 'DoorLock'] else False)
+    aog.notificationSupportedByAgent = (True if domain in ['SmokeDetector', 'Doorbell', 'DoorLock', 'DoorLockInverted'] else False)
 
     if domain == 'Scene':
         aog.type = 'action.devices.types.SCENE'
@@ -220,7 +220,7 @@ def getAog(device, user_id=None):
         aog.traits.append('action.devices.traits.OnOff')
     if domain == 'Dimmer':
         aog.traits.append('action.devices.traits.Brightness')
-    if domain == 'DoorLock':
+    if domain in ['DoorLock', 'DoorLockInverted']:
         aog.type = 'action.devices.types.LOCK'
         aog.traits.append('action.devices.traits.LockUnlock')
 

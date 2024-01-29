@@ -109,6 +109,7 @@ function refreshSwitches(updateSwitches) {
 			}
 			if (data == 'Unlocked'){
 				$('#icon_DoorLock_' + idx).html("lock_open").css('color','#008000')
+				$('#icon_DoorLockInverted_' + idx).html("lock_open").css('color','#008000')
 			}
 			if (data == 'Off'){
 				$('#icon_OnOff_' + idx).removeAttr('style')
@@ -122,6 +123,7 @@ function refreshSwitches(updateSwitches) {
 			}
 			if (data == 'Locked'){
 				$('#icon_DoorLock_' + idx).html("lock").css('color','#ED2939')
+				$('#icon_DoorLockInverted_' + idx).html("lock").css('color','#ED2939')
 			}
 			if (data == 'Normal'){
 				$('#icon_security_' + idx).removeAttr('style')
@@ -371,11 +373,11 @@ function checkVersion() {
     url: "https://raw.githubusercontent.com/DewGew/DZGA-Flask/development/VERSION.md",
     cache: false,
     success: function( data ) {
-		dataFloat = data.split(",")[0];
+		dataFloat = data.split("\n")[0];
     var compare = versionCompare(dataFloat, dzga_version);
     if (compare == 1) {
       $('#newver').html(" <i> (New version " + dataFloat + " is avalible.)</i>");
-	  $('#newver_note').html('A new version ' + dataFloat + ' is avalible <a href="https://github.com/DewGew/DZGA-Flask" target="_blank">here</a>');  
+	  $('#newver_note').html('A new version ' + dataFloat + ' is avalible <a href="https://github.com/DewGew/DZGA-Flask" target="_blank">here</a>');
 	  $('#badge').show();
       $("#notes").html('You have 1 new notifications');
       $("#shownotes" ).show();

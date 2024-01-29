@@ -1,5 +1,5 @@
 DEVICES_DIRECTORY = "config"
-KEYFILE_DIRECTORY = "uploads"
+KEYFILE_DIRECTORY = "config"
 CONFIG_DIRECTORY = "config"
 UPLOAD_DIRECTORY = "uploads"
 DATABASE_DIRECTORY = "instance"
