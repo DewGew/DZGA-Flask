@@ -1,2 +1,4 @@
 24.2
-Security changes. - Move '.json' file from uploads to to config folder. Move '.json' file to config or upload a new json file.
+- Security Update. DZGA now reads smart-home-key.json file from config folder. Move .json file or upload a new.
+- Added new device, Door Lock Inverted.
+- Changed check version, get latest updates.
