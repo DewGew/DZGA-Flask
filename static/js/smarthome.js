@@ -109,6 +109,7 @@ function refreshSwitches(updateSwitches) {
 			}
 			if (data == 'Unlocked'){
 				$('#icon_DoorLock_' + idx).html("lock_open").css('color','#008000')
+				$('#icon_DoorLockInverted_' + idx).html("lock_open").css('color','#008000')
 			}
 			if (data == 'Off'){
 				$('#icon_OnOff_' + idx).removeAttr('style')
@@ -122,6 +123,7 @@ function refreshSwitches(updateSwitches) {
 			}
 			if (data == 'Locked'){
 				$('#icon_DoorLock_' + idx).html("lock").css('color','#ED2939')
+				$('#icon_DoorLockInverted_' + idx).html("lock").css('color','#ED2939')
 			}
 			if (data == 'Normal'){
 				$('#icon_security_' + idx).removeAttr('style')
