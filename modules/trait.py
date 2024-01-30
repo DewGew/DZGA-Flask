@@ -156,9 +156,12 @@ def execute(device, command, params, user_id, challenge):
         response['on'] = params['on']
 
     if command == 'action.devices.commands.LockUnlock':
-
-        url += 'switchlight&idx=' + idx + '&switchcmd=' + (
-                        'On' if params['lock'] else 'Off')
+        if domain in ['DoorLockInverted']:
+            url += 'switchlight&idx=' + idx + '&switchcmd=' + (
+                            'Off' if params['lock'] else 'On')
+        else:
+            url += 'switchlight&idx=' + idx + '&switchcmd=' + (
+                            'On' if params['lock'] else 'Off')
 
         response['isLocked'] = params['lock']
 
