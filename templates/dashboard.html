@@ -249,7 +249,43 @@
 					  <small id="output_{{ v['customData']['idx'] }}">0</small>		  
 					  <div class="label">{{ v['name']['name'] }}</div>
 					</div>
-					<input id="slider_{{ v['customData']['idx'] }}" type="range" min="0" max="100" step="1" onchange="changeDimmers({{ v['customData']['idx'] }}, this.value)">
+					<input id="slider_{{ v['customData']['idx'] }}" type="range" min="0" max="100" step="1" onchange="changeDimmers({{ v['customData']['idx'] }}, this.value, '{{ v['customData']['protected'] }}')">
+					<div class="modal fade" id="onoffpin_{{ v['customData']['idx'] }}" tabindex="-1">
+						<div class="modal-dialog modal-dialog-centered modal-sm">
+						  <div class="modal-content">
+							<div class="modal-body">
+							<form class="row g-3">
+								<div class="col-12">
+								  <label for="inputPin_{{ v['customData']['idx'] }}" class="form-label">Enter Pin</label>
+								  <input inputmode="numeric" type="password" class="form-control" id="inputPin_{{ v['customData']['idx'] }}">
+								</div>
+							</form>
+							</div>
+							<div class="modal-footer">
+							  <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+							  <button onclick="toogleSecSwitch({{ v['customData']['idx'] }})" type="button" class="btn btn-primary btn-sm" data-bs-dismiss="modal">Submit</button>
+							</div>
+						  </div>
+						</div>
+					  </div><!-- End Vertically centered Modal-->
+					  <div class="modal fade" id="dimmerpin_{{ v['customData']['idx'] }}" tabindex="-1">
+						<div class="modal-dialog modal-dialog-centered modal-sm">
+						  <div class="modal-content">
+							<div class="modal-body">
+							<form class="row g-3">
+								<div class="col-12">
+								  <label for="inputDimPin_{{ v['customData']['idx'] }}" class="form-label">Enter Pin</label>
+								  <input inputmode="numeric" type="password" class="form-control" id="inputDimPin_{{ v['customData']['idx'] }}">
+								</div>
+							</form>
+							</div>
+							<div class="modal-footer">
+							  <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+							  <button onclick="changeSecDimmers({{ v['customData']['idx'] }}, slider_{{ v['customData']['idx'] }}.value)" type="button" class="btn btn-primary btn-sm" data-bs-dismiss="modal">Submit</button>
+							</div>
+						  </div>
+						</div>
+					  </div><!-- End Vertically centered Modal-->
 					<div class="card-footer col-sm-12">
 					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not available</small><i class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></i>
 					 <div class="modal fade" id="light-log_{{ v['customData']['idx'] }}" tabindex="-1">

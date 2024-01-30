@@ -254,9 +254,18 @@ function changeRGB(ridx, val) {
 	requestAPI("/api?type=command&param=setcolbrightnessvalue&idx=" + ridx + "&hex=" + rgbcode_stripped);
 }
 
-function changeDimmers(idx, val) {
-    $('#output_' + idx).html(val);
-	requestAPI("/api?type=command&param=switchlight&idx=" + idx + "&switchcmd=Set%20Level&level=" + val)
+function changeDimmers(idx, val, protect) {
+	if (protect == 'True'){
+		$('#dimmerpin_' + idx).modal('show');		
+	}else{
+		$('#output_' + idx).html(val);
+		requestAPI("/api?type=command&param=switchlight&idx=" + idx + "&switchcmd=Set%20Level&level=" + val)
+	}
+}
+function changeSecDimmers(idx, val) {
+	var pin = $('#inputDimPin_'+idx).val();
+	$('#output_' + idx).html(val);
+	requestAPI("/api?type=command&param=switchlight&idx=" + idx + "&switchcmd=Set%20Level&level=" + val + "&passcode=" + pin)
 }
 
 function setSetpoint(idx, protect) {

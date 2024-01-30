@@ -9,9 +9,9 @@
 		<div class="post-item clearfix">
 			<h4><a href="https://smarthome-test-suite.withgoogle.com/devices" target="_blank">About </a></h4>
 			<p>
-			<b>DZGA-Flask Version: </b><span id="dzga-version">Not available</span><span id="newver"></span>
+			<b>DZGA-Flask Version: </b><span id="dzga-version">Not available</span><span class="text-warning" id="newver"></span>
 			</br>
-			<b>Domoticz Version: </b><span id="dz-version">Not available</span></br>
+			<b>Domoticz Version: </b><span id="dz-version">Not available</span>
 			</p>
 			
 		</div>
@@ -20,7 +20,7 @@
 			<p>
 			{% for x in version %}
 				{% if x != version[0] %}
-					{{ x }} </br>
+					{{ x }}<br />
 				{% endif %}
 			{% endfor %}
 			</p>
