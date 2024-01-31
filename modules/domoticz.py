@@ -106,7 +106,7 @@ def getAog(device, user_id=None):
         'name': device.get('Name'),
         'nicknames': []
         }
-    if device.get('Type') in ['Light/Switch', 'Color Switch', 'Lighting 1', 'Lighting 2', 'Lighting 5', 'RFY', 'Value']:
+    if device.get('Type') in ['Light/Switch', 'Color Switch', 'Lighting 1', 'Lighting 2', 'Lighting 3','Lighting 4', 'Lighting 5', 'RFY', 'Value']:
         aog.type = 'action.devices.types.LIGHT'
     if device.get('Image') == 'WallSocket':
         aog.type = 'action.devices.types.OUTLET'
