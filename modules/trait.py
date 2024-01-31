@@ -124,8 +124,33 @@ def query(custom_data, device, user_id):
         response["isArmed"] = state['Data'] != "Normal"
         if response["isArmed"]:
             response["currentArmLevel"] = state['Data']
+            
+    if 'action.devices.traits.EnergyStorage' in device['traits']:
+        if state['BatteryLevel'] != 255:
+            battery = state['BatteryLevel']
+            if battery is not None:
+                if battery == 100:
+                    descriptive_capacity_remaining = "FULL"
+                elif 75 <= battery < 100:
+                    descriptive_capacity_remaining = "HIGH"
+                elif 25 <= battery < 75:
+                    descriptive_capacity_remaining = "MEDIUM"
+                elif 10 <= battery < 25:
+                    descriptive_capacity_remaining = "LOW"
+                elif 0 <= battery < 10:
+                    descriptive_capacity_remaining = "CRITICALLY_LOW"
+                    
+                response['descriptiveCapacityRemaining'] = descriptive_capacity_remaining
+                response['capacityRemaining'] = [{
+                    'unit': 'PERCENTAGE',
+                    'rawValue': battery
+                }]
+            
 
     response['online'] = True
+    if domain not in ['Group', 'Scene'] and state['BatteryLevel'] != 255:
+        if state['BatteryLevel'] <= 10: # Report low battery below 10%
+            response['exceptionCode'] = 'lowBattery'
 
     return response
 
@@ -251,7 +276,8 @@ def execute(device, command, params, user_id, challenge):
             response['online'] = True
             return response
         else:
-            return {"status": "ERROR", "errorCode": "streamUnavailable"}
+            raise SmartHomeError('streamUnavailable',
+                             'Unable to execute {} for {}'.format(command, device['id']))
 
     if command == 'action.devices.commands.ArmDisarm':
 

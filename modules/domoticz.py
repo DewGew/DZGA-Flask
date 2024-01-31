@@ -106,7 +106,7 @@ def getAog(device, user_id=None):
         'name': device.get('Name'),
         'nicknames': []
         }
-    if device.get('Type') in ['Light/Switch', 'Color Switch', 'Lighting 1', 'Lighting 2', 'Lighting 5', 'RFY', 'Value']:
+    if device.get('Type') in ['Light/Switch', 'Color Switch', 'Lighting 1', 'Lighting 2', 'Lighting 3','Lighting 4', 'Lighting 5', 'RFY', 'Value']:
         aog.type = 'action.devices.types.LIGHT'
     if device.get('Image') == 'WallSocket':
         aog.type = 'action.devices.types.OUTLET'
@@ -168,7 +168,7 @@ def getAog(device, user_id=None):
     aog.customData['idx'] = device.get('idx')
     aog.customData['domain'] = domain
     aog.customData['protected'] = device.get('Protected')
-    aog.notificationSupportedByAgent = (True if domain in ['SmokeDetector', 'Doorbell', 'DoorLock', 'DoorLockInverted'] else False)
+    aog.notificationSupportedByAgent = (True if domain in ['SmokeDetector', 'Doorbell', 'DoorLock', 'DoorLockInverted'] else False)       
 
     if domain == 'Scene':
         aog.type = 'action.devices.types.SCENE'
@@ -342,6 +342,12 @@ def getAog(device, user_id=None):
             ],
             'cameraStreamNeedAuthToken': False
         }
+    
+    batteryLevel = device.get('BatteryLevel')
+    if domain not in ['Group', 'Scene'] and batteryLevel != 255:
+        aog.traits.append('action.devices.traits.EnergyStorage')
+        aog.attributes['queryOnlyEnergyStorage'] = True
+        aog.attributes['isRechargeable'] = False
 
     return aog
 
