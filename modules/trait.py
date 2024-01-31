@@ -131,11 +131,11 @@ def query(custom_data, device, user_id):
             if battery is not None:
                 if battery == 100:
                     descriptive_capacity_remaining = "FULL"
-                elif 75 <= battery < 100:
+                elif 50 <= battery < 100:
                     descriptive_capacity_remaining = "HIGH"
-                elif 25 <= battery < 75:
+                elif 15 <= battery < 50:
                     descriptive_capacity_remaining = "MEDIUM"
-                elif 10 <= battery < 25:
+                elif 10 <= battery < 15:
                     descriptive_capacity_remaining = "LOW"
                 elif 0 <= battery < 10:
                     descriptive_capacity_remaining = "CRITICALLY_LOW"
