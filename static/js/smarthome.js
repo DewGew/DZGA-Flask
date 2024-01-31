@@ -73,6 +73,14 @@ function refreshTemp(updateTemp) {
 			}
 			if (batterylevel != 255){
 				$('#batteryLevel_' + idx).addClass('bi bi-battery-full')
+				if (batterylevel <= 50){
+					$('#batteryLevel_' + idx).removeClass('bi bi-battery-full')
+					$('#batteryLevel_' + idx).addClass('bi bi-battery-half')
+				}
+				if (batterylevel <= 15){
+					$('#batteryLevel_' + idx).removeClass('bi bi-battery-full')
+					$('#batteryLevel_' + idx).addClass('bi bi-battery').css('color','#ED2939')
+				}
 				$('#batteryLevel_' + idx).html(batterylevel + '%&nbsp;')
 			};
 			$('button[id="switch_' + idx + '"]').html(data)
@@ -98,6 +106,14 @@ function refreshSwitches(updateSwitches) {
 			};
 			if (batterylevel != 255){
 				$('#batteryLevel_' + idx).addClass('bi bi-battery-full')
+				if (batterylevel <= 50){
+					$('#batteryLevel_' + idx).removeClass('bi bi-battery-full')
+					$('#batteryLevel_' + idx).addClass('bi bi-battery-half')
+				}
+				if (batterylevel <= 15){
+					$('#batteryLevel_' + idx).removeClass('bi bi-battery-full')
+					$('#batteryLevel_' + idx).addClass('bi bi-battery').css('color','#ED2939')
+				}
 				$('#batteryLevel_' + idx).html(batterylevel + '%&nbsp;')
 			};
 			$('button[id="switch_' + idx + '"]').html(data);
@@ -162,6 +178,14 @@ function refreshSelectors(updateSelector) {
 			var batterylevel = jsonData.result[0].BatteryLevel
 			if (batterylevel != 255){
 				$('#batteryLevel_' + idx).addClass('bi bi-battery-full')
+				if (batterylevel <= 50){
+					$('#batteryLevel_' + idx).removeClass('bi bi-battery-full')
+					$('#batteryLevel_' + idx).addClass('bi bi-battery-half')
+				}
+				if (batterylevel <= 15){
+					$('#batteryLevel_' + idx).removeClass('bi bi-battery-full')
+					$('#batteryLevel_' + idx).addClass('bi bi-battery').css('color','#ED2939')
+				}
 				$('#batteryLevel_' + idx).html(batterylevel + '%&nbsp;')
 			};
 			btns = decodeBase64(levelnames).split('|');
@@ -237,7 +261,19 @@ function refreshDimmers(updateDimmers) {
 			if (lastUpdate != null){
 				$('#lastUpdate_' + idx).html(moment(lastUpdate).fromNow())
 			}
-
+			var batterylevel = jsonData.result[0].BatteryLevel
+			if (batterylevel != 255){
+				$('#batteryLevel_' + idx).addClass('bi bi-battery-full')
+				if (batterylevel <= 50){
+					$('#batteryLevel_' + idx).removeClass('bi bi-battery-full')
+					$('#batteryLevel_' + idx).addClass('bi bi-battery-half')
+				}
+				if (batterylevel <= 15){
+					$('#batteryLevel_' + idx).removeClass('bi bi-battery-full')
+					$('#batteryLevel_' + idx).addClass('bi bi-battery').css('color','#ED2939')
+				}
+				$('#batteryLevel_' + idx).html(batterylevel + '%&nbsp;')
+			};
 			if (jsonData.result[0].Type == 'Color Switch'){
 				var color = JSON.parse(jsonData.result[0].Color)
 				var color_decimal = color.r * 65536 + color.g * 256 + color.b
