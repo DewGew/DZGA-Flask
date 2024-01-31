@@ -126,6 +126,9 @@ def query(custom_data, device, user_id):
             response["currentArmLevel"] = state['Data']
 
     response['online'] = True
+    if state['BatteryLevel'] != 255:
+        if state['BatteryLevel'] <= 10: # Report low battery below 10%
+            response['exceptionCode'] = 'lowBattery'
 
     return response
 
@@ -251,7 +254,8 @@ def execute(device, command, params, user_id, challenge):
             response['online'] = True
             return response
         else:
-            return {"status": "ERROR", "errorCode": "streamUnavailable"}
+            raise SmartHomeError('streamUnavailable',
+                             'Unable to execute {} for {}'.format(command, device['id']))
 
     if command == 'action.devices.commands.ArmDisarm':
 
