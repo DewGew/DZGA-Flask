@@ -15,6 +15,11 @@ async function requestAPI(url){
 		return data;	
 }
 
+var yellow = '#ffa700'
+var red = '#ED2939'
+var green = '#008744'
+var blue = '#2963FF'
+
 function restart(){
 	requestAPI("/api?custom=restart")
 	$("body").css("cursor", "wait");
@@ -79,7 +84,7 @@ function refreshTemp(updateTemp) {
 				}
 				if (batterylevel <= 15){
 					$('#batteryLevel_' + idx).removeClass('bi bi-battery-full')
-					$('#batteryLevel_' + idx).addClass('bi bi-battery').css('color','#ED2939')
+					$('#batteryLevel_' + idx).addClass('bi bi-battery').css('color',red)
 				}
 				$('#batteryLevel_' + idx).html(batterylevel + '%&nbsp;')
 			};
@@ -112,7 +117,7 @@ function refreshSwitches(updateSwitches) {
 				}
 				if (batterylevel <= 15){
 					$('#batteryLevel_' + idx).removeClass('bi bi-battery-full')
-					$('#batteryLevel_' + idx).addClass('bi bi-battery').css('color','#ED2939')
+					$('#batteryLevel_' + idx).addClass('bi bi-battery').css('color',red)
 				}
 				$('#batteryLevel_' + idx).html(batterylevel + '%&nbsp;')
 			};
@@ -121,21 +126,25 @@ function refreshSwitches(updateSwitches) {
 
 			if (data == 'On'){
 				if ($('#icon_OnOff_' + idx).html() == 'lightbulb'){
-					$('#icon_OnOff_' + idx).css('color','#ffa700');
+					$('#icon_OnOff_' + idx).css('color',yellow);
 				}else{
-					$('#icon_OnOff_' + idx).css('color', '#008744');
+					$('#icon_OnOff_' + idx).css('color', green);
 				}
-				$('#icon_smoke_' + idx).html("detector_smoke").css('color','#ED2939');
-				$('#data_smoke_'+ idx).html('Smoke detected!').css('color','#ED2939');
-				$('#icon_MotionSensor_' + idx).html("motion_sensor_alert").css('color','#ED2939');
-				$('#data_motion_' + idx).html('Motion detected!').css('color','#ED2939');
+				$('#icon_smoke_' + idx).html("detector_smoke").css('color',red);
+				$('#data_smoke_'+ idx).html('Smoke detected!').css('color',red);
+				$('#icon_MotionSensor_' + idx).html("motion_sensor_alert").css('color',red);
+				$('#data_motion_' + idx).html('Motion detected!').css('color',red);
 			}
 			if (data == 'Open'){
 				$('#icon_DoorContact_' + idx).html("door_open")
+				$('#icon_blinds_' + idx).css('color', green)
+			}
+			if (data == 'Stopped'){
+				$('#icon_blinds_' + idx).css('color', yellow)
 			}
 			if (data == 'Unlocked'){
-				$('#icon_DoorLock_' + idx).html("lock_open").css('color','#008000')
-				$('#icon_DoorLockInverted_' + idx).html("lock_open").css('color','#008000')
+				$('#icon_DoorLock_' + idx).html("lock_open").css('color',green)
+				$('#icon_DoorLockInverted_' + idx).html("lock_open").css('color',green)
 			}
 			if (data == 'Off'){
 				$('#icon_OnOff_' + idx).removeAttr('style')
@@ -146,19 +155,20 @@ function refreshSwitches(updateSwitches) {
 			}
 			if (data == 'Closed'){
 				$('#icon_DoorContact_' + idx).html("door_front")
+				$('#icon_blinds_' + idx).removeAttr('style')
 			}
 			if (data == 'Locked'){
-				$('#icon_DoorLock_' + idx).html("lock").css('color','#ED2939')
-				$('#icon_DoorLockInverted_' + idx).html("lock").css('color','#ED2939')
+				$('#icon_DoorLock_' + idx).html("lock").css('color',red)
+				$('#icon_DoorLockInverted_' + idx).html("lock").css('color',red)
 			}
 			if (data == 'Normal'){
 				$('#icon_security_' + idx).removeAttr('style')
 			}
 			if (data == 'Arm Home'){
-				$('#icon_security_' + idx).css('color','#ffa700')
+				$('#icon_security_' + idx).css('color',yellow)
 			}
 			if (data == 'Arm Away'){
-				$('#icon_security_' + idx).css('color','#ffa700')
+				$('#icon_security_' + idx).css('color',yellow)
 			}
 		});		
 	});
@@ -184,7 +194,7 @@ function refreshSelectors(updateSelector) {
 				}
 				if (batterylevel <= 15){
 					$('#batteryLevel_' + idx).removeClass('bi bi-battery-full')
-					$('#batteryLevel_' + idx).addClass('bi bi-battery').css('color','#ED2939')
+					$('#batteryLevel_' + idx).addClass('bi bi-battery').css('color',red)
 				}
 				$('#batteryLevel_' + idx).html(batterylevel + '%&nbsp;')
 			};
@@ -204,10 +214,10 @@ function refreshSelectors(updateSelector) {
 					$('#data_'+ idx).html(lvlname)
 					$('#mode_data_'+ idx).html(lvlname)
 					if (lvlname.toLowerCase() == 'off'){$('#thermo_icon_' + idx).html('thermostat').removeAttr('style')};
-					if (lvlname.toLowerCase() == 'heat'){$('#thermo_icon_' + idx).html('mode_heat').css('color', '#ffa700')};
-					if (lvlname.toLowerCase() == 'cool'){$('#thermo_icon_' + idx).html('mode_cool').css('color', '#2963FF')};
+					if (lvlname.toLowerCase() == 'heat'){$('#thermo_icon_' + idx).html('mode_heat').css('color', yellow)};
+					if (lvlname.toLowerCase() == 'cool'){$('#thermo_icon_' + idx).html('mode_cool').css('color', blue)};
 					if (lvlname.toLowerCase() == 'auto'){$('#thermo_icon_' + idx).html('thermostat_auto').removeAttr('style')};
-					if (lvlname.toLowerCase() == 'eco'){$('#thermo_icon_' + idx).html('eco').css('color', '#008744')};
+					if (lvlname.toLowerCase() == 'eco'){$('#thermo_icon_' + idx).html('eco').css('color', green)};
 					if (lvlname.toLowerCase() == 'fan-only'){$('#thermo_icon_' + idx).html('mode_fan').removeAttr('style')};
 					if (lvlname.toLowerCase() == 'purifier'){$('#thermo_icon_' + idx).html('air_purifier_gen').removeAttr('style')};
 					if (lvlname.toLowerCase() == 'dry'){$('#thermo_icon_' + idx).html('cool_to_dry').removeAttr('style')};
@@ -241,7 +251,7 @@ function refreshScenes(updateScenes) {
 			$('button[id="switch_' + idx + '"]').html(data)
 			if (data != 'Off'){
 				$('#icon_Group_' + idx).removeClass("bi bi-toggle2-off")
-				$('#icon_Group_' + idx).addClass("bi bi-toggle2-on").css('color', '#008744')
+				$('#icon_Group_' + idx).addClass("bi bi-toggle2-on").css('color', green)
 			}else{
 				$('#icon_Group_' + idx).removeClass("bi bi-toggle2-on")
 				$('#icon_Group_' + idx).addClass("bi bi-toggle2-off").removeAttr('style')
@@ -270,7 +280,7 @@ function refreshDimmers(updateDimmers) {
 				}
 				if (batterylevel <= 15){
 					$('#batteryLevel_' + idx).removeClass('bi bi-battery-full')
-					$('#batteryLevel_' + idx).addClass('bi bi-battery').css('color','#ED2939')
+					$('#batteryLevel_' + idx).addClass('bi bi-battery').css('color',red)
 				}
 				$('#batteryLevel_' + idx).html(batterylevel + '%&nbsp;')
 			};
@@ -283,8 +293,9 @@ function refreshDimmers(updateDimmers) {
 			$('button[id="switch_' + idx + '"]').html(level + '%')		
 			if (data != 'Off'){
 				$('#data_'+ idx).html(level + '%')
-				$('#icon_Dimmer_' + idx).css('color','#ffa700')
-				$('#icon_ColorSwitch_' + idx).css('color','#ffa700')
+				$('#icon_Dimmer_' + idx).css('color',yellow)
+				$('#icon_blinds_' + idx).css('color', green)
+				$('#icon_ColorSwitch_' + idx).css('color',yellow)
 				$('#icon_ColorSwitch_' + idx).css('color','#' + hexcolor)
 				$('#slider_' + idx).val(level)
 				$('#output_' + idx).html(level + '%');
@@ -295,7 +306,14 @@ function refreshDimmers(updateDimmers) {
 				$('#output_' + idx).html('Off');
 				$('#slider_' + idx).val('0')
 			}
-	 
+			if (data == 'Closed'){
+				$('#data_'+ idx).html('Closed')
+				$('#icon_blinds_' + idx).removeAttr('style')
+			}
+			if (data == 'Open'){
+				$('#data_'+ idx).html('Open')
+				$('#icon_blinds_' + idx).css('color', green)
+			}
 		});
 	});
 }
