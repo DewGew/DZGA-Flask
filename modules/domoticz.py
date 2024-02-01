@@ -116,8 +116,17 @@ def getAog(device, user_id=None):
         aog.type = 'action.devices.types.FAN'
     if device.get('Image') == 'Heating':
         aog.type = 'action.devices.types.HEATER'
+        
+    if domain in ['Temp', 'TempHumidity', 'TempHumidityBaro', 'DoorContact', 'Contact']:
+        aog.type = 'action.devices.types.SENSOR'
     if domain in ['Thermostat', 'Setpoint']:
         aog.type = 'action.devices.types.THERMOSTAT'
+    if domain in ['VenetianBlindsUS', 'VenetianBlindsEU', 'Blinds', 'BlindsStop', 'BlindsPercentage']:
+        aog.type = 'action.devices.types.BLINDS'
+    if domain in ['Selector']:
+        aog.type = 'action.devices.types.SWITCH'
+    if domain in ['DoorLock', 'DoorLockInverted']:
+        aog.type = 'action.devices.types.LOCK'
 
     # Try to get device specific voice control configuration from Domoticz
     aog.customData['dzTags'] = False
@@ -221,11 +230,9 @@ def getAog(device, user_id=None):
     if domain == 'Dimmer':
         aog.traits.append('action.devices.traits.Brightness')
     if domain in ['DoorLock', 'DoorLockInverted']:
-        aog.type = 'action.devices.types.LOCK'
         aog.traits.append('action.devices.traits.LockUnlock')
 
     if domain in ['VenetianBlindsUS', 'VenetianBlindsEU', 'Blinds', 'BlindsStop', 'BlindsPercentage']:
-        aog.type = 'action.devices.types.BLINDS'
         aog.traits.append('action.devices.traits.OpenClose')
         if domain in ['VenetianBlindsUS', 'VenetianBlindsEU', 'BlindsStop']:
             aog.traits.append('action.devices.traits.StartStop')
@@ -242,7 +249,6 @@ def getAog(device, user_id=None):
                                 'temperatureMaxK': 6500}
                         }
     if domain == 'Selector':
-        aog.type = 'action.devices.types.SWITCH'
         aog.traits.append('action.devices.traits.OnOff')
         aog.traits.append('action.devices.traits.Toggles')
         levelName = base64.b64decode(device.get("LevelNames")).decode('UTF-8').split("|")
@@ -294,7 +300,6 @@ def getAog(device, user_id=None):
         # <-- Modes trait for selector not working yet
 
     if domain in ['Temp', 'TempHumidity', 'TempHumidityBaro']:
-        aog.type = 'action.devices.types.SENSOR'
         aog.traits.append('action.devices.traits.TemperatureSetting')
         aog.attributes = {'thermostatTemperatureUnit': dbsettings.tempunit,
                           'thermostatTemperatureRange': {
@@ -323,7 +328,6 @@ def getAog(device, user_id=None):
                             "occupancySensorType": "PIR",
                             }]}
     if domain in ['DoorContact', 'Contact']:
-        aog.type = 'action.devices.types.SENSOR'
         aog.traits.append('action.devices.traits.OpenClose')
         aog.attributes = {'discreteOnlyOpenClose': True,
                           'queryOnlyOpenClose': True}
