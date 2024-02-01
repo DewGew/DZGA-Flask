@@ -211,12 +211,12 @@
 					</div>
 				</div>
 				
-				{% elif v['customData']['domain'] in ('VenetianBlindsUS', 'VenetianBlindsEU', 'Blinds', 'BlindsStop','BlindsPercentage')%}
+				{% elif v['customData']['domain'] in ('VenetianBlindsUS', 'VenetianBlindsEU', 'Blinds', 'BlindsStop', 'BlindsPercentage')%}
 				<div class="icon">
 					<i class="material-symbols-outlined" id="icon_blinds_{{ v['customData']['idx'] }}">roller_shades</i>
 					  <small id="data_{{ v['customData']['idx'] }}">Not available</small>
 					<div class="label">{{ v['name']['name'] }}</div>
-					{% if v['customData']['domain'] != 'BlindsPercentage' %}
+					{% if v['customData']['domain'] in ['VenetianBlindsUS', 'VenetianBlindsEU', 'Blinds', 'BlindsStop'] %}
 					<div class="btn-group" role="group" aria-label="Basic outlined blinds">
 						<button type="button" class="btn btn-outline-primary btn-sm" onclick="openCloseBlind({{ v['customData']['idx'] }}, 'Open')"><i class="bi bi-arrow-up-circle" style="font-size: 1rem;"></i></button>
 						{% if v['customData']['domain'] != 'Blinds' %}
@@ -224,7 +224,8 @@
 						{% endif %}
 						<button type="button" class="btn btn-outline-primary btn-sm" onclick="openCloseBlind({{ v['customData']['idx'] }}, 'Close')"><i class="bi bi-arrow-down-circle" style="font-size: 1rem;"></i></button>	
 					</div>
-					{% else %}
+					{% endif %}
+					{% if v['customData']['domain'] in ['BlindsStop', 'BlindsPercentage'] %}
 					<input id="slider_{{ v['customData']['idx'] }}" type="range" min="0" max="100" step="1" onchange="changeDimmers({{ v['customData']['idx'] }}, this.value, '{{ v['customData']['protected'] }}')">
 					{% endif %}
 					<div class="card-footer col-sm-12">
@@ -803,7 +804,7 @@ $('#title_security').hide()
 			   $("#icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}").addClass("bi bi-toggle2-off").removeAttr('style');
 			}, 2000);
 		});
-	{% elif v['customData']['domain'] in ('Dimmer', 'ColorSwitch', 'BlindsPercentage') %}
+	{% elif v['customData']['domain'] in ('Dimmer', 'ColorSwitch', 'BlindsStop', 'BlindsPercentage') %}
 		updateDimmers_block.push("{{ v['customData']['idx'] }}")
 		$('#title_switches').show()
 	{% elif v['customData']['domain'] in ['Selector', 'Selector_Hidden'] %}
@@ -818,7 +819,7 @@ $('#title_security').hide()
 		$('#title_security').show()
 		$("#title_security > i").toggleClass('bi bi-chevron-compact-up')
 	{% elif  (v['customData']['domain'] not in (
-					'SmokeDetector', 'Security', 'VenetianBlindsEU', 'OnOff', 'VenetianBlindsUS', 'Doorbell', 'DoorLock', 'DoorLockInverted', 'DoorContact', 'BlindsPercentage',
+					'SmokeDetector', 'Security', 'VenetianBlindsEU', 'OnOff', 'VenetianBlindsUS', 'Doorbell', 'DoorLock', 'DoorLockInverted', 'DoorContact', 'BlindsStop', 'BlindsPercentage',
 					'MotionSensor', 'PushOnButton', 'PushOffButton', 'Contact') and 'Hidden' not in v['customData']['domain']) %}
 		updateOthers_block.push("{{ v['customData']['idx'] }}")
 		$('#title_other').show()
