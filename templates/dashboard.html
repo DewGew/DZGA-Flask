@@ -225,7 +225,7 @@
 						<button type="button" class="btn btn-outline-primary btn-sm" onclick="openCloseBlind({{ v['customData']['idx'] }}, 'Close')"><i class="bi bi-arrow-down-circle" style="font-size: 1rem;"></i></button>	
 					</div>
 					{% else %}
-					<input id="slider_{{ v['customData']['idx'] }}" type="range" min="0" max="100" step="1" onchange="changeDimmers({{ v['customData']['idx'] }}, this.value)">
+					<input id="slider_{{ v['customData']['idx'] }}" type="range" min="0" max="100" step="1" onchange="changeDimmers({{ v['customData']['idx'] }}, this.value, '{{ v['customData']['protected'] }}')">
 					{% endif %}
 					<div class="card-footer col-sm-12">
 					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not available</small>
@@ -324,7 +324,7 @@
 					  <small id="output_{{ v['customData']['idx'] }}">0</small>					  
 					  <div class="label">{{ v['name']['name'] }}</div>
 					</div>
-					<input id="slider_{{ v['customData']['idx'] }}" type="range" min="0" max="100" step="1" onchange="changeDimmers({{ v['customData']['idx'] }}, this.value)">
+					<input id="slider_{{ v['customData']['idx'] }}" type="range" min="0" max="100" step="1" onchange="changeDimmers({{ v['customData']['idx'] }}, this.value, '{{ v['customData']['protected'] }}')">
 					<input type="color" class="form-control form-control-color" id="rgb_{{ v['customData']['idx'] }}" value="#4154f1" title="Choose your color" onchange="changeRGB({{ v['customData']['idx'] }}, this.value)">
 					<div class="card-footer col-sm-12">
 					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not available</small>
@@ -811,7 +811,7 @@ setTimeout(() => {
 	{% if v['customData']['domain'] in ('Group', 'Scene') %}
 		updateScenes_block.push("{{ v['customData']['idx'] }}")
 		$('#title_scenes').show()
-	{% elif v['customData']['domain'] in ('Dimmer', 'ColorSwitch') %}
+	{% elif v['customData']['domain'] in ('Dimmer', 'ColorSwitch', 'BlindsPercentage') %}
 		updateDimmers_block.push("{{ v['customData']['idx'] }}")
 		$('#title_switches').show()
 	{% elif v['customData']['domain'] in ['Selector', 'Selector_Hidden'] %}
