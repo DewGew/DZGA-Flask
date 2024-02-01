@@ -252,6 +252,7 @@ function refreshScenes(updateScenes) {
 			if (data != 'Off'){
 				$('#icon_Group_' + idx).removeClass("bi bi-toggle2-off")
 				$('#icon_Group_' + idx).addClass("bi bi-toggle2-on").css('color', green)
+				
 			}else{
 				$('#icon_Group_' + idx).removeClass("bi bi-toggle2-on")
 				$('#icon_Group_' + idx).addClass("bi bi-toggle2-off").removeAttr('style')
@@ -510,3 +511,46 @@ function decodeBase64(string) {
   } while( i < string.length );
 return result;
 }
+
+function getlog(div, idx, name, timeline){
+	setTimeout(() => {
+		ShowTempLog(div, idx, name, timeline)
+		}, 500);
+	<!-- setInterval(ShowTempLog, 60000, div, idx, name, timeline); -->
+}
+
+function getLigthLog(idx){
+setTimeout(() => {
+		getDeviceLog(idx)
+		}, 100);
+}
+
+$('#title_scenes').click(function(){
+	$("#title_scenes > i").toggleClass('bi bi-chevron-compact-up')
+	$('#scene_devices').slideToggle();
+});
+
+$('#title_switches').click(function(){
+	$("#title_switches > i").toggleClass('bi bi-chevron-compact-up')
+	$('#switch_devices').slideToggle();
+});
+$('#title_temps').click(function(){
+	$("#title_temps > i").toggleClass('bi bi-chevron-compact-up')
+	$('#temp_devices').slideToggle();
+});
+
+$('#title_security').click(function(){
+	$("#title_security > i").toggleClass('bi bi-chevron-compact-up')
+	$('#sec_devices').slideToggle();
+});
+
+$("#title_other").click(function(){
+	$("#title_other > i").toggleClass('bi bi-chevron-compact-up')
+	$("#other_devices").slideToggle();
+});
+
+$("#title_hidden").click(function(){
+	$("#title_hidden > i").toggleClass('bi bi-chevron-compact-up')
+	$("#hidden_devices").slideToggle();
+});
+
