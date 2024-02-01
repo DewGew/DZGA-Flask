@@ -217,12 +217,19 @@
 					  <small id="data_{{ v['customData']['idx'] }}">Not available</small>
 					<div class="label">{{ v['name']['name'] }}</div>
 					{% if v['customData']['domain'] in ['VenetianBlindsUS', 'VenetianBlindsEU', 'Blinds', 'BlindsStop'] %}
-					<div class="btn-group" role="group" aria-label="Basic outlined blinds">
+					<div class="btn-group d-none d-sm-block" role="group" aria-label="Basic outlined blinds">
 						<button type="button" class="btn btn-outline-primary btn-sm" onclick="openCloseBlind({{ v['customData']['idx'] }}, 'Open')"><i class="bi bi-arrow-up-circle" style="font-size: 1rem;"></i></button>
 						{% if v['customData']['domain'] != 'Blinds' %}
 						<button type="button" class="btn btn-outline-primary btn-sm" onclick="openCloseBlind({{ v['customData']['idx'] }}, 'Stop')"><i class="bi bi-stop-circle" style="font-size: 1rem; color: red;"></i></button>
 						{% endif %}
 						<button type="button" class="btn btn-outline-primary btn-sm" onclick="openCloseBlind({{ v['customData']['idx'] }}, 'Close')"><i class="bi bi-arrow-down-circle" style="font-size: 1rem;"></i></button>	
+					</div>
+					<div class="btn-group d-block d-sm-none" role="group" aria-label="Basic outlined blinds">
+						<button type="button" class="btn btn-outline-primary btn-lg" onclick="openCloseBlind({{ v['customData']['idx'] }}, 'Open')"><i class="bi bi-arrow-up-circle" style="font-size: 1rem;"></i></button>
+						{% if v['customData']['domain'] != 'Blinds' %}
+						<button type="button" class="btn btn-outline-primary btn-lg" onclick="openCloseBlind({{ v['customData']['idx'] }}, 'Stop')"><i class="bi bi-stop-circle" style="font-size: 1rem; color: red;"></i></button>
+						{% endif %}
+						<button type="button" class="btn btn-outline-primary btn-lg" onclick="openCloseBlind({{ v['customData']['idx'] }}, 'Close')"><i class="bi bi-arrow-down-circle" style="font-size: 1rem;"></i></button>	
 					</div>
 					{% endif %}
 					{% if v['customData']['domain'] in ['BlindsStop', 'BlindsPercentage'] %}
