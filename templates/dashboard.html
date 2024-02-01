@@ -24,9 +24,9 @@
 		  
 			<div class="col-12">
 			
-			<h5 id="title_scenes">Scenes/Groups</h5>
+			<h5 id="title_scenes">Scenes/Groups <i class="bi bi-chevron-compact-down"></i></h5>
 			  
-			  <div class="iconslist">
+			  <div class="iconslist" id="scene_devices">
 			  {% for k, v in devices.items() %}
 			  
 			  {% if v['customData']['domain'] == 'Group' %}
@@ -42,7 +42,7 @@
 				
 			  {% elif v['customData']['domain'] == 'Scene' %}
 			    <div class="icon">
-					<div class="click" onclick="activateScene({{ v['customData']['idx'] }})">
+					<div class="click" id="clickScene_{{ v['customData']['idx'] }}" onclick="activateScene({{ v['customData']['idx'] }})">
 					  <i class="bi bi-toggle2-off" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}"></i>
 					  <div class="label">{{ v['name']['name'] }}</div>
 					</div>
@@ -56,9 +56,9 @@
 			  </div>
 			  </br>
 			  
-			  <h5 id="title_switches">Switches</h5>
+			  <h5 id="title_switches">Switches <i class="bi bi-chevron-compact-down"></i></h5>
 			  
-			  <div class="iconslist">
+			  <div class="iconslist" id="switch_devices">
 			  {% for k, v in devices.items() %}
 				
 				{% if v['customData']['domain'] == 'OnOff' %}
@@ -485,8 +485,8 @@
 		      {% endfor %}
 			  </div>
 			  </br>
-			  <h5 id="title_temps">Thermostats/Temperatures</h5>
-			  <div class="iconslist">
+			  <h5 id="title_temps">Thermostats/Temperatures <i class="bi bi-chevron-compact-down"></i></h5>
+			  <div class="iconslist" id="temp_devices">
 			  {% for k, v in devices.items() %}
 			 
 				{% if  v['customData']['domain'] in ('Temp', 'TempHumidity', 'TempHumidityBaro') %}
@@ -609,8 +609,8 @@
 			  {% endfor %}
 			  </div>
 			  </br>
-			  <h5 id="title_security">Security devices</h5>
-			  <div class="iconslist">
+			  <h5 id="title_security">Security devices <i class="bi bi-chevron-compact-down"></i></h5>
+			  <div class="iconslist" id="sec_devices">
 			  {% for k, v in devices.items() %}
 			 
 				{% if v['customData']['domain'] == 'Security' %}
@@ -732,7 +732,20 @@
 			  {% endfor %}
 			  </div>
 			  </br>
-			  <h5 id="title_other">Other devices <i class="bi bi-chevron-compact-down"></i></h5>
+			  <h5 id="title_hidden" style="cursor: pointer;">Hidden devices <i class="bi bi-chevron-compact-down"></i></h5>
+			  <div class="iconslist" id="hidden_devices">
+			  {% for k, v in devices.items() %}
+			    {% if  'Hidden' in v['customData']['domain'] %}
+				<div class="icon">
+					<i class="bi bi-incognito" id="icon_{{ v['customData']['idx'] }}"></i>
+					<small id="data_{{ v['customData']['idx'] }}">Not available</small>
+					<div class="label">{{ v['name']['name'] }}</br>Domain: {{ v['customData']['domain'] }}</br>IDX: {{ v['customData']['idx'] }}</div>
+				</div>
+				{% endif %}
+			  {% endfor %}
+			  </div>
+			  </br>
+			  <h5 id="title_other">Other devices <small>(not supported devices)</small><i class="bi bi-chevron-compact-down"></i></h5>
 			  <div class="iconslist" id="other_devices">
 			  {% for k, v in devices.items() %}
 			    {% if  (v['customData']['domain'] not in (
@@ -747,22 +760,6 @@
 				{% endif %}
 			  {% endfor %}
 			  </div>
-			  </br>
-			  <h5 id="title_hidden" style="cursor: pointer;">Hidden devices <i class="bi bi-chevron-compact-down"></i></h5>
-			  <div class="iconslist" id="hidden_devices">
-			  {% for k, v in devices.items() %}
-			    {% if  'Hidden' in v['customData']['domain'] %}
-				<div class="icon">
-					<i class="bi bi-incognito" id="icon_{{ v['customData']['idx'] }}"></i>
-					<small id="data_{{ v['customData']['idx'] }}">Not available</small>
-					<div class="label">{{ v['name']['name'] }}</br>Domain: {{ v['customData']['domain'] }}</br>IDX: {{ v['customData']['idx'] }}</div>
-				</div>
-				{% endif %}
-			  {% endfor %}
-			  
-			
-
-			</div>
 
           </div>
         </div><!-- End Left side columns -->
@@ -792,25 +789,20 @@ $('#title_hidden').hide()
 $('#hidden_devices').hide()
 $('#title_security').hide()
 
-function getlog(div, idx, name, timeline){
-	setTimeout(() => {
-		ShowTempLog(div, idx, name, timeline)
-		}, 500);
-	<!-- setInterval(ShowTempLog, 60000, div, idx, name, timeline); -->
-}
-
-function getLigthLog(idx){
-setTimeout(() => {
-		getDeviceLog(idx)
-		}, 100);
-
-}
-
 {% for k, v in devices.items() %}
 
 	{% if v['customData']['domain'] in ('Group', 'Scene') %}
 		updateScenes_block.push("{{ v['customData']['idx'] }}")
 		$('#title_scenes').show()
+		$("#title_scenes > i").toggleClass('bi bi-chevron-compact-up')
+		$("#clickScene_{{ v['customData']['idx'] }}").click(function(){
+			$("#icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}").removeClass("bi bi-toggle2-off");
+			$("#icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}").addClass("bi bi-toggle2-on").css('color', green);
+			setTimeout(() => {
+			  $("#icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}").removeClass("bi bi-toggle2-on");
+			   $("#icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}").addClass("bi bi-toggle2-off").removeAttr('style');
+			}, 2000);
+		});
 	{% elif v['customData']['domain'] in ('Dimmer', 'ColorSwitch', 'BlindsPercentage') %}
 		updateDimmers_block.push("{{ v['customData']['idx'] }}")
 		$('#title_switches').show()
@@ -820,9 +812,11 @@ setTimeout(() => {
 	{% elif  v['customData']['domain'] in ('Thermostat', 'Setpoint', 'Temp', 'Temp_Hidden', 'TempHumidity', 'TempHumidityBaro') %}
 		updateTemp_block.push("{{ v['customData']['idx'] }}")
 		$('#title_temps').show()
+		$("#title_temps > i").toggleClass('bi bi-chevron-compact-up')
 	{% elif v['customData']['domain'] in ('Security', 'SmokeDetector') %}
 		updateSwitches_block.push("{{ v['customData']['idx'] }}")
 		$('#title_security').show()
+		$("#title_security > i").toggleClass('bi bi-chevron-compact-up')
 	{% elif  (v['customData']['domain'] not in (
 					'SmokeDetector', 'Security', 'VenetianBlindsEU', 'OnOff', 'VenetianBlindsUS', 'Doorbell', 'DoorLock', 'DoorLockInverted', 'DoorContact', 'BlindsPercentage',
 					'MotionSensor', 'PushOnButton', 'PushOffButton', 'Contact') and 'Hidden' not in v['customData']['domain']) %}
@@ -834,24 +828,19 @@ setTimeout(() => {
 			$('#title_hidden').show()
 		{% endif %}
 		$('#title_switches').show()
-		{% if v['customData']['domain'] in ('PushOnButton', 'PushOffButton') %}
-			$("#click_{{ v['customData']['idx'] }}").click(function(){
-				$("#icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}").html('radio_button_unchecked').css('color', '#008744');
-				setTimeout(() => {
-				  $("#icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}").html('radio_button_checked').removeAttr('style');
-				}, 1000);
-			});
-		{% endif %}
+		$("#title_switches > i").toggleClass('bi bi-chevron-compact-up')
 	{% endif %}
+	
+	{% if v['customData']['domain'] in ('PushOnButton', 'PushOffButton') %}
+		$("#click_{{ v['customData']['idx'] }}").click(function(){
+			$("#icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}").html('radio_button_unchecked').css('color', '#008744');
+			setTimeout(() => {
+			  $("#icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}").html('radio_button_checked').removeAttr('style');
+			}, 1500);
+		});
+	{% endif %}
+
 {% endfor %}
-
-$("#title_other").click(function(){
-	$("#other_devices").toggle();
-});
-
-$("#title_hidden").click(function(){
-	$("#hidden_devices").toggle();
-});
 
 refreshSwitches(updateSwitches_block);
 refreshScenes(updateScenes_block)
