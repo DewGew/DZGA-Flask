@@ -26,7 +26,7 @@ class AogState:
 
 def getDomain(device):
     
-    if device["Type"] in ['Color Switch', 'Group', 'Scene', 'Temp', 'Thermostat', 'Setpoint', 'Temp + Humidity', 'Temp + Humidity + Baro']:
+    if device["Type"] in ['Color Switch', 'Group', 'Scene', 'Temp', 'Thermostat', 'Setpoint', 'Temp + Humidity', 'Temp + Humidity + Baro', 'Security']:
         devs = device["Type"].replace(" ", "")
         devs = devs.replace("+", "")
         return devs
