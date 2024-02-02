@@ -1,5 +1,6 @@
-24.5
-- Fix for blinds graphics in UI
-- Fixes Lighting 4 devices
-- Added battery level on dashboard devices
-- Added Enerygystorgae trait uses to check battery level
+24.6
+- Fixed "Deprecated RType () for API request" error
+- Fixed camerastream not working
+- Add Security device
+- UI improvments
+- Add more selectable device types
