@@ -81,7 +81,7 @@
 									  <div class="col-sm-12">
 										{% if v['customData']['dzTags'] %}
 										  <div class="alert border-warning fade show text-center" role="alert">
-											Found voicecontrol tags in device description!
+											Found voicecontrol tags in device description!. This applies to all users.
 										  </div>
 										{% endif %}
 										<input type="text" class="form-control" name="device_id" value="{{ k }}" hidden>
@@ -130,7 +130,8 @@
 										<div class="row mb-3">
 										  <label for="nicknames" class="col-sm-3 col-form-label">Nicknames</label>
 										  <div class="col-sm-6">
-											<input type="text" class="form-control" name="nicknames" value="{% for n in v['name']['nicknames'] %}{{ n }}, {% endfor %}"> <small>(Add like this: <code>Celinglamp, kitchen lamp</code>)</small>
+											<input type="text" class="form-control" name="nicknames" value="{% for n in v['name']['nicknames'] %}{{ n }}, {% endfor %}" aria-describedby="nickNameHelp">
+											<div id="emailHelp" class="form-text">Add like this: <code>Celinglamp, kitchen lamp</code>.</div>
 										  </div>
 										</div>
 										<div class="row mb-3">
@@ -149,7 +150,7 @@
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'smoke_detector' %}selected {% endif %} value="smoke_detector">Smoke Detector</option>
 											  {% elif v['customData']['domain'] == 'Camera' %}
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'camera' %}selected {% endif %} value="camera">Camera</option>
-										          {% elif v['customData']['domain'] == 'Group' %}
+											  {% elif v['customData']['domain'] == 'Group' %}
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'switch' %}selected {% endif %} value="switch">Switch</option>
 											  {% elif v['customData']['domain'] in ['Thermostat', 'Setpoint'] %}
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'ac_unit' %}selected {% endif %} value="ac_unit">AC Unit</option>
@@ -252,8 +253,8 @@
 									  {% if v['customData']['domain'] in ['Thermostat', 'Setpoint'] %}
 									   <div class="row mb-3">
 										  <label for="inputText" class="col-sm-3 col-form-label">Get actual temp</label>
-										  <div class="col-sm-4">
-											<select id="actual_temp_idx" name="actual_temp_idx" class="form-select">
+										  <div class="col-sm-6">
+											<select id="actual_temp_idx" name="actual_temp_idx" class="form-select" aria-describedby="actTempHelp">
 											   <option value="" {% if v['customData']['actual_temp_idx'] == None %}selected{% endif %} >None</option>
 											   {% for n, p in devices.items() %}
 													{% if 'Temp' in n %}
@@ -261,17 +262,15 @@
 													{% endif %}
 												{% endfor %}
 											</select>
-										  </div>
-										  <div class="col-sm-5">
-										  <small>Get temperature from another device</small>
+											<div id="modesHelp" class="form-text">Get temperature from another device.</div>
 										  </div>
 										</div>
 									  {% endif %}
 									  {% if v['customData']['domain'] in ['Thermostat', 'Setpoint'] %}
-										<div class="row mb-12">
+										<div class="row mb-3">
 										  <label for="inputText" class="col-sm-3 col-form-label">Get modes</label>
-										  <div class="col-sm-4">
-											<select id="actual_temp_idx" name="actual_temp_idx" class="form-select">
+										  <div class="col-sm-6">
+											<select id="actual_temp_idx" name="actual_temp_idx" class="form-select" aria-describedby="modesHelp">
 											   <option value="" {% if v['customData']['actual_temp_idx'] == None %}selected{% endif %} >None</option>
 											   {% for n, p in devices.items() %}
 													{% if 'Selector' in n %}
@@ -279,9 +278,7 @@
 													{% endif %}
 												{% endfor %}
 											</select>
-										  </div>
-										  <div class="col-sm-5">
-										  <small>Get thermostat modes from another device. Supports levelnames: 'off', 'heat', 'cool', 'auto', 'fan-only', 'purifier', 'eco', 'dry'</small>
+											<div id="modesHelp" class="form-text">Get thermostat modes from another device. Supports levelnames: 'off', 'heat', 'cool', 'auto', 'fan-only', 'purifier', 'eco', 'dry'</div>
 										  </div>
 										  </div>
 									  {% endif %}
@@ -290,16 +287,18 @@
 									   <div class="row mb-3" {% if dbsettings.language == 'en' %}style="display: none;"{% endif %}>
 									  	<div id="armhome_div" class="col-md-12">
 										  <label for="armedhome" class="col-sm-10 col-form-label" id="label_armhome">Armhome</label>
-										  <input type="text" class="form-control" id="armedhome" name="armedhome" value="{% for x in dbsettings.armlevels['armhome'] %}{{ x }}, {% endfor %}">
-										</div><small>(Add levels like this: <code>home, armed home</code>)</small>
+										  <input type="text" class="form-control" id="armedhome" name="armedhome" value="{% for x in dbsettings.armlevels['armhome'] %}{{ x }}, {% endfor %}" aria-describedby="secure1Help">
+										  <div id="secure1Help" class="form-text">Add levels like this: <code>home, armed home</code></div>
+										</div>
 										<div id="armaway_div" class="col-md-12">
 										  <label for="armedaway" class="col-sm-10 col-form-label" id="label_armaway">Armaway</label>
-										  <input type="text" class="form-control" id="armedaway" name="armedaway" value="{% for x in dbsettings.armlevels['armaway'] %}{{ x }}, {% endfor %}">
-										</div><small>(Add levels like this: <code>away, armed away</code>)</small>
+										  <input type="text" class="form-control" id="armedaway" name="armedaway" value="{% for x in dbsettings.armlevels['armaway'] %}{{ x }}, {% endfor %}" aria-describedby="secure2Help">
+										  <div id="secure2Help" class="form-text">Add levels like this: <code>away, armed away</code></div>
 										</div>
+									   </div>
 										{% endif %}
 										<div class="row mb-3">
-										  <small class="text-center text-danger"><strong>Sync devices after saving for the changes to take effect</strong></small>
+										  <small class="text-center text-danger"><strong>Sync devices after saving for the changes to take effect</strong></br>Its possible to change several devices before syncing devices</small>
 										</div>
 										</div>
 										</div>
