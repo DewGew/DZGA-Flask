@@ -109,7 +109,7 @@ class SmartHomeHandler:
                     states['online'] = True
                     action_result = {'ids': [device['id']], 'status': 'SUCCESS', 'states': states}
                     response['commands'].append(action_result)
-                    print(response)
+                    
                 except SmartHomeErrorNoChallenge as err:
                     action_failed = {'ids': [device['id']], 'status': 'ERROR', 'errorCode': err.code,
                                           'challengeNeeded': {'type': err.desc}}
@@ -124,8 +124,9 @@ class SmartHomeHandler:
                     
 
             if repstate.report_state_enabled():
-                data = {'states': {device['id']: action_result['states']}}
-                self.statereport(requestId, user_id, data)
+                    if 'Doorbell' not in device['id'] and 'Camera' not in device['id']:
+                        data = {'states': {device['id']: action_result['states']}}
+                        self.statereport(requestId, user_id, data)
 
             # if "followUpToken" in params and 'DoorLock' in custom_data['domain']:
                 # ndata = {'states':{},'notifications':{}}
