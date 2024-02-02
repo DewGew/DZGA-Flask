@@ -149,6 +149,8 @@
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'smoke_detector' %}selected {% endif %} value="smoke_detector">Smoke Detector</option>
 											  {% elif v['customData']['domain'] == 'Camera' %}
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'camera' %}selected {% endif %} value="camera">Camera</option>
+										          {% elif v['customData']['domain'] == 'Group' %}
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'switch' %}selected {% endif %} value="switch">Switch</option>
 											  {% elif v['customData']['domain'] in ['Thermostat', 'Setpoint'] %}
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'ac_unit' %}selected {% endif %} value="ac_unit">AC Unit</option>
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'aircooler' %}selected {% endif %} value="aircooler">Air Cooler</option>
