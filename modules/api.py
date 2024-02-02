@@ -72,7 +72,7 @@ def gateway():
             flash("Devices synced with domoticz")
             return "Devices synced with domoticz", 200
 
-    if custom == "restart":
+    elif custom == "restart":
 
         logger.info('Restarts smarthome server')
         os.execv(sys.executable, ['python'] + sys.argv)
@@ -101,7 +101,7 @@ def gateway():
         logger.info("User " + userToRemove + " is deleted")
 
         return "User removed", 200
-    else:
+    elif '?type' in requestedUrl[1]:
 
         result = queryDomoticz(flask_login.current_user.username, requestedUrl[1])
 
