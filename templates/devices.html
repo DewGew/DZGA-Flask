@@ -137,7 +137,7 @@
 										  <label for="inputText" class="col-sm-3 col-form-label">Device Type</label>
 										  <div class="col-sm-6"> 
 											  <select id="devicetype" name="devicetype" class="form-select"
-											  {% if (v['customData']['domain'] not in ['OnOff', 'PushOnButton', 'PushOffButton', 'Thermostat', 'Setpoint', 'DoorLock', 'DoorLockInverted']) %}
+											  {% if (v['customData']['domain'] in ['Security', 'Scene', 'Group', 'SmokeDetector', 'MotionSensor', 'Doorbell', 'Camera']) %}
 											  disabled
 											  {% endif %}>
 											  <option {% if v['type'].replace('action.devices.types.', '').lower() == 'default' %}selected {% endif %} value="default">Set default type</option>
@@ -147,48 +147,80 @@
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'scene' %}selected {% endif %} value="scene">Scene</option>
 											  {% elif v['customData']['domain'] == 'SmokeDetector' %}
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'smoke_detector' %}selected {% endif %} value="smoke_detector">Smoke Detector</option>
-											  {% elif (v['customData']['domain'] in ['Thermostat', 'Setpoint']) %}
+											  {% elif v['customData']['domain'] == 'Camera' %}
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'camera' %}selected {% endif %} value="camera">Camera</option>
+											  {% elif v['customData']['domain'] in ['Thermostat', 'Setpoint'] %}
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'ac_unit' %}selected {% endif %} value="ac_unit">AC Unit</option>
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'aircooler' %}selected {% endif %} value="aircooler">Air Cooler</option>
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'heater' %}selected {% endif %} value="heater">Heater</option>
-												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'thermostat' %}selected {% endif %} value="thermostat">Thermostat</option>										    
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'thermostat' %}selected {% endif %} value="thermostat">Thermostat</option>
+											  {% elif v['customData']['domain'] in ['Temp', 'TempHumidity', 'TempHumidityBaro'] %}
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'sensor' %}selected {% endif %} value="sensor">Sensor</option>
+											    <option {% if v['type'].replace('action.devices.types.', '').lower() == 'thermostat' %}selected {% endif %} value="thermostat">Thermostat</option>
 											  {% elif v['customData']['domain'] == 'Doorbell' %}
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'doorbell' %}selected {% endif %} value="doorbell">Doorbell</option>
 											  {% elif v['customData']['domain'] in ['DoorLock', 'DoorLockInverted'] %}
-											  <option {% if v['type'].replace('action.devices.types.', '').lower() == 'lock' %}selected {% endif %} value="lock">Lock</option>
 											  <option {% if v['type'].replace('action.devices.types.', '').lower() == 'door' %}selected {% endif %} value="door">Door</option>
 											  <option {% if v['type'].replace('action.devices.types.', '').lower() == 'garage' %}selected {% endif %} value="garage">Garage</option>
 											  <option {% if v['type'].replace('action.devices.types.', '').lower() == 'gate' %}selected {% endif %} value="gate">Gate</option>
+											  <option {% if v['type'].replace('action.devices.types.', '').lower() == 'lock' %}selected {% endif %} value="lock">Lock</option>
 											  <option {% if v['type'].replace('action.devices.types.', '').lower() == 'window' %}selected {% endif %} value="window">Window</option>
-											  {% else %}
+											  {% elif v['customData']['domain'] in ['DoorContact', 'Contact'] %}											  
+											  <option {% if v['type'].replace('action.devices.types.', '').lower() == 'door' %}selected {% endif %} value="door">Door</option>
+											  <option {% if v['type'].replace('action.devices.types.', '').lower() == 'garage' %}selected {% endif %} value="garage">Garage</option>
+											  <option {% if v['type'].replace('action.devices.types.', '').lower() == 'gate' %}selected {% endif %} value="gate">Gate</option>
+											  <option {% if v['type'].replace('action.devices.types.', '').lower() == 'sensor' %}selected {% endif %} value="sensor">Sensor</option>
+											  <option {% if v['type'].replace('action.devices.types.', '').lower() == 'window' %}selected {% endif %} value="window">Window</option>
+											  {% elif v['customData']['domain'] in ['VenetianBlindsUS', 'VenetianBlindsEU', 'Blinds', 'BlindsStop', 'BlindsPercentage'] %}
+											  <option {% if v['type'].replace('action.devices.types.', '').lower() == 'blinds' %}selected {% endif %} value="blinds">Blinds</option>
+											  <option {% if v['type'].replace('action.devices.types.', '').lower() == 'curtain' %}selected {% endif %} value="curtain">Curtain</option>
+											  {% elif v['customData']['domain'] == 'Dimmer' %}
+											  <option {% if v['type'].replace('action.devices.types.', '').lower() == 'light' %}selected {% endif %} value="light">Light</option>
+											  <option {% if v['type'].replace('action.devices.types.', '').lower() == 'sensor' %}selected {% endif %} value="sensor">Sensor</option>
+											  <option {% if v['type'].replace('action.devices.types.', '').lower() == 'switch' %}selected {% endif %} value="switch">Switch</option>
+											  {% elif v['customData']['domain'] in ['OnOff', 'PushOnButton', 'PushOffButton'] %}
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'ac_unit' %}selected {% endif %} value="ac_unit">AC Unit</option>
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'aircooler' %}selected {% endif %} value="aircooler">Air Cooler</option>
-												{% if (v['customData']['domain'] not in ['OnOff', 'PushOnButton', 'PushOffButton']) %}
-													<option {% if v['type'].replace('action.devices.types.', '').lower() == 'blinds' %}selected {% endif %} value="blinds">Blinds</option>
-													<option {% if v['type'].replace('action.devices.types.', '').lower() == 'door' %}selected {% endif %} value="door">Door</option>
-													<option {% if v['type'].replace('action.devices.types.', '').lower() == 'window' %}selected {% endif %} value="window">Window</option>
-												{% endif %}
-												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'camera' %}selected {% endif %} value="camera">Camera</option>
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'airfreshener' %}selected {% endif %} value="airfreshener">Air Freshener</option>
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'airpurifier' %}selected {% endif %} value="airpurifier">Air Purifier</option>
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'blender' %}selected {% endif %} value="blender">Blender</option>
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'boiler' %}selected {% endif %} value="boiler">Boiler</option>
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'charger' %}selected {% endif %} value="charger">Charger</option>
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'coffeemaker' %}selected {% endif %} value="coffeemaker">Coffee maker</option>
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'cooktop' %}selected {% endif %} value="cooktop">Cook Top</option>
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'dehumidifier' %}selected {% endif %} value="dehumidifier">Dehumidifier</option>
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'dishwasher' %}selected {% endif %} value="dishwasher">Dishwasher</option>
 												{% if (v['customData']['domain'] in ['PushOnButton', 'PushOffButton']) %}
 													<option {% if v['type'].replace('action.devices.types.', '').lower() == 'doorbell' %}selected {% endif %} value="doorbell">Doorbell</option>
 												{% endif %}
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'dryer' %}selected {% endif %} value="dryer">Dryer</option>
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'fan' %}selected {% endif %} value="fan">Fan</option>
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'fryer' %}selected {% endif %} value="fryer">Fryer</option>
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'grill' %}selected {% endif %} value="grill">Grill</option>
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'heater' %}selected {% endif %} value="heater">Heater</option>
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'humidifier' %}selected {% endif %} value="humidifier">Humidifier</option>
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'kettle' %}selected {% endif %} value="kettle">Kettle</option>
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'light' %}selected {% endif %} value="light">Light</option>
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'lock' %}selected {% endif %} value="lock">Lock</option>
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'microwave' %}selected {% endif %} value="microwave">Microwave</option>
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'mop' %}selected {% endif %} value="mop">Mop</option>
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'mower' %}selected {% endif %} value="mower">Mower</option>
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'outlet' %}selected {% endif %} value="outlet">Outlet</option>
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'oven' %}selected {% endif %} value="oven">Oven</option>
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'pressurecooker' %}selected {% endif %} value="pressurecooker">Pressure Cooker</option>
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'radiator' %}selected {% endif %} value="radiator">Radiator</option>
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'soundbar' %}selected {% endif %} value="soundbar">Soundbar</option>
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'speaker' %}selected {% endif %} value="speaker">Speaker</option>
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'sensor' %}selected {% endif %} value="sensor">Sensor</option>
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'standmixer' %}selected {% endif %} value="standmixer">Standmixer</option>
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'sprinkler' %}selected {% endif %} value="sprinkler">Sprinkler</option>
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'switch' %}selected {% endif %} value="switch">Switch</option>
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'tv' %}selected {% endif %} value="tv">TV</option>
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'vacuum' %}selected {% endif %} value="vacuum">Vacuum</option>
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'washer' %}selected {% endif %} value="washer">Washer</option>
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'waterheater' %}selected {% endif %} value="waterheater">Waterheater</option>
-												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'washer' %}selected {% endif %} value="washer">Washer</option>							
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'waterpurifier' %}selected {% endif %} value="waterpurifier">Waterpurifier</option>
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'watersoftener' %}selected {% endif %} value="watersoftener">Watersoftener</option>
 											  {% endif %}
 											  </select>
 										  </div>
