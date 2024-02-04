@@ -20,7 +20,7 @@ def query(custom_data, device, user_id):
     response = {}
 
     if 'action.devices.traits.OnOff' in device['traits']:
-        if domain in ['Group', 'Scene']:
+        if domain in ['Group']:
             data = state['Status'] != 'Off'
             response['on'] = data
         else:
@@ -160,6 +160,7 @@ def execute(device, command, params, user_id, challenge):
     custom_data = device['customData']
     idx = device['customData']['idx']
     domain = device['customData']['domain']
+    check_state = customData['check_state']
 
     if domain in ['Group', 'Scene']:
         state = getDomoticzState(user_id, idx, 'scene')
@@ -172,15 +173,27 @@ def execute(device, command, params, user_id, challenge):
     if command == "action.devices.commands.OnOff":
 
         if domain in ['Group', 'Scene']:
-            url += 'switchscene&idx=' + idx + '&switchcmd=' + (
-                        'On' if params['on'] else 'Off')
+            data = state['Status']
+            url += 'switchscene&idx=' + idx + '&switchcmd='
         else:
-            url += 'switchlight&idx=' + idx + '&switchcmd=' + (
-                        'On' if params['on'] else 'Off')
+            data = state['Data']
+            url += 'switchlight&idx=' + idx + '&switchcmd='
+        
+        if check_state:
+            if params['on'] is True and data == 'Off':
+                url += 'On'
+            elif params['on'] is False and data != 'Off':
+                url += 'Off'
+            else:
+                raise SmartHomeError('alreadyInState',
+                                   'Unable to execute {} for {}. Already in state '.format(command, device['id']))
+        else:                      
+            url += ('On' if params['on'] else 'Off')
 
         response['on'] = params['on']
 
     if command == 'action.devices.commands.LockUnlock':
+    
         if domain in ['DoorLockInverted']:
             url += 'switchlight&idx=' + idx + '&switchcmd=' + (
                             'Off' if params['lock'] else 'On')
