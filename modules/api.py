@@ -98,7 +98,7 @@ def gateway():
         else:
             getDomoticzDevices(flask_login.current_user.username)
             flash("Devices synced with domoticz")
-            return "Devices synced with domoticz", 200
+            result = '{"title": "RequestedSync", "status": "OK"}'
 
     elif custom == "restart":
         if dbuser.admin:
@@ -113,13 +113,13 @@ def gateway():
     elif custom == "server_settings":
         if dbuser.admin:
             modifyServerSettings(request)
-            return "Server settings saved", 200
+            result = '{"title": "ServerSettingsChanged", "status": "OK"}'
 
     elif custom == "user_settings":
 
         modifyUserSettings(flask_login.current_user.username, request)
-        return "User settings saved", 200
-
+        result = '{"title": "UserSettingsChanged", "status": "OK"}'
+        
     elif custom == "removeuser":
         if dbuser.admin:
             userToRemove = request.args.get('user', '')
@@ -131,13 +131,13 @@ def gateway():
             remove_user(userToRemove)
             logger.info("User " + userToRemove + " is deleted")
 
-            return "User removed", 200
+            result = '{"title": "UserRemoved", "status": "OK"}'
             
     elif '?type' in requestedUrl[1]:
 
         result = queryDomoticz(flask_login.current_user.username, requestedUrl[1])
 
     try:
-        return json.loads(result)
+        return json.loads(result), 200
     except Exception:
-        return "No results returned", 404
+        return {"title": "No results returned", "status": "ERR"}, 404
