@@ -94,8 +94,14 @@
 										  <label class="form-check-label" for="willReportState">Report State</label>
 										</div>
 										<div class="form-check form-switch">
+										  <input class="form-check-input" type="checkbox" id="checkState" name="checkState" {% if v['customData']['check_state'] == True %}checked{% endif %}>
+										  <label class="form-check-label" for="checkState">Check State</label></br>
+										  <small class="form-text">Turns on/off already in state error message</small>
+										</div>
+										<div class="form-check form-switch">
 										  <input class="form-check-input" type="checkbox" id="notification" name="notification" {% if v['notificationSupportedByAgent'] == True %}checked {% endif %} disabled>
-										  <label class="form-check-label" for="notification">Notification Supported</label>{% if v['notificationSupportedByAgent'] == True %} <small>(User can turn on or off notifications in Google Home App)</small>{% endif %}
+										  <label class="form-check-label" for="notification">Notification Supported</label></br>
+										  {% if v['notificationSupportedByAgent'] == True %}<small class="form-text">User can turn on or off notifications in Google Home App</small>{% endif %}
 										</div>
 										<div class="form-check form-switch">
 										  <input class="form-check-input" type="checkbox" id="secondaryUserVerificationCheck_{{ v['id'] }}" {% if ('acknowledge' in v['customData'] or v['customData']['protected'] == True) %}checked{% endif %}{% if 'Hidden' in v['customData']['domain'] %} disabled{% endif %}>
