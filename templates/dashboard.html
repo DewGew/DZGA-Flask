@@ -34,6 +34,7 @@
 					<div class="click" onclick="toogleGroup({{ v['customData']['idx'] }})">
 					  <i class="bi bi-toggle2-off" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}"></i>
 					  <div class="label">{{ v['name']['name'] }}</div>
+					  <small id="data_{{ v['customData']['idx'] }}">Not available</small>
 					</div>
 					<div class="card-footer col-sm-12">
 					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not available</small>
@@ -45,6 +46,7 @@
 					<div class="click" id="clickScene_{{ v['customData']['idx'] }}" onclick="activateScene({{ v['customData']['idx'] }})">
 					  <i class="bi bi-toggle2-off" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}"></i>
 					  <div class="label">{{ v['name']['name'] }}</div>
+					  <small id="sceneData_{{ v['customData']['idx'] }}" style="visibility:hidden">Activates Scene</small>
 					</div>
 					<div class="card-footer col-sm-12">
 					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not available</small>
@@ -806,10 +808,12 @@ $('#title_security').hide()
 		$("#clickScene_{{ v['customData']['idx'] }}").click(function(){
 			$("#icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}").removeClass("bi bi-toggle2-off");
 			$("#icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}").addClass("bi bi-toggle2-on").css('color', green);
+			$("#sceneData_{{ v['customData']['idx'] }}").css('visibility','visible');
 			setTimeout(() => {
 			  $("#icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}").removeClass("bi bi-toggle2-on");
 			   $("#icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}").addClass("bi bi-toggle2-off").removeAttr('style');
-			}, 2000);
+			   $("#sceneData_{{ v['customData']['idx'] }}").css('visibility','hidden');
+			}, 5000);
 		});
 	{% elif v['customData']['domain'] in ('Dimmer', 'ColorSwitch', 'BlindsStop', 'BlindsPercentage') %}
 		updateDimmers_block.push("{{ v['customData']['idx'] }}")
