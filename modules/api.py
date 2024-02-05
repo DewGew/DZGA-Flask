@@ -52,8 +52,6 @@ def modifyServerSettings(request):
 def modifyUserSettings(username, request):
 
     dbuser = User.query.filter_by(username=username).first()
-    
-    logger.info(request)
 
     domo_url = request.args.get('domourl', None)
     if domo_url:
