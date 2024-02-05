@@ -18,14 +18,30 @@ def modifyServerSettings(request):
 
     dbsettings = Settings.query.get_or_404(1)
 
-    dbsettings.client_id = request.args.get('aogclient', '')
-    dbsettings.client_secret = request.args.get('aogsecret', '')
-    dbsettings.api_key = request.args.get('aogapi', '')
-    dbsettings.tempunit = request.args.get('tempunit', '')
-    dbsettings.language = request.args.get('language', '')
-    dbsettings.use_ssl = (request.args.get('ssl', '') == 'true')
-    dbsettings.ssl_cert = request.args.get('sslcert', '')
-    dbsettings.ssl_key = request.args.get('sslkey', '')
+    client_id = request.args.get('aogclient', None)
+    if client_id:
+        dbsettings.client_id = client_id
+    client_secret = request.args.get('aogsecret', None)
+    if client_secret:
+        dbsettings.client_secret = client_secret
+    api_key = request.args.get('aogapi', None)
+    if api_key:
+        dbsettings.api_key = api_key
+    tempunit = request.args.get('tempunit', None)
+    if tempunit:
+        dbsettings.tempunit = tempunit
+    language = request.args.get('language', None)
+    if language:
+        dbsettings.language = language
+    use_ssl = request.args.get('ssl', None)
+    if use_ssl:
+        dbsettings.use_ssl =(True if use_ssl else False) 
+    ssl_cert = request.args.get('sslcert', None)
+    if ssl_cert
+        dbsettings.ssl_cert = ssl_cert
+    ssl_key = request.args.get('sslkey', None)
+    if ssl_key:
+        dbsettings.ssl_key = ssl_key
 
     db.session.add(dbsettings)
     db.session.commit()
@@ -36,13 +52,27 @@ def modifyServerSettings(request):
 def modifyUserSettings(username, request):
 
     dbuser = User.query.filter_by(username=username).first()
+    
+    logger.info(request)
 
-    dbuser.domo_url = request.args.get('domourl', '')
-    dbuser.domouser = request.args.get('domouser', '')
-    dbuser.domopass = request.args.get('domopass', '')
-    dbuser.roomplan = request.args.get('roomplan', '')
-    dbuser.password = request.args.get('uipassword', '')
-    dbuser.googleassistant = (request.args.get('googleassistant', '') == 'true')
+    domo_url = request.args.get('domourl', None)
+    if domo_url:
+        dbuser.domo_url = domo_url
+    domouser = request.args.get('domouser', None)
+    if domouser:
+        dbuser.domouser = domouser
+    domopass = request.args.get('domopass', None)
+    if domopass:
+        dbuser.domopass = domopass
+    roomplan = request.args.get('roomplan', None)
+    if roomplan:
+        dbuser.roomplan = roomplan
+    password = request.args.get('uipassword', None)
+    if password:
+        dbuser.password = password
+    googleassistant = request.args.get('googleassistant', None)
+    if googleassistant:
+        dbuser.googleassistant = (True if googleassistant == 'true' else False)
 
     db.session.add(dbuser)
     db.session.commit()
@@ -85,10 +115,12 @@ def gateway():
     elif custom == "server_settings":
 
         modifyServerSettings(request)
+        return "Server settings saved", 200
 
     elif custom == "user_settings":
 
         modifyUserSettings(flask_login.current_user.username, request)
+        return "User settings saved", 200
 
     elif custom == "removeuser":
         userToRemove = request.args.get('user', '')
