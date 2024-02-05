@@ -37,7 +37,7 @@ def modifyServerSettings(request):
     if use_ssl:
         dbsettings.use_ssl =(True if use_ssl else False) 
     ssl_cert = request.args.get('sslcert', None)
-    if ssl_cert
+    if ssl_cert:
         dbsettings.ssl_cert = ssl_cert
     ssl_key = request.args.get('sslkey', None)
     if ssl_key:
