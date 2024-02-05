@@ -101,9 +101,9 @@ def gateway():
             return "Devices synced with domoticz", 200
 
     elif custom == "restart":
-
-        logger.info('Restarts smarthome server')
-        os.execv(sys.executable, ['python'] + sys.argv)
+        if dbuser.admin:
+            logger.info('Restarts smarthome server')
+            os.execv(sys.executable, ['python'] + sys.argv)
 
     elif custom == "setArmLevel":
         armLevel = request.args.get('armLevel', '')
@@ -111,9 +111,9 @@ def gateway():
         result = queryDomoticz(flask_login.current_user.username, '?type=command&param=setsecstatus&secstatus=' + armLevel + '&seccode=' + hashlib.md5(str.encode(seccode)).hexdigest())
 
     elif custom == "server_settings":
-
-        modifyServerSettings(request)
-        return "Server settings saved", 200
+        if dbuser.admin:
+            modifyServerSettings(request)
+            return "Server settings saved", 200
 
     elif custom == "user_settings":
 
@@ -121,16 +121,18 @@ def gateway():
         return "User settings saved", 200
 
     elif custom == "removeuser":
-        userToRemove = request.args.get('user', '')
+        if dbuser.admin:
+            userToRemove = request.args.get('user', '')
 
-        removeuser = User.query.filter_by(username=userToRemove).first()
+            removeuser = User.query.filter_by(username=userToRemove).first()
 
-        db.session.delete(removeuser)
-        db.session.commit()
-        remove_user(userToRemove)
-        logger.info("User " + userToRemove + " is deleted")
+            db.session.delete(removeuser)
+            db.session.commit()
+            remove_user(userToRemove)
+            logger.info("User " + userToRemove + " is deleted")
 
-        return "User removed", 200
+            return "User removed", 200
+            
     elif '?type' in requestedUrl[1]:
 
         result = queryDomoticz(flask_login.current_user.username, requestedUrl[1])
