@@ -63,6 +63,7 @@ def devices():
             camurl = request.form.get('camurl')
             actual_temp_idx = request.form.get('actual_temp_idx')
             selector_modes_idx = request.form.get('selector_modes_idx')
+            check_state = request.form.get('checkState')
 
             if idx not in deviceconfig.keys():
                 deviceconfig[idx] = {}
@@ -76,6 +77,11 @@ def devices():
                 deviceconfig[idx].update({'report_state': False})
             elif idx in deviceconfig.keys() and 'report_state' in deviceconfig[idx]:
                 deviceconfig[idx].pop('report_state')
+                
+            if check_state != 'on':
+                deviceconfig[idx].update({'check_state': False})
+            elif idx in deviceconfig.keys() and 'check_state' in deviceconfig[idx]:
+                deviceconfig[idx].pop('check_state')
 
             if challenge == 'ackNeeded':
                 deviceconfig[idx].update({'ack': True})
