@@ -160,7 +160,7 @@ def execute(device, command, params, user_id, challenge):
     custom_data = device['customData']
     idx = device['customData']['idx']
     domain = device['customData']['domain']
-    check_state = customData['check_state']
+    check_state = custom_data['check_state']
 
     if domain in ['Group', 'Scene']:
         state = getDomoticzState(user_id, idx, 'scene')
