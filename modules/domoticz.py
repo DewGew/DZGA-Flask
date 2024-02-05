@@ -150,7 +150,7 @@ def getAog(device, user_id=None):
             aog.customData['acknowledge'] = ack
         chkState = desc.get('check_state', True)
         if not chkState:
-            aog.customData['check_State'] = chkState
+            aog.customData['check_state'] = chkState
         repState = desc.get('report_state', True)
         if not repState:
             aog.willReportState = repState
