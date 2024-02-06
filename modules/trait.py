@@ -194,12 +194,21 @@ def execute(device, command, params, user_id, challenge):
 
     if command == 'action.devices.commands.LockUnlock':
     
-        if domain in ['DoorLockInverted']:
-            url += 'switchlight&idx=' + idx + '&switchcmd=' + (
-                            'Off' if params['lock'] else 'On')
+        url += 'switchlight&idx=' + idx + '&switchcmd='
+        
+        if check_state:
+            if params['lock'] is True and state['Data'] == 'Unlocked':
+                url += ('Off' if domain in ['DoorLockInverted'] else 'On')
+            elif params['lock'] is False and state['Data'] != 'Unlocked':
+                url += ('On' if domain in ['DoorLockInverted'] else 'Off')
+            else:
+                raise SmartHomeError('alreadyInState',
+                               'Unable to execute {} for {}. Already in state '.format(command, device['id']))
         else:
-            url += 'switchlight&idx=' + idx + '&switchcmd=' + (
-                            'On' if params['lock'] else 'Off')
+            if domain in ['DoorLockInverted']:
+                url += ('Off' if params['lock'] else 'On')
+            else:
+                url += ('On' if params['lock'] else 'Off')
 
         response['isLocked'] = params['lock']
 
@@ -267,10 +276,20 @@ def execute(device, command, params, user_id, challenge):
         else:
             p = params.get('openPercent', 50)
             url += 'switchlight&idx=' + idx + '&switchcmd='
-            if p == 100:
-                url += 'Open'
-            if p == 0:
-                url += 'Close'
+            
+            if check_state:
+                if p == 100 and state['Data'] in ['Closed', 'Stopped']:
+                    url += 'Open'
+                elif p == 0 and state['Data'] in ['Open', 'Stopped']:
+                    url += 'Close'
+                else:
+                    raise SmartHomeError('alreadyInState',
+                                       'Unable to execute {} for {}. Already in state '.format(command, device['id']))
+            else:
+                if p == 100:
+                    url += 'Open'
+                if p == 0:
+                    url += 'Close'
 
         response['openState'] = [{'openPercent': params['openPercent']}]
 
