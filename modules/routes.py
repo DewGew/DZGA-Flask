@@ -161,6 +161,12 @@ def devices():
 
                 db.session.add(dbsettings)
                 db.session.commit()
+                
+            if dbuser.googleassistant is True:
+                if report_state.report_state_enabled():
+                    report_state.call_homegraph_api('sync', {"agentUserId": current_user.username})
+            else:
+                getDomoticzDevices(current_user.username)
 
         logger.info("Device settings saved")
 
