@@ -315,11 +315,22 @@ def execute(device, command, params, user_id, challenge):
 
         if params["arm"]:
             if params["armLevel"] == "Arm Home":
-                url += "setsecstatus&secstatus=1"
-            if params["armLevel"] == "Arm Away":
-                url += "setsecstatus&secstatus=2"
+                if state['Data'] == "Arm Home" and check_state:
+                    raise SmartHomeError('alreadyInState',
+                                       'Unable to execute {} for {}. Already in state '.format(command, device['id']))
+                else:
+                    url += "setsecstatus&secstatus=1"
+                if state['Data'] == "Arm Away" and check_state:
+                    raise SmartHomeError('alreadyInState',
+                                       'Unable to execute {} for {}. Already in state '.format(command, device['id']))
+                else:
+                    url += "setsecstatus&secstatus=2"
         else:
-            url += "setsecstatus&secstatus=0"
+            if state['Data'] == "Normal" and check_state:
+                raise SmartHomeError('alreadyInState',
+                                   'Unable to execute {} for {}. Already in state '.format(command, device['id']))
+            else:
+                url += "setsecstatus&secstatus=0"
 
         url += '&seccode=' + hashlib.md5(str.encode(challenge.get('pin'))).hexdigest()
 
