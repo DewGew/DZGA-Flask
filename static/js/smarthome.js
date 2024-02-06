@@ -249,6 +249,7 @@ function refreshScenes(updateScenes) {
 				$('#lastUpdate_' + idx).html(moment(lastUpdate).fromNow())
 			}
 			$('button[id="switch_' + idx + '"]').html(data)
+			$('#data_'+ idx).html(data)
 			if (data != 'Off'){
 				$('#icon_Group_' + idx).removeClass("bi bi-toggle2-off")
 				$('#icon_Group_' + idx).addClass("bi bi-toggle2-on").css('color', green)

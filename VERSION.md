@@ -1,6 +1,4 @@
-24.6
-- Fixed "Deprecated RType () for API request" error
-- Fixed camerastream not working
+24.7
+- Added REST API read more in wiki
 - Add Security device
-- UI improvments
 - Add more selectable device types
