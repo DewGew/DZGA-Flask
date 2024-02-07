@@ -77,6 +77,67 @@ def modifyUserSettings(username, request):
 
     logger.info("User settings updated")
 
+    
+def modifyDeviceConfig(username, request):
+    
+    dbuser = User.query.filter_by(username=username).first()
+    deviceconfig = dbuser.device_config
+       
+    entityId = request.args.get('id', None)
+    hide = request.args.get('hide', None)
+    checkstate = request.args.get('check_state', None)
+    room = request.args.get('room', None)
+    ack = request.args.get('ack', None)
+    devicetype = request.args.get('devicetype', None)
+    nicknames = request.args.get('nicknames', None)
+
+    if entityId:
+        if entityId not in deviceconfig.keys():
+                deviceconfig[entityId] = {}
+        if hide == 'true':
+            deviceconfig[entityId].update({'hide': True})
+        elif hide is not None and entityId in deviceconfig.keys() and 'hide' in deviceconfig[entityId]:
+            deviceconfig[entityId].pop('hide')
+            
+        if checkstate == 'false':
+            deviceconfig[entityId].update({'check_state': False})
+        elif checkstate is not None and entityId in deviceconfig.keys() and 'check_state' in deviceconfig[entityId]:
+            deviceconfig[entityId].pop('check_state')
+            
+        if room:
+            deviceconfig[entityId].update({'room': room})
+            
+        if ack == 'true':
+            deviceconfig[entityId].update({'ack': True})
+        elif ack is not None and entityId in deviceconfig.keys() and 'ack' in deviceconfig[entityId]:
+            deviceconfig[entityId].pop('ack')
+            
+        if devicetype:
+            deviceconfig[entityId].update({'devicetype': devicetype})
+        
+        if nicknames:
+            names = nicknames.split(",")
+            names = list(filter(None, names))
+            deviceconfig[entityId].update({'nicknames': names})
+            logger.info(names)
+
+        dbuser.device_config.update(deviceconfig)
+        db.session.add(dbuser)
+        db.session.commit()
+        
+        if dbuser.googleassistant is True:
+            if rs.report_state_enabled():
+                rs.call_homegraph_api('sync', {"agentUserId": username})
+        else:
+            getDomoticzDevices(username)
+                
+        logger.info("User settings updated")
+        return '{"title": "UserSettingsChanged", "status": "OK"}'
+    else:
+        return '{"title": "UserSettingsChanged", "status": "ERR"}'
+
+        
+    
 
 @flask_login.login_required
 def gateway():
@@ -88,8 +149,7 @@ def gateway():
     if custom == "sync":
         if dbuser.googleassistant is True:
             if rs.report_state_enabled():
-                payload = {"agentUserId": flask_login.current_user.username}
-                rs.call_homegraph_api('sync', payload)
+                rs.call_homegraph_api('sync', {"agentUserId": flask_login.current_user.username})
                 result = '{"title": "RequestedSync", "status": "OK"}'
                 flash("Devices synced with domoticz")
             else:
@@ -120,6 +180,10 @@ def gateway():
         modifyUserSettings(flask_login.current_user.username, request)
         result = '{"title": "UserSettingsChanged", "status": "OK"}'
         
+    elif custom == "device_config":
+    
+        result = modifyDeviceConfig(flask_login.current_user.username, request)
+
     elif custom == "removeuser":
         if dbuser.admin:
             userToRemove = request.args.get('user', '')

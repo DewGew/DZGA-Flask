@@ -20,7 +20,7 @@ def query(custom_data, device, user_id):
     response = {}
 
     if 'action.devices.traits.OnOff' in device['traits']:
-        if domain in ['Group', 'Scene']:
+        if domain in ['Group']:
             data = state['Status'] != 'Off'
             response['on'] = data
         else:
@@ -160,6 +160,7 @@ def execute(device, command, params, user_id, challenge):
     custom_data = device['customData']
     idx = device['customData']['idx']
     domain = device['customData']['domain']
+    check_state = custom_data['check_state']
 
     if domain in ['Group', 'Scene']:
         state = getDomoticzState(user_id, idx, 'scene')
@@ -172,21 +173,42 @@ def execute(device, command, params, user_id, challenge):
     if command == "action.devices.commands.OnOff":
 
         if domain in ['Group', 'Scene']:
-            url += 'switchscene&idx=' + idx + '&switchcmd=' + (
-                        'On' if params['on'] else 'Off')
+            data = state['Status']
+            url += 'switchscene&idx=' + idx + '&switchcmd='
         else:
-            url += 'switchlight&idx=' + idx + '&switchcmd=' + (
-                        'On' if params['on'] else 'Off')
+            data = state['Data']
+            url += 'switchlight&idx=' + idx + '&switchcmd='
+        
+        if check_state:
+            if params['on'] is True and data == 'Off':
+                url += 'On'
+            elif params['on'] is False and data != 'Off':
+                url += 'Off'
+            else:
+                raise SmartHomeError('alreadyInState',
+                                   'Unable to execute {} for {}. Already in state '.format(command, device['id']))
+        else:                      
+            url += ('On' if params['on'] else 'Off')
 
         response['on'] = params['on']
 
     if command == 'action.devices.commands.LockUnlock':
-        if domain in ['DoorLockInverted']:
-            url += 'switchlight&idx=' + idx + '&switchcmd=' + (
-                            'Off' if params['lock'] else 'On')
+    
+        url += 'switchlight&idx=' + idx + '&switchcmd='
+        
+        if check_state:
+            if params['lock'] is True and state['Data'] == 'Unlocked':
+                url += ('Off' if domain in ['DoorLockInverted'] else 'On')
+            elif params['lock'] is False and state['Data'] != 'Unlocked':
+                url += ('On' if domain in ['DoorLockInverted'] else 'Off')
+            else:
+                raise SmartHomeError('alreadyInState',
+                               'Unable to execute {} for {}. Already in state '.format(command, device['id']))
         else:
-            url += 'switchlight&idx=' + idx + '&switchcmd=' + (
-                            'On' if params['lock'] else 'Off')
+            if domain in ['DoorLockInverted']:
+                url += ('Off' if params['lock'] else 'On')
+            else:
+                url += ('On' if params['lock'] else 'Off')
 
         response['isLocked'] = params['lock']
 
@@ -254,10 +276,20 @@ def execute(device, command, params, user_id, challenge):
         else:
             p = params.get('openPercent', 50)
             url += 'switchlight&idx=' + idx + '&switchcmd='
-            if p == 100:
-                url += 'Open'
-            if p == 0:
-                url += 'Close'
+            
+            if check_state:
+                if p == 100 and state['Data'] in ['Closed', 'Stopped']:
+                    url += 'Open'
+                elif p == 0 and state['Data'] in ['Open', 'Stopped']:
+                    url += 'Close'
+                else:
+                    raise SmartHomeError('alreadyInState',
+                                       'Unable to execute {} for {}. Already in state '.format(command, device['id']))
+            else:
+                if p == 100:
+                    url += 'Open'
+                if p == 0:
+                    url += 'Close'
 
         response['openState'] = [{'openPercent': params['openPercent']}]
 
@@ -283,11 +315,22 @@ def execute(device, command, params, user_id, challenge):
 
         if params["arm"]:
             if params["armLevel"] == "Arm Home":
-                url += "setsecstatus&secstatus=1"
-            if params["armLevel"] == "Arm Away":
-                url += "setsecstatus&secstatus=2"
+                if state['Data'] == "Arm Home" and check_state:
+                    raise SmartHomeError('alreadyInState',
+                                       'Unable to execute {} for {}. Already in state '.format(command, device['id']))
+                else:
+                    url += "setsecstatus&secstatus=1"
+                if state['Data'] == "Arm Away" and check_state:
+                    raise SmartHomeError('alreadyInState',
+                                       'Unable to execute {} for {}. Already in state '.format(command, device['id']))
+                else:
+                    url += "setsecstatus&secstatus=2"
         else:
-            url += "setsecstatus&secstatus=0"
+            if state['Data'] == "Normal" and check_state:
+                raise SmartHomeError('alreadyInState',
+                                   'Unable to execute {} for {}. Already in state '.format(command, device['id']))
+            else:
+                url += "setsecstatus&secstatus=0"
 
         url += '&seccode=' + hashlib.md5(str.encode(challenge.get('pin'))).hexdigest()
 

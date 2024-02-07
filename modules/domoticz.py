@@ -127,7 +127,8 @@ def getAog(device, user_id=None):
         aog.type = 'action.devices.types.SWITCH'
     if domain in ['DoorLock', 'DoorLockInverted']:
         aog.type = 'action.devices.types.LOCK'
-
+    
+    aog.customData['check_state'] = True
     # Try to get device specific voice control configuration from Domoticz
     aog.customData['dzTags'] = False
     desc = getDesc(user_id, aog)
@@ -147,6 +148,9 @@ def getAog(device, user_id=None):
         ack = desc.get('ack', False)
         if ack:
             aog.customData['acknowledge'] = ack
+        chkState = desc.get('check_state', True)
+        if not chkState:
+            aog.customData['check_state'] = chkState
         repState = desc.get('report_state', True)
         if not repState:
             aog.willReportState = repState
