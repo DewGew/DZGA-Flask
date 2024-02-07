@@ -304,14 +304,14 @@
 									   </div>
 										{% endif %}
 										<div class="row mb-3">
-										  <small class="text-center text-danger"><strong>Sync devices after saving for the changes to take effect</strong></br>Its possible to change several devices before syncing devices</small>
+										  <small class="text-center text-danger">When pressing <strong>'SAVE'</strong> devices will be synced.</small>
 										</div>
 										</div>
 										</div>
 									
 										<div class="modal-footer">
 										  <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-										  <button type="submit" name="submit" value="device_settings" class="btn btn-primary">Save changes</button>
+										  <button type="submit" name="submit" value="device_settings" class="btn btn-primary">Save and sync devices</button>
 										</div>
 									</form>
 								  </div>
@@ -319,12 +319,12 @@
 							  </div><!-- End Vertically centered Modal-->
                         <td>
 						{% if v['customData']['protected'] == False %}
-							<button class="btn btn-outline-success btn-sm" onclick="toogleProtected({{ v['customData']['idx'] }}, 'true')" >No
+							<button class="btn btn-outline-success btn-sm" onclick="toogleProtected({{ v['customData']['idx'] }}, 'true')" {% if not user.admin %}disabled{% endif %}>No
 							{% else %}
-							<button class="btn btn-outline-danger btn-sm" onclick="toogleProtected({{ v['customData']['idx'] }}, 'false')">Yes
+							<button class="btn btn-outline-danger btn-sm" onclick="toogleProtected({{ v['customData']['idx'] }}, 'false')" {% if not user.admin %}disabled{% endif %}>Yes
 						{% endif %}							
 						</button></td>
-						<td><button class="btn btn-light btn-sm" id="switch_{{ v['customData']['idx'] }}">Not available</button></td>
+						<td><button class="btn btn-light btn-sm" id="switch_{{ v['customData']['idx'] }}" disabled>Not available</button></td>
                       </tr>
 					{% endfor %}
                     </tbody>
