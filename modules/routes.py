@@ -9,7 +9,7 @@ from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 from modules.reportstate import ReportState
 from modules.database import db, User, Settings
-from modules.domoticz import saveJson, getDomoticzDevices
+from modules.domoticz import saveJson, getDomoticzDevices, getDzUser
 from modules.helpers import logger, get_devices, generateToken, remove_user, getVersion
 from sqlalchemy import or_
 
@@ -44,6 +44,7 @@ def devices():
     devices = get_devices(current_user.username)
     dbuser = User.query.filter_by(username=current_user.username).first()
     version = getVersion()
+    dzUserAdmin = getDzUser(current_user.username)
 
     if request.method == "POST":
 
@@ -180,7 +181,8 @@ def devices():
                                reportstate=reportstate,
                                devices=devices,
                                _csrf_token=session['_csrf_token'],
-                               version = version
+                               version = version,
+                               dzUserAdmin = dzUserAdmin
                                )
 
 
@@ -302,6 +304,7 @@ def settings():
         reportstate = report_state.report_state_enabled()
         devices = get_devices(current_user.username)
         version = getVersion()
+        dzUserAdmin = getDzUser(current_user.username)
 
         return render_template('settings.html',
                                user=User.query.filter_by(username=current_user.username).first(),
@@ -310,7 +313,8 @@ def settings():
                                reportstate=reportstate,
                                devices=devices,
                                _csrf_token=session['_csrf_token'],
-                               version = version
+                               version = version,
+                               dzUserAdmin = dzUserAdmin
                                )
 
 
