@@ -127,8 +127,6 @@ def getAog(device, user_id=None):
         aog.type = 'action.devices.types.SWITCH'
     if domain in ['DoorLock', 'DoorLockInverted']:
         aog.type = 'action.devices.types.LOCK'
-    if domain in ['OnOff', 'Dimmer', 'ColorSwitch']:
-        aog.traits.append('action.devices.traits.Timer')
     
     aog.customData['check_state'] = True
     # Try to get device specific voice control configuration from Domoticz
@@ -352,6 +350,11 @@ def getAog(device, user_id=None):
             ],
             'cameraStreamNeedAuthToken': False
         }
+        
+    if domain in ['OnOff', 'Dimmer', 'ColorSwitch']:
+        aog.traits.append('action.devices.traits.Timer')
+        aog.attributes['maxTimerLimitSec'] = 7200
+        aog.attributes['commandOnlyTimer'] = True
     
     batteryLevel = device.get('BatteryLevel')
     if domain not in ['Group', 'Scene'] and batteryLevel != 255:
