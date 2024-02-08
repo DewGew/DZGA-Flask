@@ -127,6 +127,8 @@ def getAog(device, user_id=None):
         aog.type = 'action.devices.types.SWITCH'
     if domain in ['DoorLock', 'DoorLockInverted']:
         aog.type = 'action.devices.types.LOCK'
+    if domain in ['OnOff', 'Dimmer', 'ColorSwitch']:
+        aog.traits.append('action.devices.traits.Timer')
     
     aog.customData['check_state'] = True
     # Try to get device specific voice control configuration from Domoticz
@@ -181,7 +183,7 @@ def getAog(device, user_id=None):
     aog.customData['idx'] = device.get('idx')
     aog.customData['domain'] = domain
     aog.customData['protected'] = device.get('Protected')
-    aog.notificationSupportedByAgent = (True if domain in ['SmokeDetector', 'Doorbell', 'DoorLock', 'DoorLockInverted'] else False)       
+    aog.notificationSupportedByAgent = (True if domain in ['SmokeDetector', 'Doorbell', 'DoorLock', 'DoorLockInverted'] else False)
 
     if domain == 'Scene':
         aog.type = 'action.devices.types.SCENE'
@@ -425,3 +427,16 @@ def getDomoticzState(user_id, idx, device='id'):
         data = d
 
     return data
+
+
+def getDzUser(user_id):
+
+    url = "?type=command&param=getusers"
+    try:
+        r = json.loads(queryDomoticz(user_id, url))
+        if r['status'] == 'OK':
+            return True
+        else:
+            return False
+    except Exception as err:
+        return False
