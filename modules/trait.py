@@ -351,11 +351,11 @@ def execute(device, command, params, user_id, challenge):
             
     if command == 'action.devices.commands.TimerStart':
     
-        url = 'customevent&event=TIMER&data={"idx":' + idx + ',"time":' + str(params['timerTimeSec']) + ',"on":true}'
+        url += 'customevent&event=TIMER&data={"idx":' + idx + ',"time":' + str(params['timerTimeSec']) + ',"on":true}'
         
     if command == 'action.devices.commands.TimerCancel':
 
-        url = 'customevent&event=TIMER&data={"idx":' + idx + ',"cancel":true}'
+        url += 'customevent&event=TIMER&data={"idx":' + idx + ',"cancel":true}'
 
     if state['Protected'] is True:
         url = url + '&passcode=' + challenge.get('pin')
