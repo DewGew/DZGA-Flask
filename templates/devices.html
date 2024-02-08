@@ -96,12 +96,12 @@
 										<div class="form-check form-switch">
 										  <input class="form-check-input" type="checkbox" id="checkState" name="checkState" {% if v['customData']['check_state'] == True %}checked{% endif %}>
 										  <label class="form-check-label" for="checkState">Check State</label></br>
-										  <small class="form-text">Turns on/off already in state error message</small>
+										  <small class="form-text">Turns on/off 'already in state' error message</small>
 										</div>
 										<div class="form-check form-switch">
 										  <input class="form-check-input" type="checkbox" id="notification" name="notification" {% if v['notificationSupportedByAgent'] == True %}checked {% endif %} disabled>
-										  <label class="form-check-label" for="notification">Notification Supported</label></br>
-										  {% if v['notificationSupportedByAgent'] == True %}<small class="form-text">User can turn on or off notifications in Google Home App</small>{% endif %}
+										  <label class="form-check-label" for="notification">Support Notification</label></br>
+										  {% if v['notificationSupportedByAgent'] == True %}<small class="form-text">User can turn on/off notifications in Google Home App</small>{% endif %}
 										</div>
 										<div class="form-check form-switch">
 										  <input class="form-check-input" type="checkbox" id="secondaryUserVerificationCheck_{{ v['id'] }}" {% if ('acknowledge' in v['customData'] or v['customData']['protected'] == True) %}checked{% endif %}{% if 'Hidden' in v['customData']['domain'] %} disabled{% endif %}>
@@ -118,10 +118,10 @@
 											  </label>
 											</div>
 											<div class="form-check">
-											  <input class="form-check-input" type="radio" name="2FA" id="pinNeeded" value="pinNeeded" {% if v['customData']['protected'] == True %}checked{% endif %}{% if ('Hidden' in v['customData']['domain'] or v['customData']['protected'] != True) %} disabled{% endif %}>
+											  <input class="form-check-input" type="radio" name="2FA" id="pinNeeded" value="pinNeeded" {% if v['customData']['protected'] == True %}checked{% endif %}{% if dzUserAdmin is not true %} disabled{% endif %}>
 											  <label class="form-check-label" for="pinNeeded">
 												Pincode Needed 
-											  </label> <small>(Set device as protected in Domoticz)</small>
+											  </label>{% if dzUserAdmin is not true %} <small class="form-text">(Set device as protected in Domoticz)</small>{% endif %}
 											</div>
 										  </div>
 										</fieldset>
@@ -319,9 +319,9 @@
 							  </div><!-- End Vertically centered Modal-->
                         <td>
 						{% if v['customData']['protected'] == False %}
-							<button class="btn btn-outline-success btn-sm" onclick="toogleProtected({{ v['customData']['idx'] }}, 'true')" {% if not user.admin %}disabled{% endif %}>No
+							<button class="btn btn-outline-success btn-sm" onclick="toogleProtected({{ v['customData']['idx'] }}, 'true')" title="Domoticz Admin user can turn protection on/off here"{% if dzUserAdmin is not true %} disabled{% endif %}>No
 							{% else %}
-							<button class="btn btn-outline-danger btn-sm" onclick="toogleProtected({{ v['customData']['idx'] }}, 'false')" {% if not user.admin %}disabled{% endif %}>Yes
+							<button class="btn btn-outline-danger btn-sm" onclick="toogleProtected({{ v['customData']['idx'] }}, 'false')" title="Domoticz Admin user can turn protection on/off here"{% if dzUserAdmin is not true %} disabled{% endif %}>Yes
 						{% endif %}							
 						</button></td>
 						<td><button class="btn btn-light btn-sm" id="switch_{{ v['customData']['idx'] }}" disabled>Not available</button></td>
