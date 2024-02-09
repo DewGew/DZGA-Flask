@@ -157,7 +157,7 @@ def getAog(device, user_id=None):
         st = desc.get('devicetype', None)
         if st is not None and st.lower() in config.TYPES:
             aog.type = 'action.devices.types.' + st.upper()
-        if domain in ['Thermostat', 'Setpoint']:
+        if domain in ['Thermostat', 'Setpoint', 'OnOff']:
             minT = desc.get('minThreehold', None)
             if minT is not None:
                 minThreehold = minT
@@ -170,6 +170,10 @@ def getAog(device, user_id=None):
             modes_idx = desc.get('selector_modes_idx', None)
             if modes_idx is not None:
                 aog.customData['selector_modes_idx'] = modes_idx
+        if domain in ['OnOff']:
+            thermo_idx = desc.get('merge_thermo_idx', None)
+            if thermo_idx is not None:
+                aog.customData['merge_thermo_idx'] = thermo_idx
         if domain in ['Doorbell', 'Camera']:
             camurl = desc.get('camurl', None)
             if camurl:
@@ -181,7 +185,7 @@ def getAog(device, user_id=None):
     aog.customData['idx'] = device.get('idx')
     aog.customData['domain'] = domain
     aog.customData['protected'] = device.get('Protected')
-    aog.notificationSupportedByAgent = (True if domain in ['SmokeDetector', 'Doorbell', 'DoorLock', 'DoorLockInverted'] else False)       
+    aog.notificationSupportedByAgent = (True if domain in ['SmokeDetector', 'Doorbell', 'DoorLock', 'DoorLockInverted'] else False)
 
     if domain == 'Scene':
         aog.type = 'action.devices.types.SCENE'
@@ -316,8 +320,8 @@ def getAog(device, user_id=None):
         aog.traits.append('action.devices.traits.TemperatureSetting')
         aog.attributes = {'thermostatTemperatureUnit': dbsettings.tempunit,
                           'thermostatTemperatureRange': {
-                            'minThresholdCelsius': minThreehold,
-                            'maxThresholdCelsius': maxThreehold},
+                            'minThresholdCelsius': (minThreehold if dbsettings.tempunit == 'C' else (minThreehold-32) * 5/9),
+                            'maxThresholdCelsius': (maxThreehold if dbsettings.tempunit == 'C' else (maxThreehold-32) * 5/9)},
                           'availableThermostatModes':  ['heat', 'cool'],
                         }
         if 'selector_modes_idx' in aog.customData:
@@ -350,6 +354,19 @@ def getAog(device, user_id=None):
             ],
             'cameraStreamNeedAuthToken': False
         }
+    if domain in ['OnOff'] and aog.type in ['action.devices.types.HEATER', 'action.devices.types.WATERHEATER', 'action.devices.types.KETTLE', 'action.devices.types.OVEN']:
+        if 'merge_thermo_idx' in aog.customData:
+           aog.traits.append('action.devices.traits.TemperatureControl')
+           aog.attributes['temperatureUnitForUX'] = dbsettings.tempunit
+           aog.attributes['temperatureRange'] = {
+                    'minThresholdCelsius': (minThreehold if dbsettings.tempunit == 'C' else (minThreehold-32) * 5/9),
+                    'maxThresholdCelsius': (maxThreehold if dbsettings.tempunit == 'C' else (maxThreehold-32) * 5/9)}
+           aog.attributes['temperatureStepCelsius'] = (5 if dbsettings.tempunit == 'C' else 2.778)     
+        
+    if domain in ['OnOff', 'Dimmer', 'ColorSwitch']:
+        aog.traits.append('action.devices.traits.Timer')
+        aog.attributes['maxTimerLimitSec'] = 7200
+        aog.attributes['commandOnlyTimer'] = True
     
     batteryLevel = device.get('BatteryLevel')
     if domain not in ['Group', 'Scene'] and batteryLevel != 255:
@@ -425,3 +442,16 @@ def getDomoticzState(user_id, idx, device='id'):
         data = d
 
     return data
+
+
+def getDzUser(user_id):
+
+    url = "?type=command&param=getusers"
+    try:
+        r = json.loads(queryDomoticz(user_id, url))
+        if r['status'] == 'OK':
+            return True
+        else:
+            return False
+    except Exception as err:
+        return False
