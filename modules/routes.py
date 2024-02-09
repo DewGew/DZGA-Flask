@@ -9,7 +9,7 @@ from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 from modules.reportstate import ReportState
 from modules.database import db, User, Settings
-from modules.domoticz import saveJson, getDomoticzDevices
+from modules.domoticz import saveJson, getDomoticzDevices, getDzUser
 from modules.helpers import logger, get_devices, generateToken, remove_user, getVersion
 from sqlalchemy import or_
 
@@ -44,6 +44,7 @@ def devices():
     devices = get_devices(current_user.username)
     dbuser = User.query.filter_by(username=current_user.username).first()
     version = getVersion()
+    dzUserAdmin = getDzUser(current_user.username)
 
     if request.method == "POST":
 
@@ -64,6 +65,7 @@ def devices():
             actual_temp_idx = request.form.get('actual_temp_idx')
             selector_modes_idx = request.form.get('selector_modes_idx')
             check_state = request.form.get('checkState')
+            merge_thermo_idx = request.form.get('merge_thermo_idx')
 
             if idx not in deviceconfig.keys():
                 deviceconfig[idx] = {}
@@ -136,6 +138,12 @@ def devices():
                     deviceconfig[idx].update({'selector_modes_idx': selector_modes_idx})
                 elif idx in deviceconfig.keys() and 'selector_modes_idx' in deviceconfig[idx]:
                     deviceconfig[idx].pop('selector_modes_idx')
+                    
+            if merge_thermo_idx is not None:
+                if merge_thermo_idx != '':
+                    deviceconfig[idx].update({'merge_thermo_idx': merge_thermo_idx})
+                elif idx in deviceconfig.keys() and 'merge_thermo_idx' in deviceconfig[idx]:
+                    deviceconfig[idx].pop('merge_thermo_idx')
 
             if camurl is not None:
                 if camurl != '':
@@ -180,7 +188,8 @@ def devices():
                                reportstate=reportstate,
                                devices=devices,
                                _csrf_token=session['_csrf_token'],
-                               version = version
+                               version = version,
+                               dzUserAdmin = dzUserAdmin
                                )
 
 
@@ -302,6 +311,7 @@ def settings():
         reportstate = report_state.report_state_enabled()
         devices = get_devices(current_user.username)
         version = getVersion()
+        dzUserAdmin = getDzUser(current_user.username)
 
         return render_template('settings.html',
                                user=User.query.filter_by(username=current_user.username).first(),
@@ -310,7 +320,8 @@ def settings():
                                reportstate=reportstate,
                                devices=devices,
                                _csrf_token=session['_csrf_token'],
-                               version = version
+                               version = version,
+                               dzUserAdmin = dzUserAdmin
                                )
 
 
