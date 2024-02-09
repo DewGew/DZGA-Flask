@@ -239,13 +239,21 @@
 										<div class="row mb-3">
 										  <label for="inputText" class="col-sm-3 col-form-label">Min Threehold {{ dbsettings.tempunit }}&#176;</label>
 										  <div class="col-sm-2">
+										  {% if dbsettings.tempunit == 'F'%}
+											<input type="number" class="form-control" name="minThreehold" value="{{ ((v['attributes']['thermostatTemperatureRange']['minThresholdCelsius']*1.8)+32)|round|int }}">
+										  {% else %}
 											<input type="number" class="form-control" name="minThreehold" value="{{ v['attributes']['thermostatTemperatureRange']['minThresholdCelsius'] }}">
+										  {% endif %}
 										  </div>
 										</div>
 										<div class="row mb-3">
 										  <label for="inputText" class="col-sm-3 col-form-label">Max Threehold {{ dbsettings.tempunit }}&#176;</label>
 										  <div class="col-sm-2">
+										  {% if dbsettings.tempunit == 'F'%}
+											<input type="number" class="form-control" name="maxThreehold" value="{{ ((v['attributes']['thermostatTemperatureRange']['maxThresholdCelsius']*1.8)+32)|round|int }}">
+										  {% else %}
 											<input type="number" class="form-control" name="maxThreehold" value="{{ v['attributes']['thermostatTemperatureRange']['maxThresholdCelsius'] }}">
+									      {% endif %}
 										  </div>
 										</div>
 									  {% endif %}
@@ -262,13 +270,21 @@
 										<div class="row mb-3">
 										  <label for="inputText" class="col-sm-3 col-form-label">Min Threehold {{ dbsettings.tempunit }}&#176;</label>
 										  <div class="col-sm-2">
-											<input type="number" class="form-control" name="minThreehold" value="{{ devices['Setpoint_' + v['customData']['merge_thermo_idx']]['attributes']['thermostatTemperatureRange']['minThresholdCelsius'] }}">
+										  {% if dbsettings.tempunit == 'F'%}
+											<input type="number" class="form-control" name="minThreehold" readonly value="{{ ((devices['Setpoint_' + v['customData']['merge_thermo_idx']]['attributes']['thermostatTemperatureRange']['minThresholdCelsius']*1.8)+32)|round|int }}">
+											{% else %}
+											<input type="number" class="form-control" name="minThreehold" readonly value="{{ devices['Setpoint_' + v['customData']['merge_thermo_idx']]['attributes']['thermostatTemperatureRange']['minThresholdCelsius']|round|int }}">
+										  {% endif %}
 										  </div>
 										</div>
 										<div class="row mb-3">
 										  <label for="inputText" class="col-sm-3 col-form-label">Max Threehold {{ dbsettings.tempunit }}&#176;</label>
 										  <div class="col-sm-2">
-											<input type="number" class="form-control" name="maxThreehold" value="{{ devices['Setpoint_' + v['customData']['merge_thermo_idx']]['attributes']['thermostatTemperatureRange']['maxThresholdCelsius'] }}">
+										  {% if dbsettings.tempunit == 'F'%}
+											<input type="number" class="form-control" name="maxThreehold" readonly value="{{ ((devices['Setpoint_' + v['customData']['merge_thermo_idx']]['attributes']['thermostatTemperatureRange']['maxThresholdCelsius']*1.8)+32)|round|int }}">
+											{% else %}
+											<input type="number" class="form-control" name="maxThreehold" readonly value="{{ devices['Setpoint_' + v['customData']['merge_thermo_idx']]['attributes']['thermostatTemperatureRange']['maxThresholdCelsius']|round|int }}">
+										  {% endif %}
 										  </div>
 										</div>
 										{% endif %}
