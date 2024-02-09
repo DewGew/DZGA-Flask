@@ -316,7 +316,7 @@ def getAog(device, user_id=None):
                           'queryOnlyTemperatureSetting': True,
                           'availableThermostatModes': ['heat', 'cool'],
                         }
-    if domain in ['Thermostat', 'Setpoint']:
+    if domain in ['Thermostat', 'Setpoint', 'Setpoint_Hidden']:
         aog.traits.append('action.devices.traits.TemperatureSetting')
         aog.attributes = {'thermostatTemperatureUnit': dbsettings.tempunit,
                           'thermostatTemperatureRange': {
