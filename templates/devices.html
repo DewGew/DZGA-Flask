@@ -234,7 +234,8 @@
 											  </select>
 										  </div>
 										</div>
-										 {% if (v['customData']['domain'] in ['Thermostat', 'Setpoint']) %}
+										{% endif %}
+										 {% if (v['customData']['domain'] in ['Thermostat', 'Setpoint', 'Setpoint_Hidden']) %}
 										<div class="row mb-3">
 										  <label for="inputText" class="col-sm-3 col-form-label">Min Threehold {{ dbsettings.tempunit }}&#176;</label>
 										  <div class="col-sm-2">
@@ -286,7 +287,7 @@
 										  </div>
 										</div>
 									  {% endif %}
-									  {% if v['customData']['domain'] in ['Thermostat', 'Setpoint'] %}
+									  {% if v['customData']['domain'] in ['Thermostat', 'Setpoint', 'Setpoint_Hidden'] %}
 									   <div class="row mb-3">
 										  <label for="inputText" class="col-sm-3 col-form-label">Get actual temp</label>
 										  <div class="col-sm-6">
@@ -302,7 +303,7 @@
 										  </div>
 										</div>
 									  {% endif %}
-									  {% if v['customData']['domain'] in ['Thermostat', 'Setpoint'] %}
+									  {% if v['customData']['domain'] in ['Thermostat', 'Setpoint', 'Setpoint_Hidden'] %}
 										<div class="row mb-3">
 										  <label for="inputText" class="col-sm-3 col-form-label">Get modes</label>
 										  <div class="col-sm-6">
@@ -318,7 +319,7 @@
 										  </div>
 										  </div>
 									  {% endif %}
-									  {% endif %}
+									  
 									   {% if (v['customData']['domain'] == 'Security' and user.admin) %}
 									   <div class="row mb-3" {% if dbsettings.language == 'en' %}style="display: none;"{% endif %}>
 									  	<div id="armhome_div" class="col-md-12">
@@ -384,7 +385,7 @@
   {% include 'footer.html' %}
   
 <script>
-var updateInterval = 15000
+var updateInterval = 30000
 var updateSwitches_block = [];
 var updateScenes_block = [];
 var updateDimmers_block = [];
