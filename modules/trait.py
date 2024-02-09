@@ -97,6 +97,10 @@ def query(custom_data, device, user_id):
         if domain in ['Temp', 'TempHumidity', 'TempHumidityBaro']:
             current_temp = float(state['Temp'])
             response['temperatureAmbientCelsius'] = round(_tempConvert(current_temp, dbsettings.tempunit), 1)
+        if domain in ['OnOff'] and 'merge_thermo_idx' in custom_data:
+            merged_state = getDomoticzState(user_id, custom_data['merge_thermo_idx'])
+            current_temp = float(merged_state['Data'])
+            response['temperatureAmbientCelsius'] = round(_tempConvert(current_temp, dbsettings.tempunit), 1)
 
     if 'action.devices.traits.Toggles' in device['traits']:
         levelName = base64.b64decode(state.get("LevelNames")).decode('UTF-8').split("|")
@@ -144,8 +148,7 @@ def query(custom_data, device, user_id):
                 response['capacityRemaining'] = [{
                     'unit': 'PERCENTAGE',
                     'rawValue': battery
-                }]
-            
+                }]            
 
     response['online'] = True
     if domain not in ['Group', 'Scene'] and state['BatteryLevel'] != 255:
@@ -327,8 +330,8 @@ def execute(device, command, params, user_id, challenge):
                     url += "setsecstatus&secstatus=2"
         else:
             if state['Data'] == "Normal" and check_state:
-                raise SmartHomeError('alreadyInState',
-                                   'Unable to execute {} for {}. Already in state '.format(command, device['id']))
+                raise SmartHomeError('alreadyDisarmed',
+                                   'Unable to execute {} for {}. Already disarmed '.format(command, device['id']))
             else:
                 url += "setsecstatus&secstatus=0"
 
@@ -348,6 +351,19 @@ def execute(device, command, params, user_id, challenge):
                 slevel = str(levelName.index(key) * 10)
 
             url += 'switchlight&idx=' + idx + '&switchcmd=Set%20Level&level=' + slevel
+            
+    if command == 'action.devices.commands.TimerStart':
+    
+        url += 'customevent&event=TIMER&data={"idx":' + idx + ',"time":' + str(params['timerTimeSec']) + ',"on":true}'
+        
+    if command == 'action.devices.commands.TimerCancel':
+
+        url += 'customevent&event=TIMER&data={"idx":' + idx + ',"cancel":true}'
+        
+    if command == 'action.devices.commands.SetTemperature':
+        if 'merge_thermo_idx' in custom_data:
+            url += 'setsetpoint&idx=' + custom_data['merge_thermo_idx'] + '&setpoint=' + str(
+                            params['temperature'])
 
     if state['Protected'] is True:
         url = url + '&passcode=' + challenge.get('pin')
