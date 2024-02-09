@@ -320,8 +320,8 @@ def getAog(device, user_id=None):
         aog.traits.append('action.devices.traits.TemperatureSetting')
         aog.attributes = {'thermostatTemperatureUnit': dbsettings.tempunit,
                           'thermostatTemperatureRange': {
-                            'minThresholdCelsius': (minThreehold if dbsettings.tempunit == 'C' else (minThreehold-32) * 5/9),
-                            'maxThresholdCelsius': (maxThreehold if dbsettings.tempunit == 'C' else (maxThreehold-32) * 5/9)},
+                            'minThresholdCelsius': (minThreehold if dbsettings.tempunit == 'C' else (minThreehold-32)/1.8),
+                            'maxThresholdCelsius': (maxThreehold if dbsettings.tempunit == 'C' else (maxThreehold-32)/1.8)},
                           'availableThermostatModes':  ['heat', 'cool'],
                         }
         if 'selector_modes_idx' in aog.customData:
@@ -359,8 +359,8 @@ def getAog(device, user_id=None):
            aog.traits.append('action.devices.traits.TemperatureControl')
            aog.attributes['temperatureUnitForUX'] = dbsettings.tempunit
            aog.attributes['temperatureRange'] = {
-                    'minThresholdCelsius': (minThreehold if dbsettings.tempunit == 'C' else (minThreehold-32) * 5/9),
-                    'maxThresholdCelsius': (maxThreehold if dbsettings.tempunit == 'C' else (maxThreehold-32) * 5/9)}
+                    'minThresholdCelsius': (minThreehold if dbsettings.tempunit == 'C' else (minThreehold-32)/1.8),
+                    'maxThresholdCelsius': (maxThreehold if dbsettings.tempunit == 'C' else (maxThreehold-32)/1.8)}
            aog.attributes['temperatureStepCelsius'] = (5 if dbsettings.tempunit == 'C' else 2.778)     
         
     if domain in ['OnOff', 'Dimmer', 'ColorSwitch']:
