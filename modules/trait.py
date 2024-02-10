@@ -126,9 +126,9 @@ def query(custom_data, device, user_id):
             response["currentArmLevel"] = state['Data']
             
     if 'action.devices.traits.EnergyStorage' in device['traits']:
-        if state['BatteryLevel'] != 255:
+        if state['BatteryLevel'] is not None:
             battery = state['BatteryLevel']
-            if battery is not None:
+            if battery != 255:
                 if battery == 100:
                     descriptive_capacity_remaining = "FULL"
                 elif 50 <= battery < 100:
@@ -148,7 +148,7 @@ def query(custom_data, device, user_id):
             
 
     response['online'] = True
-    if domain not in ['Group', 'Scene'] and state['BatteryLevel'] != 255:
+    if domain not in ['Group', 'Scene'] and state['BatteryLevel'] is not None and state['BatteryLevel'] != 255:
         if state['BatteryLevel'] <= 10: # Report low battery below 10%
             response['exceptionCode'] = 'lowBattery'
 
