@@ -352,7 +352,7 @@ def getAog(device, user_id=None):
         }
     
     batteryLevel = device.get('BatteryLevel')
-    if domain not in ['Group', 'Scene'] and batteryLevel != 255:
+    if domain not in ['Group', 'Scene'] and batteryLevel is not None and batteryLevel != 255:
         aog.traits.append('action.devices.traits.EnergyStorage')
         aog.attributes['queryOnlyEnergyStorage'] = True
         aog.attributes['isRechargeable'] = False
