@@ -157,7 +157,7 @@ def getAog(device, user_id=None):
         st = desc.get('devicetype', None)
         if st is not None and st.lower() in config.TYPES:
             aog.type = 'action.devices.types.' + st.upper()
-        if domain in ['Thermostat', 'Setpoint']:
+        if domain in ['Thermostat', 'Setpoint', 'OnOff']:
             minT = desc.get('minThreehold', None)
             if minT is not None:
                 minThreehold = minT
@@ -170,6 +170,10 @@ def getAog(device, user_id=None):
             modes_idx = desc.get('selector_modes_idx', None)
             if modes_idx is not None:
                 aog.customData['selector_modes_idx'] = modes_idx
+        if domain in ['OnOff']:
+            thermo_idx = desc.get('merge_thermo_idx', None)
+            if thermo_idx is not None:
+                aog.customData['merge_thermo_idx'] = thermo_idx
         if domain in ['Doorbell', 'Camera']:
             camurl = desc.get('camurl', None)
             if camurl:
@@ -312,12 +316,12 @@ def getAog(device, user_id=None):
                           'queryOnlyTemperatureSetting': True,
                           'availableThermostatModes': ['heat', 'cool'],
                         }
-    if domain in ['Thermostat', 'Setpoint']:
+    if domain in ['Thermostat', 'Setpoint', 'Setpoint_Hidden']:
         aog.traits.append('action.devices.traits.TemperatureSetting')
         aog.attributes = {'thermostatTemperatureUnit': dbsettings.tempunit,
                           'thermostatTemperatureRange': {
-                            'minThresholdCelsius': minThreehold,
-                            'maxThresholdCelsius': maxThreehold},
+                            'minThresholdCelsius': (minThreehold if dbsettings.tempunit == 'C' else (minThreehold-32)/1.8),
+                            'maxThresholdCelsius': (maxThreehold if dbsettings.tempunit == 'C' else (maxThreehold-32)/1.8)},
                           'availableThermostatModes':  ['heat', 'cool'],
                         }
         if 'selector_modes_idx' in aog.customData:
@@ -350,6 +354,15 @@ def getAog(device, user_id=None):
             ],
             'cameraStreamNeedAuthToken': False
         }
+        
+    if domain in ['OnOff'] and aog.type in ['action.devices.types.HEATER', 'action.devices.types.WATERHEATER', 'action.devices.types.KETTLE', 'action.devices.types.OVEN']:
+        if 'merge_thermo_idx' in aog.customData:
+           aog.traits.append('action.devices.traits.TemperatureControl')
+           aog.attributes['temperatureUnitForUX'] = dbsettings.tempunit
+           aog.attributes['temperatureRange'] = {
+                    'minThresholdCelsius': (minThreehold if dbsettings.tempunit == 'C' else (minThreehold-32)/1.8),
+                    'maxThresholdCelsius': (maxThreehold if dbsettings.tempunit == 'C' else (maxThreehold-32)/1.8)}
+           aog.attributes['temperatureStepCelsius'] = (5 if dbsettings.tempunit == 'C' else 2.778)     
         
     if domain in ['OnOff', 'Dimmer', 'ColorSwitch']:
         aog.traits.append('action.devices.traits.Timer')

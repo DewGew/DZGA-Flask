@@ -25,8 +25,8 @@
 	<div class="col-6">
 	  <label for="tempunit" class="form-label">Temperture unit</label>
 	  <select id="tempunit" name="tempunit" class="form-select">
-		<option {% if dbsettings.language == 'C' %} selected {% endif %}value="C">Celsius</option>
-		<option {% if dbsettings.language == 'F' %} selected {% endif %}value="F">Fahrenheit</option>
+		<option {% if dbsettings.tempunit == 'C' %} selected {% endif %}value="C">Celsius</option>
+		<option {% if dbsettings.tempunit == 'F' %} selected {% endif %}value="F">Fahrenheit</option>
 	  </select>
 	</div>
 	<div class="col-md-6">

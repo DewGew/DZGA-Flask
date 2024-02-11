@@ -65,6 +65,7 @@ def devices():
             actual_temp_idx = request.form.get('actual_temp_idx')
             selector_modes_idx = request.form.get('selector_modes_idx')
             check_state = request.form.get('checkState')
+            merge_thermo_idx = request.form.get('merge_thermo_idx')
 
             if idx not in deviceconfig.keys():
                 deviceconfig[idx] = {}
@@ -137,6 +138,12 @@ def devices():
                     deviceconfig[idx].update({'selector_modes_idx': selector_modes_idx})
                 elif idx in deviceconfig.keys() and 'selector_modes_idx' in deviceconfig[idx]:
                     deviceconfig[idx].pop('selector_modes_idx')
+                    
+            if merge_thermo_idx is not None:
+                if merge_thermo_idx != '':
+                    deviceconfig[idx].update({'merge_thermo_idx': merge_thermo_idx})
+                elif idx in deviceconfig.keys() and 'merge_thermo_idx' in deviceconfig[idx]:
+                    deviceconfig[idx].pop('merge_thermo_idx')
 
             if camurl is not None:
                 if camurl != '':

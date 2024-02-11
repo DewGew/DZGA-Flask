@@ -48,7 +48,7 @@
                         <th class="pointer" scope="row" data-bs-toggle="modal" data-bs-target="#devicesModal_{{ k }}">{{ k }}</th>
 						
 							  <div class="modal fade" id="devicesModal_{{ k }}" tabindex="-1">
-								<div class="modal-dialog modal-lg">
+								<div class="modal-dialog modal-lg modal-dialog-scrollable">
 								  <div class="modal-content">
 									<div class="modal-header">
 									  <h5 class="modal-title">Sync request json for {{ k }}</h5>
@@ -57,15 +57,15 @@
 									<div class="modal-body">
 										<pre id="json_{{ v['customData']['idx'] }}">
 										</pre>
-<!-- 									<div class="modal-footer">
+									<div class="modal-footer">
 									  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-									  <button type="button" class="btn btn-primary">Save changes</button>
-									</div> -->
+									  <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+									</div>
 								  </div>
 								</div>
 							  </div><!-- End Vertically centered Modal-->
 
-                        <td>{{ v['name']['name'] }}</td>
+                        <td>{{ v['name']['name'] }} <small class="form-text">{% if v['customData']['merge_thermo_idx'] %}(Merged with idx:{{ v['customData']['merge_thermo_idx'] }}){% elif v['customData']['actual_temp_idx']%}(Merged with idx:{{ v['customData']['actual_temp_idx'] }}){% endif %}</small></td>
                         <td class="text-primary pointer" data-bs-toggle="modal" data-bs-target="#descriptionModal_{{ k }}" >{{ v['customData']['domain'] }}</td>
 						    <div class="modal fade" id="descriptionModal_{{ k }}" tabindex="-1">
 								<div class="modal-dialog modal-lg">
@@ -234,17 +234,26 @@
 											  </select>
 										  </div>
 										</div>
-										 {% if (v['customData']['domain'] in ['Thermostat', 'Setpoint']) %}
+										{% endif %}
+										 {% if (v['customData']['domain'] in ['Thermostat', 'Setpoint', 'Setpoint_Hidden']) %}
 										<div class="row mb-3">
-										  <label for="inputText" class="col-sm-3 col-form-label">Min Threehold</label>
+										  <label for="inputText" class="col-sm-3 col-form-label">Min Threehold {{ dbsettings.tempunit }}&#176;</label>
 										  <div class="col-sm-2">
+										  {% if dbsettings.tempunit == 'F'%}
+											<input type="number" class="form-control" name="minThreehold" value="{{ ((v['attributes']['thermostatTemperatureRange']['minThresholdCelsius']*1.8)+32)|round|int }}">
+										  {% else %}
 											<input type="number" class="form-control" name="minThreehold" value="{{ v['attributes']['thermostatTemperatureRange']['minThresholdCelsius'] }}">
+										  {% endif %}
 										  </div>
 										</div>
 										<div class="row mb-3">
-										  <label for="inputText" class="col-sm-3 col-form-label">Max Threehold</label>
+										  <label for="inputText" class="col-sm-3 col-form-label">Max Threehold {{ dbsettings.tempunit }}&#176;</label>
 										  <div class="col-sm-2">
+										  {% if dbsettings.tempunit == 'F'%}
+											<input type="number" class="form-control" name="maxThreehold" value="{{ ((v['attributes']['thermostatTemperatureRange']['maxThresholdCelsius']*1.8)+32)|round|int }}">
+										  {% else %}
 											<input type="number" class="form-control" name="maxThreehold" value="{{ v['attributes']['thermostatTemperatureRange']['maxThresholdCelsius'] }}">
+									      {% endif %}
 										  </div>
 										</div>
 									  {% endif %}
@@ -256,7 +265,45 @@
 										  </div>
 										</div>
 									  {% endif %}
-									  {% if v['customData']['domain'] in ['Thermostat', 'Setpoint'] %}
+									  {% if v['customData']['domain'] in ['OnOff'] and v['type'] in ['action.devices.types.HEATER', 'action.devices.types.WATERHEATER', 'action.devices.types.KETTLE', 'action.devices.types.OVEN'] %}
+										{% if v['customData']['merge_thermo_idx'] %}
+										<div class="row mb-3">
+										  <label for="inputText" class="col-sm-3 col-form-label">Min Threehold {{ dbsettings.tempunit }}&#176;</label>
+										  <div class="col-sm-2">
+										  {% if dbsettings.tempunit == 'F'%}
+											<input type="number" class="form-control" name="minThreehold" readonly value="{{ ((devices['Setpoint_' + v['customData']['merge_thermo_idx']]['attributes']['thermostatTemperatureRange']['minThresholdCelsius']*1.8)+32)|round|int }}">
+											{% else %}
+											<input type="number" class="form-control" name="minThreehold" readonly value="{{ devices['Setpoint_' + v['customData']['merge_thermo_idx']]['attributes']['thermostatTemperatureRange']['minThresholdCelsius']|round|int }}">
+										  {% endif %}
+										  </div>
+										</div>
+										<div class="row mb-3">
+										  <label for="inputText" class="col-sm-3 col-form-label">Max Threehold {{ dbsettings.tempunit }}&#176;</label>
+										  <div class="col-sm-2">
+										  {% if dbsettings.tempunit == 'F'%}
+											<input type="number" class="form-control" name="maxThreehold" readonly value="{{ ((devices['Setpoint_' + v['customData']['merge_thermo_idx']]['attributes']['thermostatTemperatureRange']['maxThresholdCelsius']*1.8)+32)|round|int }}">
+											{% else %}
+											<input type="number" class="form-control" name="maxThreehold" readonly value="{{ devices['Setpoint_' + v['customData']['merge_thermo_idx']]['attributes']['thermostatTemperatureRange']['maxThresholdCelsius']|round|int }}">
+										  {% endif %}
+										  </div>
+										</div>
+										{% endif %}
+									   <div class="row mb-3">
+										  <label for="inputText" class="col-sm-3 col-form-label">Get setpoint</label>
+										  <div class="col-sm-6">
+											<select id="merge_thermo_idx" name="merge_thermo_idx" class="form-select" aria-describedby="actTempHelp">
+											   <option value="" {% if v['customData']['merge_thermo_idx'] == None %}selected{% endif %} >None</option>
+											   {% for n, p in devices.items() %}
+													{% if 'Setpoint' in n %}
+													<option value="{{ p['customData']['idx'] }}" {% if v['customData']['merge_thermo_idx'] == p['customData']['idx'] %}selected{% endif %}>{{ p['name']['name'].replace('_',' ') }}, idx: {{ p['customData']['idx'] }}</option>
+													{% endif %}
+												{% endfor %}
+											</select>
+											<div id="modesHelp" class="form-text">Control temp from a setpoint device.</div>
+										  </div>
+										</div>
+									  {% endif %}
+									  {% if v['customData']['domain'] in ['Thermostat', 'Setpoint', 'Setpoint_Hidden'] %}
 									   <div class="row mb-3">
 										  <label for="inputText" class="col-sm-3 col-form-label">Get actual temp</label>
 										  <div class="col-sm-6">
@@ -272,12 +319,12 @@
 										  </div>
 										</div>
 									  {% endif %}
-									  {% if v['customData']['domain'] in ['Thermostat', 'Setpoint'] %}
+									  {% if v['customData']['domain'] in ['Thermostat', 'Setpoint', 'Setpoint_Hidden'] %}
 										<div class="row mb-3">
 										  <label for="inputText" class="col-sm-3 col-form-label">Get modes</label>
 										  <div class="col-sm-6">
-											<select id="actual_temp_idx" name="actual_temp_idx" class="form-select" aria-describedby="modesHelp">
-											   <option value="" {% if v['customData']['actual_temp_idx'] == None %}selected{% endif %} >None</option>
+											<select id="selector_modes_idx" name="selector_modes_idx" class="form-select" aria-describedby="modesHelp">
+											   <option value="" {% if v['customData']['selector_modes_idx'] == None %}selected{% endif %} >None</option>
 											   {% for n, p in devices.items() %}
 													{% if 'Selector' in n %}
 													<option value="{{ p['customData']['idx'] }}" {% if v['customData']['selector_modes_idx'] == p['customData']['idx'] %}selected{% endif %}>{{ p['name']['name'].replace('_',' ') }}, idx: {{ p['customData']['idx'] }}</option>
@@ -288,7 +335,7 @@
 										  </div>
 										  </div>
 									  {% endif %}
-									  {% endif %}
+									  
 									   {% if (v['customData']['domain'] == 'Security' and user.admin) %}
 									   <div class="row mb-3" {% if dbsettings.language == 'en' %}style="display: none;"{% endif %}>
 									  	<div id="armhome_div" class="col-md-12">
@@ -354,7 +401,7 @@
   {% include 'footer.html' %}
   
 <script>
-var updateInterval = 15000
+var updateInterval = 30000
 var updateSwitches_block = [];
 var updateScenes_block = [];
 var updateDimmers_block = [];
