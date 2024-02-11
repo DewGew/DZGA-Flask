@@ -128,12 +128,12 @@ def query(custom_data, device, user_id):
         response["isArmed"] = state['Data'] != "Normal"
         if response["isArmed"]:
             response["currentArmLevel"] = state['Data']
-            
+
     if 'action.devices.traits.EnergyStorage' in device['traits']:
         if state['BatteryLevel'] != 255:
             battery = state['BatteryLevel']
             if battery is not None:
-                if battery == 100:
+                if battery >= 100:
                     descriptive_capacity_remaining = "FULL"
                 elif 50 <= battery < 100:
                     descriptive_capacity_remaining = "HIGH"
@@ -143,12 +143,12 @@ def query(custom_data, device, user_id):
                     descriptive_capacity_remaining = "LOW"
                 elif 0 <= battery < 10:
                     descriptive_capacity_remaining = "CRITICALLY_LOW"
-                    
+
                 response['descriptiveCapacityRemaining'] = descriptive_capacity_remaining
                 response['capacityRemaining'] = [{
                     'unit': 'PERCENTAGE',
                     'rawValue': battery
-                }]            
+                }]
 
     response['online'] = True
     if domain not in ['Group', 'Scene'] and state['BatteryLevel'] != 255:
@@ -181,7 +181,7 @@ def execute(device, command, params, user_id, challenge):
         else:
             data = state['Data']
             url += 'switchlight&idx=' + idx + '&switchcmd='
-        
+
         if check_state:
             if params['on'] is True and data == 'Off':
                 url += 'On'
@@ -190,15 +190,15 @@ def execute(device, command, params, user_id, challenge):
             else:
                 raise SmartHomeError('alreadyInState',
                                    'Unable to execute {} for {}. Already in state '.format(command, device['id']))
-        else:                      
+        else:
             url += ('On' if params['on'] else 'Off')
 
         response['on'] = params['on']
 
     if command == 'action.devices.commands.LockUnlock':
-    
+
         url += 'switchlight&idx=' + idx + '&switchcmd='
-        
+
         if check_state:
             if params['lock'] is True and state['Data'] == 'Unlocked':
                 url += ('Off' if domain in ['DoorLockInverted'] else 'On')
@@ -279,7 +279,7 @@ def execute(device, command, params, user_id, challenge):
         else:
             p = params.get('openPercent', 50)
             url += 'switchlight&idx=' + idx + '&switchcmd='
-            
+
             if check_state:
                 if p == 100 and state['Data'] in ['Closed', 'Stopped']:
                     url += 'Open'
@@ -351,15 +351,15 @@ def execute(device, command, params, user_id, challenge):
                 slevel = str(levelName.index(key) * 10)
 
             url += 'switchlight&idx=' + idx + '&switchcmd=Set%20Level&level=' + slevel
-            
+
     if command == 'action.devices.commands.TimerStart':
-    
+
         url += 'customevent&event=TIMER&data={"idx":' + idx + ',"time":' + str(params['timerTimeSec']) + ',"on":true}'
-        
+
     if command == 'action.devices.commands.TimerCancel':
 
         url += 'customevent&event=TIMER&data={"idx":' + idx + ',"cancel":true}'
-        
+
     if command == 'action.devices.commands.SetTemperature':
         if 'merge_thermo_idx' in custom_data:
             url += 'setsetpoint&idx=' + custom_data['merge_thermo_idx'] + '&setpoint=' + str(
