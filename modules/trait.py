@@ -327,8 +327,8 @@ def execute(device, command, params, user_id, challenge):
                     url += "setsecstatus&secstatus=2"
         else:
             if state['Data'] == "Normal" and check_state:
-                raise SmartHomeError('alreadyInState',
-                                   'Unable to execute {} for {}. Already in state '.format(command, device['id']))
+                raise SmartHomeError('alreadyDisarmed',
+                                   'Unable to execute {} for {}. Already disarmed '.format(command, device['id']))
             else:
                 url += "setsecstatus&secstatus=0"
 
@@ -348,6 +348,14 @@ def execute(device, command, params, user_id, challenge):
                 slevel = str(levelName.index(key) * 10)
 
             url += 'switchlight&idx=' + idx + '&switchcmd=Set%20Level&level=' + slevel
+            
+    if command == 'action.devices.commands.TimerStart':
+    
+        url += 'customevent&event=TIMER&data={"idx":' + idx + ',"time":' + str(params['timerTimeSec']) + ',"on":true}'
+        
+    if command == 'action.devices.commands.TimerCancel':
+
+        url += 'customevent&event=TIMER&data={"idx":' + idx + ',"cancel":true}'
 
     if state['Protected'] is True:
         url = url + '&passcode=' + challenge.get('pin')

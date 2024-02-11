@@ -181,7 +181,7 @@ def getAog(device, user_id=None):
     aog.customData['idx'] = device.get('idx')
     aog.customData['domain'] = domain
     aog.customData['protected'] = device.get('Protected')
-    aog.notificationSupportedByAgent = (True if domain in ['SmokeDetector', 'Doorbell', 'DoorLock', 'DoorLockInverted'] else False)       
+    aog.notificationSupportedByAgent = (True if domain in ['SmokeDetector', 'Doorbell', 'DoorLock', 'DoorLockInverted'] else False)
 
     if domain == 'Scene':
         aog.type = 'action.devices.types.SCENE'
@@ -350,6 +350,11 @@ def getAog(device, user_id=None):
             ],
             'cameraStreamNeedAuthToken': False
         }
+        
+    if domain in ['OnOff', 'Dimmer', 'ColorSwitch']:
+        aog.traits.append('action.devices.traits.Timer')
+        aog.attributes['maxTimerLimitSec'] = 7200
+        aog.attributes['commandOnlyTimer'] = True
     
     batteryLevel = device.get('BatteryLevel')
     if domain not in ['Group', 'Scene'] and batteryLevel is not None and batteryLevel != 255:
@@ -425,3 +430,16 @@ def getDomoticzState(user_id, idx, device='id'):
         data = d
 
     return data
+
+
+def getDzUser(user_id):
+
+    url = "?type=command&param=getusers"
+    try:
+        r = json.loads(queryDomoticz(user_id, url))
+        if r['status'] == 'OK':
+            return True
+        else:
+            return False
+    except Exception as err:
+        return False

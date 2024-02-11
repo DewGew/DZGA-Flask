@@ -365,17 +365,6 @@ function setSelectorLevel(div, idx, protect) {
 	requestAPI(requesturl)
 }
 
-function getUser(user) {
-	var url = "/api?type=command&param=getusers"
-	requestAPI(url).then(jsonData => {
-		var data = jsonData
-		if (data.status == 'ERR' || data.status == null) {
-			$('#domoticzAdmin').val('No')
-		} else {
-			$('#domoticzAdmin').val('Yes')
-		}			
-	});
-}
 function getDzVersion() {
 	var url = "/api?type=command&param=getversion"
 	requestAPI(url).then(jsonData => {
