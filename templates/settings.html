@@ -73,7 +73,7 @@
 						</div>
 						<div class="col-md-6" >
 						  <label for="domoticzAdmin" class="form-label">Domoticz Admin</label>
-						  <input type="text" class="form-control" id="domoticzAdmin" value="No" disabled readonly>
+						  <input type="text" class="form-control" id="domoticzAdmin" value="{% if dzUserAdmin is true %}Yes{% else %}No{% endif %}" disabled readonly>
 						</div>
 						<div class="col-md-12" id="div_token">
 						  <label for="token" class="form-label">Auth Token</label>
@@ -125,7 +125,5 @@ $(".togglePassword").click(function (e) {
 	  $(this).parent().parent().find(".password").attr("type","password");
 	}
 });
-
-getUser("{{ user.domouser }}")
 
   </script>

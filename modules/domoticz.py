@@ -354,6 +354,7 @@ def getAog(device, user_id=None):
             ],
             'cameraStreamNeedAuthToken': False
         }
+        
     if domain in ['OnOff'] and aog.type in ['action.devices.types.HEATER', 'action.devices.types.WATERHEATER', 'action.devices.types.KETTLE', 'action.devices.types.OVEN']:
         if 'merge_thermo_idx' in aog.customData:
            aog.traits.append('action.devices.traits.TemperatureControl')
@@ -369,7 +370,7 @@ def getAog(device, user_id=None):
         aog.attributes['commandOnlyTimer'] = True
     
     batteryLevel = device.get('BatteryLevel')
-    if domain not in ['Group', 'Scene'] and batteryLevel != 255:
+    if domain not in ['Group', 'Scene'] and batteryLevel is not None and batteryLevel != 255:
         aog.traits.append('action.devices.traits.EnergyStorage')
         aog.attributes['queryOnlyEnergyStorage'] = True
         aog.attributes['isRechargeable'] = False
