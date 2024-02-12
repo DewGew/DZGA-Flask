@@ -219,7 +219,17 @@
 				{% elif v['customData']['domain'] in ('DoorLock', 'DoorLockInverted') %}
 				<div class="icon">
 					<div class="click" onclick="toogleSwitch({{ v['customData']['idx'] }}, '{{ v['customData']['protected'] }}')">
+						{% if v['type'] == 'action.devices.types.DOOR' %}
+						<i class="material-symbols-outlined" id="icon_lock_{{ v['customData']['idx'] }}">door_front</i>
+						{% elif v['type'] == 'action.devices.types.GARAGE' %}
+						<i class="material-symbols-outlined" id="icon_lock_{{ v['customData']['idx'] }}">garage_door</i>
+						{% elif v['type'] == 'action.devices.types.GATE' %}
+						<i class="material-symbols-outlined" id="icon_lock_{{ v['customData']['idx'] }}">gate</i>
+						{% elif v['type'] == 'action.devices.types.WINDOW' %}
+						<i class="material-symbols-outlined" id="icon_lock_{{ v['customData']['idx'] }}">window_sensor</i>	
+						{% else %}
 						<i class="material-symbols-outlined" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}">lock</i>
+						{% endif %}
 						<div class="label">{{ v['name']['name'] }}</div>
 						<small id="data_{{ v['customData']['idx'] }}">Not available</small>
 					</div>
@@ -266,7 +276,11 @@
 				
 				{% elif v['customData']['domain'] in ('VenetianBlindsUS', 'VenetianBlindsEU', 'Blinds', 'BlindsStop', 'BlindsPercentage')%}
 				<div class="icon">
-					<i class="material-symbols-outlined" id="icon_blinds_{{ v['customData']['idx'] }}">roller_shades</i>
+					{% if v['type'] == 'action.devices.types.CURTAINS' %}
+					<i class="material-symbols-outlined" id="icon_blinds_{{ v['customData']['idx'] }}">curtains</i>
+					{% else %}
+					<i class="material-symbols-outlined" id="icon_blinds_{{ v['customData']['idx'] }}">blinds</i>
+					{% endif %}
 					  <small id="data_{{ v['customData']['idx'] }}">Not available</small>
 					<div class="label">{{ v['name']['name'] }}</div>
 					{% if v['customData']['domain'] in ['VenetianBlindsUS', 'VenetianBlindsEU', 'Blinds', 'BlindsStop'] %}
@@ -468,7 +482,17 @@
 				
 				{% elif (v['customData']['domain'] in ['DoorContact', 'Contact']) %}
 				<div class="icon">
-					<i class="material-symbols-outlined" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}">door_front</i>
+					{% if v['type'] == 'action.devices.types.DOOR' %}
+					<i class="material-symbols-outlined" id="icon_DoorContact_{{ v['customData']['idx'] }}">door_front</i>
+					{% elif v['type'] == 'action.devices.types.GARAGE' %}
+					<i class="material-symbols-outlined" id="icon_Contact_{{ v['customData']['idx'] }}">garage_door</i>
+					{% elif v['type'] == 'action.devices.types.GATE' %}
+					<i class="material-symbols-outlined" id="icon_Contact_{{ v['customData']['idx'] }}">gate</i>
+					{% elif v['type'] == 'action.devices.types.WINDOW' %}
+					<i class="material-symbols-outlined" id="icon_Contact_{{ v['customData']['idx'] }}">window_sensor</i>		
+					{% else %}
+					<i class="material-symbols-outlined" id="icon_Contact_{{ v['customData']['idx'] }}">sensors</i>
+					{% endif %}
 					<div class="label">{{ v['name']['name'] }}</div>
 					<small id="data_{{ v['customData']['idx'] }}">Not available</small>
 					<div class="card-footer col-sm-12">
