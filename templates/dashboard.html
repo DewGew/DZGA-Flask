@@ -70,6 +70,14 @@
 					  <i class="material-symbols-outlined" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}">outlet</i>
 					  {% elif v['type'] == 'action.devices.types.SWITCH' %}
 					  <i class="material-symbols-outlined" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}">switch</i>
+					  {% elif v['type'] == 'action.devices.types.AC_UNIT' %}
+					  <i class="material-symbols-outlined" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}">ac_unit</i>
+					  {% elif v['type'] == 'action.devices.types.AIRPURIFIER' %}
+					  <i class="material-symbols-outlined" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}">air_purifier_gen</i>
+					  {% elif v['type'] == 'action.devices.types.DRYER' %}
+					  <i class="material-symbols-outlined" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}">local_laundry_service</i>
+					  {% elif v['type'] == 'action.devices.types.VACUUM' %}
+					  <i class="material-symbols-outlined" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}">vacuum</i>
 					  {% elif v['type'] == 'action.devices.types.WATERHEATER' %}
 					  <i class="material-symbols-outlined" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}">water_heater</i>
 					  {% elif v['type'] == 'action.devices.types.HEATER' %}
@@ -84,12 +92,26 @@
 					  <i class="material-symbols-outlined" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}">mop</i>
 					  {% elif v['type'] == 'action.devices.types.DISHWASHER' %}
 					  <i class="material-symbols-outlined" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}">dishwasher_gen</i>
+					  {% elif v['type'] == 'action.devices.types.KETTLE' %}
+					  <i class="material-symbols-outlined" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}">kettle</i>
+					  {% elif v['type'] == 'action.devices.types.GRILL' %}
+					  <i class="material-symbols-outlined" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}">outdoor_grill</i>
+					  {% elif v['type'] == 'action.devices.types.SPRINKLER' %}
+					  <i class="material-symbols-outlined" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}">sprinkler</i>
+					  {% elif v['type'] == 'action.devices.types.OVEN' %}
+					  <i class="material-symbols-outlined" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}">oven</i>
 					  {% elif v['type'] == 'action.devices.types.WASHER' %}
 					  <i class="material-symbols-outlined" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}">local_laundry_service</i>
 					  {% elif v['type'] == 'action.devices.types.TV' %}
 					  <i class="material-symbols-outlined" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}">tv</i>
 					  {% elif v['type'] == 'action.devices.types.COFFEEMAKER' %}
 					  <i class="material-symbols-outlined" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}">coffee_maker</i>
+					  {% elif v['type'] == 'action.devices.types.MICROWAVE' %}
+					  <i class="material-symbols-outlined" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}">microwave</i>
+					  {% elif v['type'] == 'action.devices.types.MOP' %}
+					  <i class="material-symbols-outlined" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}">mop</i>
+					  {% elif v['type'] == 'action.devices.types.MOWER' %}
+					  <i class="material-symbols-outlined" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}">grass</i>
 					  {% elif v['type'] == 'action.devices.types.TV' %}
 					  <i class="material-symbols-outlined" id="icon_{{ v['customData']['domain'] }}_{{ v['customData']['idx'] }}">tv</i>
 					  {% else %}
@@ -139,10 +161,39 @@
 					</div>
 				</div>
 				
+				{% elif v['customData']['domain'] == 'Camera' %}
+				<div class="icon">
+					<i class="material-symbols-outlined" id="icon_{{ v['customData']['idx'] }}">nest_cam_outdoor</i>
+					<div class="label">{{ v['name']['name'] }}</div>
+					<small id="" style="visibility:hidden">Not available</small>
+					<div class="card-footer col-sm-12">
+					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not available</small>
+					 <small class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></small>
+					 <small class="float-end" style="font-size: x-small;" id="batteryLevel_{{ v['customData']['idx'] }}"></small>
+					 <div class="modal fade" id="light-log_{{ v['customData']['idx'] }}" tabindex="-1">
+						<div class="modal-dialog modal-dialog-centered modal-lg">
+						  <div class="modal-content">
+							<div class="modal-header">
+							  <h5 class="card-title">Device log <span>| {{ v['name']['name'] }}</span></h5>
+							 <!--  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+							</div>
+							<div class="modal-body">
+								<div class="d-flex justify-content-center" id="device_log_{{ v['customData']['idx'] }}"></div>
+							</div>
+							<div class="modal-footer">
+								<button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+						    </div>
+						  </div>
+						</div>
+					  </div><!-- End Vertically centered Modal-->
+					</div>
+				</div>
+				
 				{% elif v['customData']['domain'] == 'Doorbell' %}
 				<div class="icon">
 					<i class="material-symbols-outlined" id="icon_{{ v['customData']['idx'] }}">doorbell_3p</i>
 					<div class="label">{{ v['name']['name'] }}</div>
+					<small id="" style="visibility:hidden">Not available</small>
 					<div class="card-footer col-sm-12">
 					 <small class="float-start" style="font-size: x-small;" id="lastUpdate_{{ v['customData']['idx'] }}">Not available</small>
 					 <small class="bi bi-bar-chart-fill float-end" onClick="getLigthLog({{ v['customData']['idx'] }})" data-bs-toggle="modal" data-bs-target="#light-log_{{ v['customData']['idx'] }}" style="font-size: x-small;"></small>
