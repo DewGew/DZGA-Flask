@@ -152,6 +152,8 @@
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'securitysystem' %} selected {% endif %} value="securitysystem" >Security System</option>
 											  {% elif v['customData']['domain'] == 'Scene' %}
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'scene' %}selected {% endif %} value="scene">Scene</option>
+											  {% elif v['customData']['domain'] == 'MotionSensor' %}
+												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'sensor' %}selected {% endif %} value="sensor">Sensor</option>
 											  {% elif v['customData']['domain'] == 'SmokeDetector' %}
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'smoke_detector' %}selected {% endif %} value="smoke_detector">Smoke Detector</option>
 											  {% elif v['customData']['domain'] == 'Camera' %}

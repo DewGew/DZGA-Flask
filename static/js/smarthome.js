@@ -137,6 +137,7 @@ function refreshSwitches(updateSwitches) {
 			}
 			if (data == 'Open'){
 				$('#icon_DoorContact_' + idx).html("door_open")
+				$('#icon_Contact_' + idx).css('color', red)
 				$('#icon_blinds_' + idx).css('color', green)
 			}
 			if (data == 'Stopped'){
@@ -144,6 +145,7 @@ function refreshSwitches(updateSwitches) {
 			}
 			if (data == 'Unlocked'){
 				$('#icon_DoorLock_' + idx).html("lock_open").css('color',green)
+				$('#icon_lock_' + idx).css('color', green)
 				$('#icon_DoorLockInverted_' + idx).html("lock_open").css('color',green)
 			}
 			if (data == 'Off'){
@@ -156,9 +158,11 @@ function refreshSwitches(updateSwitches) {
 			if (data == 'Closed'){
 				$('#icon_DoorContact_' + idx).html("door_front")
 				$('#icon_blinds_' + idx).removeAttr('style')
+				$('#icon_Contact_' + idx).removeAttr('style')
 			}
 			if (data == 'Locked'){
 				$('#icon_DoorLock_' + idx).html("lock").css('color',red)
+				$('#icon_lock_' + idx).css('color', red)
 				$('#icon_DoorLockInverted_' + idx).html("lock").css('color',red)
 			}
 			if (data == 'Normal'){
