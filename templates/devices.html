@@ -2,7 +2,44 @@
 
 {% include 'header.html' %}
 
-{% include 'sidebar.html' %}
+<!-- ======= Sidebar ======= -->
+  <aside id="sidebar" class="sidebar">
+
+    <ul class="sidebar-nav" id="sidebar-nav">
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{{ url_for('dashboard') }}">
+          <i class="material-symbols-outlined" style="font-size: 24px">dashboard</i>
+          <span>Dashboard</span>
+        </a>
+      </li><!-- End Dashboard Nav -->
+
+      <li class="nav-heading">Pages</li>
+
+	  <li class="nav-item">
+        <a class="nav-link " href="{{ url_for('devices') }}">
+          <i class="material-symbols-outlined" style="font-size: 24px">devices</i>
+          <span>Devices</span>
+        </a>
+      </li>
+      {% if user.admin %}
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{{ url_for('settings') }}">
+          <i class="material-symbols-outlined" style="font-size: 24px">settings</i>
+          <span>Settings</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{{ url_for('logging') }}">
+          <i class="material-symbols-outlined" style="font-size: 24px">summarize</i>
+          <span>Logs</span>
+        </a>
+      </li>
+      {% endif %}
+
+    </ul>
+
+  </aside><!-- End Sidebar-->
 
 <style>
 .pointer {cursor: pointer;}
@@ -144,7 +181,7 @@
 										  <label for="inputText" class="col-sm-3 col-form-label">Device Type</label>
 										  <div class="col-sm-6"> 
 											  <select id="devicetype" name="devicetype" class="form-select"
-											  {% if (v['customData']['domain'] in ['Security', 'Scene', 'Group', 'SmokeDetector', 'MotionSensor', 'Doorbell', 'Camera']) %}
+											  {% if (v['customData']['domain'] in ['Security', 'Scene', 'Group', 'SmokeDetector', 'MotionSensor']) %}
 											  disabled
 											  {% endif %}>
 											  <option {% if v['type'].replace('action.devices.types.', '').lower() == 'default' %}selected {% endif %} value="default">Set default type</option>
@@ -156,8 +193,6 @@
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'sensor' %}selected {% endif %} value="sensor">Sensor</option>
 											  {% elif v['customData']['domain'] == 'SmokeDetector' %}
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'smoke_detector' %}selected {% endif %} value="smoke_detector">Smoke Detector</option>
-											  {% elif v['customData']['domain'] == 'Camera' %}
-												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'camera' %}selected {% endif %} value="camera">Camera</option>
 											  {% elif v['customData']['domain'] == 'Group' %}
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'switch' %}selected {% endif %} value="switch">Switch</option>
 											  {% elif v['customData']['domain'] in ['Thermostat', 'Setpoint'] %}
@@ -168,7 +203,8 @@
 											  {% elif v['customData']['domain'] in ['Temp', 'TempHumidity', 'TempHumidityBaro'] %}
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'sensor' %}selected {% endif %} value="sensor">Sensor</option>
 											    <option {% if v['type'].replace('action.devices.types.', '').lower() == 'thermostat' %}selected {% endif %} value="thermostat">Thermostat</option>
-											  {% elif v['customData']['domain'] == 'Doorbell' %}
+											  {% elif v['customData']['domain'] in ['Doorbell', 'Camera'] %}
+											    <option {% if v['type'].replace('action.devices.types.', '').lower() == 'camera' %}selected {% endif %} value="camera">Camera</option>
 												<option {% if v['type'].replace('action.devices.types.', '').lower() == 'doorbell' %}selected {% endif %} value="doorbell">Doorbell</option>
 											  {% elif v['customData']['domain'] in ['DoorLock', 'DoorLockInverted'] %}
 											  <option {% if v['type'].replace('action.devices.types.', '').lower() == 'door' %}selected {% endif %} value="door">Door</option>
@@ -259,7 +295,7 @@
 										  </div>
 										</div>
 									  {% endif %}
-									  {% if (v['customData']['domain'] in ['Doorbell', 'Camera'] and 'camurl' in v['customData']) %}
+									  {% if (v['customData']['domain'] in ['Doorbell', 'Camera']) %}
 										<div class="row mb-3">
 										  <label for="inputText" class="col-sm-3 col-form-label">Camera Url</label>
 										  <div class="col-sm-10">
