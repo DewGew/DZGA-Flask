@@ -836,7 +836,7 @@
 			    {% if  (v['customData']['domain'] not in (
 					'Group','Scene','Thermostat', 'Setpoint','Temp', 'TempHumidity', 'TempHumidityBaro','SmokeDetector', 'Security',
 					'VenetianBlindsEU', 'OnOff', 'Dimmer', 'VenetianBlindsUS', 'Doorbell', 'DoorLock', 'DoorLockInverted', 'Selector', 'DoorContact', 'BlindsPercentage',
-					'MotionSensor', 'PushOnButton', 'PushOffButton', 'ColorSwitch', 'Contact') and 'Hidden' not in v['customData']['domain'] ) %}
+					'MotionSensor', 'PushOnButton', 'PushOffButton', 'ColorSwitch', 'Contact', 'Camera') and 'Hidden' not in v['customData']['domain'] ) %}
 				<div class="icon">
 					<i class="material-symbols-outlined" id="icon_{{ v['customData']['idx'] }}">unknown_2</i>
 					<small id="data_{{ v['customData']['idx'] }}">Not available</small>
@@ -906,7 +906,7 @@ $('#title_security').hide()
 		$("#title_security > i").toggleClass('bi bi-chevron-compact-up')
 	{% elif  (v['customData']['domain'] not in (
 					'SmokeDetector', 'Security', 'VenetianBlindsEU', 'OnOff', 'VenetianBlindsUS', 'Doorbell', 'DoorLock', 'DoorLockInverted', 'DoorContact', 'BlindsStop', 'BlindsPercentage',
-					'MotionSensor', 'PushOnButton', 'PushOffButton', 'Contact') and 'Hidden' not in v['customData']['domain']) %}
+					'MotionSensor', 'PushOnButton', 'PushOffButton', 'Contact', 'Camera') and 'Hidden' not in v['customData']['domain']) %}
 		updateOthers_block.push("{{ v['customData']['idx'] }}")
 		$('#title_other').show()
 	{% else %}

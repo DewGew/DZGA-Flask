@@ -37,6 +37,8 @@ def getDomain(device):
         devs = devs.replace(" ", "")
         devs = devs.replace("/", "")
         devs = devs.replace("+", "")
+        if device["UsedByCamera"] == True:
+            devs = 'Camera'
 
         return devs
 
@@ -181,7 +183,7 @@ def getAog(device, user_id=None):
         hide = desc.get('hide', False)
         if hide:
             domain = domain + '_Hidden'
-
+                    
     aog.customData['idx'] = device.get('idx')
     aog.customData['domain'] = domain
     aog.customData['protected'] = device.get('Protected')
@@ -344,6 +346,8 @@ def getAog(device, user_id=None):
         if domain == 'Doorbell':
             aog.type = 'action.devices.types.DOORBELL'
             aog.traits.append('action.devices.traits.ObjectDetection')
+        if device.get('CameraIdx'):
+            aog.customData['cameraIdx'] = device.get('CameraIdx')
         aog.traits.append('action.devices.traits.CameraStream')
         aog.attributes = {
             'cameraStreamSupportedProtocols': [
