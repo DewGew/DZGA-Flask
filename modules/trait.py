@@ -182,7 +182,8 @@ def execute(device, command, params, user_id, challenge):
             data = state['Data']
             url += 'switchlight&idx=' + idx + '&switchcmd='
 
-        if check_state:
+        # Disabled to unbreak saying 'put all lights off'
+        if False and check_state:
             if params['on'] is True and data == 'Off':
                 url += 'On'
             elif params['on'] is False and data != 'Off':
