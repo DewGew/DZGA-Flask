@@ -86,7 +86,7 @@ def request_loader(request):
     if authtoken:
         token = get_token()
         user = User.query.filter_by(authtoken=token).first()
-        if user.username:
+        if user and user.username:
             return user
 
     return None
@@ -114,8 +114,8 @@ def send_js(path):
     return send_from_directory('static/js', path)
 
 
-@flask_login.login_required
 @app.route('/uploads/<path:path>')
+@flask_login.login_required
 def send_uploads(path):
     return send_from_directory('uploads', path)
 
@@ -146,8 +146,8 @@ def login():
     return redirect(url_for('dashboard'))
 
 
-@flask_login.login_required
 @app.route('/logout')
+@flask_login.login_required
 def logout():
     flask_login.logout_user()
     session.clear()
@@ -235,8 +235,8 @@ def token():
 
 
 # Notification request
-@flask_login.login_required
 @app.route('/notification', methods=['POST'])
+@flask_login.login_required
 def notification():
     user_id = flask_login.current_user.username
     user = User.query.filter_by(username=user_id).first()
@@ -283,8 +283,8 @@ def notification():
 
 
 # Main URL to interact with Google requests
-@flask_login.login_required
 @app.route('/smarthome', methods=['POST'])
+@flask_login.login_required
 def fulfillment():
 
     user_id = flask_login.current_user.username
