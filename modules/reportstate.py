@@ -10,6 +10,9 @@ import modules.config as config
 from modules.database import Settings
 from modules.helpers import logger
 
+# Google API calls block the request that triggered them; never wait forever
+HOMEGRAPH_TIMEOUT = 10
+
 
 class ReportState:
     """Google Report State implementation."""
@@ -65,7 +68,7 @@ class ReportState:
         data = 'grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=' + signed_jwt.decode(
             'utf-8')
 
-        r = requests.post(url, headers=headers, data=data)
+        r = requests.post(url, headers=headers, data=data, timeout=HOMEGRAPH_TIMEOUT)
 
         if r.status_code == requests.codes.ok:
             token_data = json.loads(r.text)
@@ -82,7 +85,7 @@ class ReportState:
 
         url = 'https://homegraph.googleapis.com/v1/devices:requestSync?key=' + dbsettings.api_key
 
-        r = requests.post(url, json=payload)
+        r = requests.post(url, json=payload, timeout=HOMEGRAPH_TIMEOUT)
 
         if 'error' in r.text:
             logger.error(r.text)
@@ -93,6 +96,8 @@ class ReportState:
         """Makes an authorized request to the endpoint"""
         if rt == 'sync':
             url = 'https://homegraph.googleapis.com/v1/devices:requestSync'
+            # Without async Google calls our SYNC fulfillment before answering
+            payload = {**payload, 'async': True}
         elif rt == 'state':
             url = 'https://homegraph.googleapis.com/v1/devices:reportStateAndNotification'
         now = int(time.time())
@@ -106,7 +111,7 @@ class ReportState:
             'Authorization': 'Bearer ' + self._access_token
         }
 
-        r = requests.post(url, headers=headers, json=payload)
+        r = requests.post(url, headers=headers, json=payload, timeout=HOMEGRAPH_TIMEOUT)
 
         r.raise_for_status()
 
