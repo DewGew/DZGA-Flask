@@ -4,6 +4,7 @@ import flask_login
 import urllib
 import os
 import json
+import secrets
 import modules.config as config
 import modules.api as api
 import modules.routes as routes
@@ -32,9 +33,20 @@ from flask import (Flask, redirect, request,
                    send_from_directory, jsonify,
                    session)
 
+
+def load_secret_key():
+    """Read the session signing key from the instance folder, create it on first run."""
+    keyfile = os.path.join(config.DATABASE_DIRECTORY, 'secret_key')
+    if not os.path.isfile(keyfile):
+        os.makedirs(config.DATABASE_DIRECTORY, exist_ok=True)
+        with open(keyfile, 'w') as f:
+            f.write(secrets.token_hex(32))
+    with open(keyfile) as f:
+        return f.read().strip()
+
+
 app = Flask(__name__)
-# Create an actual secret key for production
-app.secret_key = 'secret'
+app.secret_key = load_secret_key()
 # Database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -74,7 +86,7 @@ def request_loader(request):
     if authtoken:
         token = get_token()
         user = User.query.filter_by(authtoken=token).first()
-        if user.username:
+        if user and user.username:
             return user
 
     return None
@@ -102,8 +114,8 @@ def send_js(path):
     return send_from_directory('static/js', path)
 
 
-@flask_login.login_required
 @app.route('/uploads/<path:path>')
+@flask_login.login_required
 def send_uploads(path):
     return send_from_directory('uploads', path)
 
@@ -134,8 +146,8 @@ def login():
     return redirect(url_for('dashboard'))
 
 
-@flask_login.login_required
 @app.route('/logout')
+@flask_login.login_required
 def logout():
     flask_login.logout_user()
     session.clear()
@@ -223,8 +235,8 @@ def token():
 
 
 # Notification request
-@flask_login.login_required
 @app.route('/notification', methods=['POST'])
+@flask_login.login_required
 def notification():
     user_id = flask_login.current_user.username
     user = User.query.filter_by(username=user_id).first()
@@ -271,8 +283,8 @@ def notification():
 
 
 # Main URL to interact with Google requests
-@flask_login.login_required
 @app.route('/smarthome', methods=['POST'])
+@flask_login.login_required
 def fulfillment():
 
     user_id = flask_login.current_user.username
@@ -339,11 +351,13 @@ if __name__ == "__main__":
     app.add_url_rule('/settings', 'settings', routes.settings, methods=['GET', 'POST'])
     app.add_url_rule('/api', 'api', api.gateway, methods=['POST'])
     app.add_url_rule('/uploader', 'uploader', routes.uploader, methods=['POST'])
+    # Werkzeug debugger runs arbitrary code from the browser, keep it off unless asked
+    debug = os.environ.get('DZGA_DEBUG', '').lower() in ('1', 'true')
     context = (dbs.ssl_cert, dbs.ssl_key)
     if dbs.use_ssl:
         logger.info("Running with ssl")
         context = (dbs.ssl_cert, dbs.ssl_key)
-        app.run('0.0.0.0', port=8181, debug=True, ssl_context=context)
+        app.run('0.0.0.0', port=8181, debug=debug, ssl_context=context)
     else:
         logger.info("Running without ssl")
-        app.run('0.0.0.0', port=8181, debug=True)
+        app.run('0.0.0.0', port=8181, debug=debug)
