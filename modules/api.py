@@ -148,8 +148,7 @@ def gateway():
 
     if custom == "sync":
         if dbuser.googleassistant is True:
-            if rs.report_state_enabled():
-                rs.call_homegraph_api('sync', {"agentUserId": flask_login.current_user.username})
+            if rs.report_state_enabled() and rs.call_homegraph_api('sync', {"agentUserId": flask_login.current_user.username}):
                 result = '{"title": "RequestedSync", "status": "OK"}'
                 flash("Devices synced with domoticz")
             else:

@@ -94,6 +94,10 @@ def request_loader(request):
 
 @login_manager.unauthorized_handler
 def unauthorized_handler():
+    # Google and Domoticz scripts need a status code, not the login page;
+    # a 401 is what makes Google refresh its access token
+    if request.headers.get('Authorization') or request.path in ('/smarthome', '/notification'):
+        return jsonify({'error': 'unauthorized'}), 401
     return redirect(url_for('login'))
 
 
