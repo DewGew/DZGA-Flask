@@ -37,7 +37,6 @@ class ReportState:
         """Generates a signed JSON Web Token using a Google API Service Account."""
         now = int(time.time())
         expires = now + 3600
-        self._access_token_expires = expires
 
         with io.open(keyfile, 'r', encoding='utf-8') as json_file:
             data = json.load(json_file)
@@ -73,6 +72,10 @@ class ReportState:
         if r.status_code == requests.codes.ok:
             token_data = json.loads(r.text)
             self._access_token = token_data['access_token']
+            # Only a token we actually got moves the expiry; setting it before
+            # the request kept an expired token in use for an hour after a
+            # failed refresh. Renew a minute early.
+            self._access_token_expires = int(time.time()) + int(token_data.get('expires_in', 3600)) - 60
             return token_data['access_token']
 
         r.raise_for_status()
@@ -122,6 +125,9 @@ class ReportState:
             r.raise_for_status()
         except requests.RequestException as err:
             logger.error("HomeGraph %s failed: %s", rt, err)
+            if err.response is not None and err.response.status_code == 401:
+                # Google no longer accepts the token, fetch a new one next time
+                self._access_token = None
             return False
 
         logger.debug("Device state reported %s" % (json.dumps(payload, indent=2, sort_keys=True)))
