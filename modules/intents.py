@@ -28,7 +28,12 @@ class SmartHomeHandler:
         if 'notifications' in states:
             data['eventId'] = random_string(10)
 
-        repstate.call_homegraph_api('state', data)
+        # Report state is optional for Google; a failure (network, token)
+        # must not turn the QUERY/EXECUTE answer into an error ("device unavailable").
+        try:
+            repstate.call_homegraph_api('state', data)
+        except Exception as err:
+            logger.error("Report state failed: %s" % err)
 
     def sync(self, user_id):
 
