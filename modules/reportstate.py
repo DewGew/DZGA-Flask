@@ -21,6 +21,7 @@ class ReportState:
         """Log error code."""
         self._access_token = None
         self._access_token_expires = None
+        self._retry_after = 0              # no new token request before this time
 
     @staticmethod
     def report_state_enabled():
@@ -37,7 +38,10 @@ class ReportState:
         """Generates a signed JSON Web Token using a Google API Service Account."""
         now = int(time.time())
         expires = now + 3600
-        self._access_token_expires = expires
+        # The token expiry is only stored once a token has really been
+        # obtained (get_access_token). Storing it here meant that a failed renewal
+        # (accounts.google.com timeout) kept the old expired token in use for one
+        # more hour: every report state got 401 and Google said "unavailable".
 
         with io.open(keyfile, 'r', encoding='utf-8') as json_file:
             data = json.load(json_file)
@@ -73,6 +77,8 @@ class ReportState:
         if r.status_code == requests.codes.ok:
             token_data = json.loads(r.text)
             self._access_token = token_data['access_token']
+            # renew one minute early (Google tokens last expires_in seconds, 3599 by default)
+            self._access_token_expires = int(time.time()) + int(token_data.get('expires_in', 3600)) - 60
             return token_data['access_token']
 
         r.raise_for_status()
@@ -102,17 +108,31 @@ class ReportState:
             url = 'https://homegraph.googleapis.com/v1/devices:reportStateAndNotification'
         now = int(time.time())
         if not self._access_token or now > self._access_token_expires:
-            self.get_access_token()
-        elif not self._access_token:
-            return
+            # After a failed renewal, wait 60 s before trying again, so that
+            # Google requests are not each held up by a token timeout while the network
+            # to Google is down.
+            if now < self._retry_after:
+                return False
+            try:
+                self.get_access_token()
+            except Exception:
+                self._retry_after = now + 60
+                raise
+        # local copy: another request may reset the token (401) at the same time
+        token = self._access_token
+        if not token:
+            return False
 
         headers = {
             'X-GFE-SSL': 'yes',
-            'Authorization': 'Bearer ' + self._access_token
+            'Authorization': 'Bearer ' + token
         }
 
         r = requests.post(url, headers=headers, json=payload, timeout=HOMEGRAPH_TIMEOUT)
 
+        if r.status_code == requests.codes.unauthorized:
+            # Token refused, get a new one on the next call
+            self._access_token = None
         r.raise_for_status()
 
         logger.debug("Device state reported %s" % (json.dumps(payload, indent=2, sort_keys=True)))
