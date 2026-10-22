@@ -37,7 +37,6 @@ class ReportState:
         """Generates a signed JSON Web Token using a Google API Service Account."""
         now = int(time.time())
         expires = now + 3600
-        self._access_token_expires = expires
 
         with io.open(keyfile, 'r', encoding='utf-8') as json_file:
             data = json.load(json_file)
@@ -73,6 +72,10 @@ class ReportState:
         if r.status_code == requests.codes.ok:
             token_data = json.loads(r.text)
             self._access_token = token_data['access_token']
+            # Only a token we actually got moves the expiry; setting it before
+            # the request kept an expired token in use for an hour after a
+            # failed refresh. Renew a minute early.
+            self._access_token_expires = int(time.time()) + int(token_data.get('expires_in', 3600)) - 60
             return token_data['access_token']
 
         r.raise_for_status()
@@ -93,27 +96,39 @@ class ReportState:
         return r.status_code == requests.codes.ok
 
     def call_homegraph_api(self, rt, payload):
-        """Makes an authorized request to the endpoint"""
+        """Makes an authorized request to the endpoint, returns True on success.
+
+        Never raises: it runs inside Google fulfillment and Domoticz requests,
+        and a HomeGraph failure must not turn those into a 500.
+        """
         if rt == 'sync':
             url = 'https://homegraph.googleapis.com/v1/devices:requestSync'
             # Without async Google calls our SYNC fulfillment before answering
             payload = {**payload, 'async': True}
         elif rt == 'state':
             url = 'https://homegraph.googleapis.com/v1/devices:reportStateAndNotification'
-        now = int(time.time())
-        if not self._access_token or now > self._access_token_expires:
-            self.get_access_token()
-        elif not self._access_token:
-            return
 
-        headers = {
-            'X-GFE-SSL': 'yes',
-            'Authorization': 'Bearer ' + self._access_token
-        }
+        try:
+            now = int(time.time())
+            if not self._access_token or now > self._access_token_expires:
+                self.get_access_token()
+            if not self._access_token:
+                logger.error("HomeGraph %s skipped: no access token", rt)
+                return False
 
-        r = requests.post(url, headers=headers, json=payload, timeout=HOMEGRAPH_TIMEOUT)
+            headers = {
+                'X-GFE-SSL': 'yes',
+                'Authorization': 'Bearer ' + self._access_token
+            }
 
-        r.raise_for_status()
+            r = requests.post(url, headers=headers, json=payload, timeout=HOMEGRAPH_TIMEOUT)
+            r.raise_for_status()
+        except requests.RequestException as err:
+            logger.error("HomeGraph %s failed: %s", rt, err)
+            if err.response is not None and err.response.status_code == 401:
+                # Google no longer accepts the token, fetch a new one next time
+                self._access_token = None
+            return False
 
         logger.debug("Device state reported %s" % (json.dumps(payload, indent=2, sort_keys=True)))
         return r.status_code == requests.codes.ok
