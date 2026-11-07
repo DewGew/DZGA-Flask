@@ -8,7 +8,7 @@ Standalone implementation for [Domoticz Home Automation](https://www.domoticz.co
 Required:
 - latest Domoticz stable 2023.2 or above.
 - public url
-- python >= 3.5
+- python >= 3.11
 - Make local deployment available trough HTTPS with valid certificate with one of below:
   - SSL with own domain or dynamic DNS, require ssl key and ssl certficate
   - Use ngrok for a secure SSL tunnel with valid public HTTPS URL
