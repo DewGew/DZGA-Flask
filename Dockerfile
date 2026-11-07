@@ -1,7 +1,7 @@
 # Dockerfile for DZGA-Flask
 
 # Install minimal Python 3.
-FROM python:3-alpine
+FROM python:3.14-alpine
 
 RUN mkdir -p config
 
