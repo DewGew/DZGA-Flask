@@ -213,7 +213,6 @@ def oauth():
 # OAuth, token request
 @app.route('/token', methods=['POST'])
 def token():
-    global last_code, last_code_user, last_code_time
     dbsettings = Settings.query.get_or_404(1)
 
     if ("client_secret" not in request.form
