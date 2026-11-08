@@ -25,7 +25,10 @@ class AogState:
 
 
 def getDomain(device):
-    
+
+    # Domoticz 2026.1+: temperature and setpoint in one device
+    if device["Type"] == 'Thermostat 6':
+        return 'Thermostat'
     if device["Type"] in ['Color Switch', 'Group', 'Scene', 'Temp', 'Thermostat', 'Setpoint', 'Temp + Humidity', 'Temp + Humidity + Baro', 'Security']:
         devs = device["Type"].replace(" ", "")
         devs = devs.replace("+", "")
