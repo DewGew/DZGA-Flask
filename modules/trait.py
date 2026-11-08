@@ -67,6 +67,9 @@ def query(custom_data, device, user_id):
             if 'actual_temp_idx' in custom_data:
                 actual_temp_idx = getDomoticzState(user_id, custom_data['actual_temp_idx'])
                 current_temp = float(actual_temp_idx['Temp'])
+            elif 'Temp' in state:
+                # Thermostat 6 has its own temperature; 'Data' is a text there
+                current_temp = float(state['Temp'])
             else:
                 current_temp = float(state['Data'])
             response['thermostatTemperatureAmbient'] = round(_tempConvert(current_temp, dbsettings.tempunit), 1)
@@ -80,6 +83,8 @@ def query(custom_data, device, user_id):
                 response['thermostatMode'] = selectorModes[modeIndex]
             else:
                 response['thermostatMode'] = 'heat'
+            if state.get('Humidity') is not None:
+                response['thermostatHumidityAmbient'] = state['Humidity']
         elif domain in ['Temp', 'TempHumidity', 'TempHumidityBaro']:
             current_temp = float(state['Temp'])
             if round(_tempConvert(current_temp, dbsettings.tempunit), 1) <= 3:
