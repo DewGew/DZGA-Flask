@@ -7,6 +7,7 @@ User=__USER__
 Group=__USER__
 WorkingDirectory=/home/__USER__/DZGA-Flask/
 Environment=VIRTUAL_ENV=/home/__USER__/DZGA-Flask/env
+#Environment=DZGA_LOG_LEVEL=INFO
 ExecStart=/home/__USER__/DZGA-Flask/env/bin/python /home/__USER__/DZGA-Flask/smarthome.py
 Restart=on-failure
 
