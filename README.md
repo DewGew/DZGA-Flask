@@ -27,4 +27,7 @@ wget -P /opt/DZGA-Flask https://raw.githubusercontent.com/DewGew/DZGA-Flask/deve
 cd /opt/DZGA-Flask
 docker-compose up -d
 ```
+
+DZGA-Flask logs everything, including each Google request and response, to `config/smarthome.log` (cleared on every start). To log less, set the environment variable `DZGA_LOG_LEVEL` to `INFO`, `WARNING` or `ERROR`: in `docker-compose.yaml` under `environment:`, or with `Environment=DZGA_LOG_LEVEL=INFO` in the systemd unit.
+
 ***For more help read DZGA-Flask [wiki](https://github.com/DewGew/DZGA-Flask/wiki)***

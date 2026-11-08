@@ -16,4 +16,5 @@ services:
     environment:
       - PUID=1010
       - PGID=1010
+#      - DZGA_LOG_LEVEL=INFO
     

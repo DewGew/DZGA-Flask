@@ -9,16 +9,24 @@ import random
 import string
 import modules.config as config
 
-# Logging
-logging.basicConfig(level=logging.DEBUG,
+# Logging. DZGA_LOG_LEVEL=INFO, WARNING or ERROR logs less, the default is DEBUG.
+LOG_LEVELS = ('DEBUG', 'INFO', 'WARNING', 'ERROR')
+env_log_level = os.environ.get('DZGA_LOG_LEVEL', 'DEBUG')
+log_level = env_log_level.strip().upper()
+if log_level not in LOG_LEVELS:
+    log_level = 'DEBUG'
+logging.basicConfig(level=log_level,
                     format="%(asctime)s %(message)s",
                     datefmt="%Y-%m-%d %H:%M:%S",
                     filename=os.path.join(config.CONFIG_DIRECTORY, "smarthome.log"),
                     filemode='w')
 logging.getLogger().addHandler(logging.StreamHandler())
-logging.getLogger("urllib3").setLevel(logging.DEBUG)
+# Its records reach the root handlers whatever the root level is
+logging.getLogger("urllib3").setLevel(log_level)
 logging.getLogger('werkzeug').setLevel(logging.ERROR)
 logger = logging.getLogger()
+if env_log_level.strip().upper() not in LOG_LEVELS:
+    logger.warning('Unknown DZGA_LOG_LEVEL %r, using DEBUG', env_log_level)
 
 
 def remove_user(user):
