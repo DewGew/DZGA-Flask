@@ -8,6 +8,7 @@ import secrets
 import modules.config as config
 import modules.api as api
 import modules.routes as routes
+import modules.tls as tls
 
 from time import time
 
@@ -356,10 +357,9 @@ if __name__ == "__main__":
     app.add_url_rule('/uploader', 'uploader', routes.uploader, methods=['POST'])
     # Werkzeug debugger runs arbitrary code from the browser, keep it off unless asked
     debug = os.environ.get('DZGA_DEBUG', '').lower() in ('1', 'true')
-    context = (dbs.ssl_cert, dbs.ssl_key)
     if dbs.use_ssl:
         logger.info("Running with ssl")
-        context = (dbs.ssl_cert, dbs.ssl_key)
+        context = tls.server_context(dbs.ssl_cert, dbs.ssl_key)
         app.run('0.0.0.0', port=8181, debug=debug, ssl_context=context)
     else:
         logger.info("Running without ssl")
