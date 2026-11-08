@@ -1,15 +1,15 @@
 name: Docker Image CI
 
+# A push runs in this repository, so the Docker Hub secrets are available.
+# A pull_request run for a PR from a fork gets no secrets, and the login fails.
 on:
-  pull_request:
+  push:
     branches: [ "development" ]
-    types:
-      - closed
+  workflow_dispatch:
 
 jobs:
 
   docker:
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       -
