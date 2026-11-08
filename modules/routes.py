@@ -55,6 +55,10 @@ def devices():
             hideDevice = request.form.get('hideDevice')
             willReportState = request.form.get('willReportState')
             challenge = request.form.get('2FA')
+            # The radio buttons are only hidden when the switch is turned off,
+            # so the browser still sends the selected one.
+            if request.form.get('secondaryUserVerification') != 'on':
+                challenge = None
             # notification = request.form.get('notification')
             room = request.form.get('room')
             nicknames = request.form.get('nicknames')
