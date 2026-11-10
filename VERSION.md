@@ -1,3 +1,8 @@
+24.11
+- Set the log level with DZGA_LOG_LEVEL
+- Turn off acknowledge when Secondary User Verification is unticked
+- Support the Domoticz Thermostat 6 device type
+- Minor fixes
 24.10
 - Commented out the check_state condition to prevent issues with the 'put all lights off' command.
 24.9
